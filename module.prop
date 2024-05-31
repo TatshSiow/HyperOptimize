@@ -1,6 +1,6 @@
-id=XiaomiDebloat_Tatsh
-name=精簡小米無用APP
+id=HyperOS-Debloater_Tatsh
+name=HyperOS-Debloater
 author= Tatsh
-description=精簡大部分無用應用（如遇問題請卸載模塊或自行排查）
+description=Debloat some unused Xiaomi Apps
 version=1.0
 versionCode=1
