@@ -6,7 +6,9 @@ Debloat non-useful Apps with empty APKs replacements systemlessly
 ## Requirements
 Device using HyperOS\
 ***MIUI NOT TESTED***\
+
 for MIUI, you might need [FuckMiMarket Module](https://github.com/Xposed-Modules-Repo/com.hook.fuckmimarket)\
+
 ***BRICK RESCUE MODULE IS A MUST!***
 
 ## Notes
