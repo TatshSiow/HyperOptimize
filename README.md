@@ -9,8 +9,8 @@ MIUI will possibly work too, but you might need [FuckMiMarket Module](https://gi
 
 ## Notes
 not guaranteed if it works on most of the build.\
-**BRICK RESCUE MODULE IS A MUST!**
-Working fine on EliteROM (Xiaomi 13:Fuxi)
+**BRICK RESCUE MODULE IS A MUST!**\
+Tested on EliteROM (Xiaomi 13:Fuxi)
 
 ## How to install?
 Flash the zip in Magisk.
