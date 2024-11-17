@@ -2,7 +2,7 @@
 Improve Battery Life and decrease RAM consumption by disabling Apps and System Process
 
 ## Requirements
-Device using HyperOS\
+Device using HyperOS
 
 ## Dev Notes
 * **MIUI** not tested
