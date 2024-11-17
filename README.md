@@ -4,11 +4,11 @@ Improve Battery Life and decrease RAM consumption by disabling Apps and System P
 ## Requirements
 Device using HyperOS\
 
-
 ## Dev Notes
 * **MIUI** not tested
 * **Brick Rescue Module** is always recommended
 * **NOT GUARANTEED** to work on all builds
+* Please manually change the _install.sh_ script if you want specific apps to not be disabled (eg. Gboard)
 
 Tested on EliteROM (Xiaomi 13:Fuxi)
 
