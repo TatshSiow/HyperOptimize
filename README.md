@@ -8,7 +8,7 @@ Device using HyperOS
 * **MIUI** not tested
 * **Brick Rescue Module** is always recommended
 * **NOT GUARANTEED** to work on all builds
-Tested on EliteROM (Xiaomi 13:Fuxi)
+Tested on EliteROM Android 14(1.0.17.0)
 
 ## Customize the disable applist
 * Edit the _install.sh_ script if you want specific apps to not be disabled (eg. Gboard)
