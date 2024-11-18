@@ -4,3 +4,4 @@ author= Tatsh
 description=Improve Battery Life and decrease RAM consumption by disabling Apps and System Process
 version=2.1
 versionCode=241118
+updateJson=https://raw.githubusercontent.com/TatshSiow/HyperOS-Debloater/main/update.json
