@@ -1,19 +1,17 @@
-#Magisk_Module 
-
 # HyperOS-Debloater
-Debloat non-useful Apps with empty APKs replacements systemlessly
+Improve Battery Life and decrease RAM consumption by disabling Apps and System Process
 
 ## Requirements
-Device using HyperOS\
-***MIUI NOT TESTED***
+Device using HyperOS
 
-for MIUI, you might need [FuckMiMarket Module](https://github.com/Xposed-Modules-Repo/com.hook.fuckmimarket)
+## Dev Notes
+* **MIUI** not tested
+* **Brick Rescue Module** is always recommended
+* **NOT GUARANTEED** to work on all builds
+Tested on EliteROM Android 14(1.0.17.0)
 
-***BRICK RESCUE MODULE IS A MUST!***
-
-## Notes
-not guaranteed if it works on most of the build.\
-Tested on EliteROM (Xiaomi 13:Fuxi)
+## Customize the disable applist
+* Edit the _install.sh_ script if you want specific apps to not be disabled (eg. Gboard)
 
 ## How to install?
 Flash the zip in Magisk.
