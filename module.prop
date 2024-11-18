@@ -2,5 +2,5 @@ id=HyperOS-Debloater_Tatsh
 name=HyperOS-Debloater
 author= Tatsh
 description=Improve Battery Life and decrease RAM consumption by disabling Apps and System Process
-version=2.0
-versionCode=171124
+version=2.1
+versionCode=241118
