@@ -1,0 +1,40 @@
+# This file will be read by resetprop
+# Example: Change dpi
+# ro.sf.lcd_density=320
+
+#Disable useless logging and debugging stuff
+debugtool.anrhistory=0
+profiler.hung.dumpdobugreport=false
+profiler.launch=false
+persist.sys.offlinelog.kernel=false
+persist.sys.offlinelog.logcat=false
+persist.sys.offlinelog.logcatkernel=false
+persist.sys.perf.debug=false
+persist.sys.whetstone.level=0
+persist.wpa_supplicant.debug=false
+ro.logdumpd.enabled=0
+ro.logd.size.stats=4K
+ro.lmk.debug=false
+sys.miui.ndcd=off
+vendor.bluetooth.startbtlogger=false
+
+#Android ART LOGD
+dalvik.vm.dex2oat-minidebuginfo=false
+persist.sys.qlogd=0
+
+#enable iorapd to improve app launch speed
+ro.iorapd.enable=true
+
+#wifi scanning interval(higher value=powersave)
+wifi.supplicant_scan_interval=300
+
+#Optimize Surface Flinger Caching(reduce animation jitter,may cause visual artifacts)
+debug.sf.latch_unsignaled=1
+#Surface Flinger Hardware Boost(Smoother System)
+debug.sf.hw=1
+#enable UBWC(reduce bandwidth usage and power consumption if supported)
+debug.gralloc.enable_fb_ubwc=1
+
+#disable kernel error checking
+ro.kernel.android.checkjni=0
+ro.kernel.checkjni=0

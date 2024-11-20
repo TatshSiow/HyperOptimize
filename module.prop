@@ -1,7 +1,7 @@
-id=HyperOS-Debloater_Tatsh
-name=HyperOS-Debloater
-author= Tatsh
-description=Improve Battery Life and decrease RAM consumption by disabling Apps and System Process
-version=2.2.1(test build)
-versionCode=241119
-updateJson=https://raw.githubusercontent.com/TatshSiow/HyperOS-Debloater/main/update.json
+id=HyperOptimize_Tatsh
+name=Hyper Optimize
+author=Tatsh
+description=Reduce Power and RAM consumption by optimizing system parameters,disabling Apps & System Process
+version=1.0
+versionCode=241120
+updateJson=https://raw.githubusercontent.com/TatshSiow/HyperOptimize/main/update.json
