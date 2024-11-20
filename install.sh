@@ -1,5 +1,5 @@
-LATESTARTSERVICE=false
-POSTFSDATA=false
+LATESTARTSERVICE=true
+POSTFSDATA=true
 PROPFILE=false
 SKIPMOUNT=false
 print_modname() {
