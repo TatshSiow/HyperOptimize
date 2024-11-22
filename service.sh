@@ -4,76 +4,103 @@
 # This script will be executed in late_start service mode
 # More info in the main Magisk thread
 
+#Enable MGLRU (Improve App Launch Time, much power efficient)
+#After testing, it uses more power to maintain background process
+#if [ -f /sys/kernel/mm/lru_gen/enabled ]; then
+#  echo "0x0003" > /sys/kernel/mm/lru_gen/enabled
+#  chmod 444 /sys/kernel/mm/lru_gen/enabled
+#fi
+#
+#if [ -f /sys/kernel/mm/lru_gen/min_ttl_ms ]; then
+#  echo "1000" > /sys/kernel/mm/lru_gen/min_ttl_ms
+#  chmod 444 /sys/kernel/mm/lru_gen/min_ttl_ms
+#fi
+#
 # Disable debug process
-echo 0 > /sys/module/binder/parameters/debug_mask
-echo 0 > /sys/module/binder_alloc/parameters/debug_mask
-echo 0 > /sys/module/msm_show_resume_irq/parameters/debug_mask
-echo 0 > /sys/module/millet_core/parameters/millet_debug
-echo 0 > /proc/sys/migt/migt_sched_debug
-echo N > /sys/kernel/debug/debug_enabled
+if [ -f /sys/module/binder/parameters/debug_mask ]; then
+  echo "0" > /sys/module/binder/parameters/debug_mask
+fi
 
-#UFS Tuning
-#Disable I/O stats
-echo 0 > /sys/block/loop0/queue/iostats
-echo 0 > /sys/block/loop1/queue/iostats
-echo 0 > /sys/block/loop2/queue/iostats
-echo 0 > /sys/block/loop3/queue/iostats
-echo 0 > /sys/block/loop4/queue/iostats
-echo 0 > /sys/block/loop5/queue/iostats
-echo 0 > /sys/block/loop6/queue/iostats
-echo 0 > /sys/block/loop7/queue/iostats
-echo 0 > /sys/block/loop8/queue/iostats
-echo 0 > /sys/block/loop9/queue/iostats
-echo 0 > /sys/block/loop10/queue/iostats
-echo 0 > /sys/block/loop11/queue/iostats
-echo 0 > /sys/block/loop12/queue/iostats
-echo 0 > /sys/block/loop13/queue/iostats
-echo 0 > /sys/block/loop14/queue/iostats
-echo 0 > /sys/block/loop15/queue/iostats
-echo 0 > /sys/block/loop16/queue/iostats
-echo 0 > /sys/block/loop17/queue/iostats
-echo 0 > /sys/block/loop18/queue/iostats
-echo 0 > /sys/block/loop19/queue/iostats
-echo 0 > /sys/block/loop20/queue/iostats
-echo 0 > /sys/block/loop21/queue/iostats
-echo 0 > /sys/block/loop22/queue/iostats
-echo 0 > /sys/block/loop23/queue/iostats
-echo 0 > /sys/block/loop24/queue/iostats
-echo 0 > /sys/block/loop25/queue/iostats
-echo 0 > /sys/block/loop26/queue/iostats
-echo 0 > /sys/block/loop27/queue/iostats
-echo 0 > /sys/block/loop28/queue/iostats
-echo 0 > /sys/block/loop29/queue/iostats
-echo 0 > /sys/block/loop30/queue/iostats
-echo 0 > /sys/block/loop31/queue/iostats
-echo 0 > /sys/block/loop32/queue/iostats
-echo 0 > /sys/block/loop33/queue/iostats
-echo 0 > /sys/block/loop34/queue/iostats
-echo 0 > /sys/block/loop35/queue/iostats
-echo 0 > /sys/block/loop36/queue/iostats
-echo 0 > /sys/block/loop37/queue/iostats
-echo 0 > /sys/block/loop38/queue/iostats
-echo 0 > /sys/block/loop39/queue/iostats
-echo 0 > /sys/block/sda/queue/iostats
-echo 0 > /sys/block/sda/queue/iostats
-echo 0 > /sys/block/sdb/queue/iostats
-echo 0 > /sys/block/sdc/queue/iostats
-echo 0 > /sys/block/sdd/queue/iostats
-echo 0 > /sys/block/sde/queue/iostats
-echo 0 > /sys/block/sdf/queue/iostats
+if [ -f /sys/module/binder_alloc/parameters/debug_mask ]; then
+  echo "0" > /sys/module/binder_alloc/parameters/debug_mask
+fi
 
-#Disable I/O Debug Helper
-echo 0 > /sys/block/sda/queue/nomerges
-echo 0 > /sys/block/sdb/queue/nomerges
-echo 0 > /sys/block/sdc/queue/nomerges
-echo 0 > /sys/block/sdd/queue/nomerges
-echo 0 > /sys/block/sde/queue/nomerges
-echo 0 > /sys/block/sdf/queue/nomerges
+if [ -f /sys/module/msm_show_resume_irq/parameters/debug_mask ]; then
+  echo "0" > /sys/module/msm_show_resume_irq/parameters/debug_mask
+fi
+
+if [ -f /sys/module/millet_core/parameters/millet_debug ]; then
+  echo "0" > /sys/module/millet_core/parameters/millet_debug
+fi
+
+if [ -f /proc/sys/migt/migt_sched_debug ]; then
+  echo "0" > /proc/sys/migt/migt_sched_debug
+fi
+
+if [ -f /sys/kernel/debug/debug_enabled ]; then
+  echo "N" > /sys/kernel/debug/debug_enabled
+fi
+
+if [ -f /proc/sys/kernel/printk_devkmsg ]; then
+  echo "off" > /proc/sys/kernel/printk_devkmsg
+fi
+
+if [ -f /proc/sys/kernel/sched_schedstats ]; then
+  echo "0" > /proc/sys/kernel/sched_schedstats
+fi
+
+if [ -f /sys/fs/f2fs/sda32/iostat_enable ]; then
+  echo "0" > /sys/fs/f2fs/sda32/iostat_enable
+fi
+
+if [ -f /sys/module/millet_core/parameters/millet_debug ]; then
+  echo "0" > /sys/module/millet_core/parameters/millet_debug
+fi
+
+#Disable RAMDUMP
+if [ -f sys/module/subsystem_restart/parameters/enable_ramdumps ]; then
+  echo "0" > sys/module/subsystem_restart/parameters/enable_ramdumps
+fi
+
+if [ -f /sys/module/subsystem_restart/parameters/enable_mini_ramdumps ]; then
+  echo "0" > /sys/module/subsystem_restart/parameters/enable_mini_ramdumps
+fi
+
+#Kernel Tuning
+if [ -f /proc/sys/vm/page-cluster ]; then
+  echo "3" > /proc/sys/vm/page-cluster
+fi
+if [ -f /proc/sys/kernel/msgmni ]; then
+  echo "256" > /proc/sys/kernel/msgmni
+fi
+if [ -f /proc/sys/kernel/msgmax ]; then
+  echo "32768" > /proc/sys/kernel/msgmax
+fi
+if [ -f /proc/sys/vm/page-cluster ]; then
+  echo "3" > /proc/sys/vm/page-cluster
+fi
+if [ -f /proc/sys/fs/lease-break-time ]; then
+  echo "30" > /proc/sys/fs/lease-break-time
+fi
+if [ -f /proc/sys/kernel/sem ]; then
+  echo "200,16000,16,64" > /proc/sys/kernel/sem
+fi
 
 # disable transparent_hugepage(reduce memory fragmentation)
 if [ -f /sys/kernel/mm/transparent_hugepage/enabled ]; then
-echo never > /sys/kernel/mm/transparent_hugepage/enabled
+  echo never > /sys/kernel/mm/transparent_hugepage/enabled
 fi
+
+#UFS Tuning
+#Disable All I/O stats
+echo 0 > /sys/block/*/queue/iostats
+
+#Disable All I/O Debug Helper
+echo 0 > /sys/block/*/queue/nomerges
+
+###The script Above is moved from post-fs-data.sh
+
+sleep 5
 
 #kill bootlogoupdater
 am kill bootlogoupdater

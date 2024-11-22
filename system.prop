@@ -1,40 +1,101 @@
-# This file will be read by resetprop
-# Example: Change dpi
-# ro.sf.lcd_density=320
-
-#Disable useless logging and debugging stuff
+# Disable logging and debugging stuff
+dalvik.vm.dex2oat-minidebuginfo=false
+dalvik.vm.minidebuginfo=false
 debugtool.anrhistory=0
-profiler.hung.dumpdobugreport=false
-profiler.launch=false
+debug.mdpcomp.logs=0
+debug.sf.enable_egl_image_tracker=0
+debug.sqlite.journalmode=OFF
+debug.sqlite.syncmode=0
+debug.sqlite.wal.syncmode=OFF
+persist.debug.sf.statistics=0
+persist.ims.disableDebugLogs=1
+persist.ims.disableADBLogs=1
+persist.ims.disableQXDMLogs=1
+persist.ims.disableIMSLogs=1
+persist.radio.ramdump=0
+persist.sys.lmk.reportkills=false
 persist.sys.offlinelog.kernel=false
 persist.sys.offlinelog.logcat=false
 persist.sys.offlinelog.logcatkernel=false
 persist.sys.perf.debug=false
 persist.sys.whetstone.level=0
+persist.traced.enable=0
+persist.vendor.ssr.enable_ramdumps=0
 persist.wpa_supplicant.debug=false
-ro.logdumpd.enabled=0
-ro.logd.size.stats=4K
+profiler.hung.dumpdobugreport=false
+profiler.launch=false
+ro.debuggable=0
 ro.lmk.debug=false
+ro.lmk.log_stats=false
+ro.logdumpd.enabled=0
+ro.statsd.enable=false
 sys.miui.ndcd=off
 vendor.bluetooth.startbtlogger=false
+vendor.swvdec.log.level=0
+vendor.vidc.debug.level=0
+vidc.debug.level=0
+sys.miui.ndcd=off
+debug.enable.wl_log=0
+activity_starts_logging_enabled=0
+ecg_disable_logging=0
+logd.disable=1
+call_log=0
 
-#Android ART LOGD
+# Developer Options Logd
+persist.logd.limit=OFF
+persist.logd.size=64K
+persist.logd.size.crash=512K
+persist.logd.size.radio=256K
+persist.logd.size.system=256K
+#persist.logd.size.main=
+#persist.log.tag=OFF
+persist.mm.enable.prefetch=false
+log.tag.stats_log=OFF
+ro.logd.size=64K
+ro.logd.size.stats=64K
+
+
+# Android ART Logd
 dalvik.vm.dex2oat-minidebuginfo=false
 persist.sys.qlogd=0
 
-#enable iorapd to improve app launch speed
-ro.iorapd.enable=true
-
-#wifi scanning interval(higher value=powersave)
-wifi.supplicant_scan_interval=300
-
-#Optimize Surface Flinger Caching(reduce animation jitter,may cause visual artifacts)
-debug.sf.latch_unsignaled=1
-#Surface Flinger Hardware Boost(Smoother System)
-debug.sf.hw=1
-#enable UBWC(reduce bandwidth usage and power consumption if supported)
-debug.gralloc.enable_fb_ubwc=1
-
-#disable kernel error checking
+# disable kernel error checking
 ro.kernel.android.checkjni=0
 ro.kernel.checkjni=0
+
+# wifi scanning interval(higher value=powersave)
+wifi.supplicant_scan_interval=600
+
+# IORAPD can improve app launch speeds but consumes more power
+ro.iorapd.enable=true
+
+# Optimize Surface Flinger Caching(enable reduce animation jitter,might cause visual artifacts) 
+debug.sf.latch_unsignaled=0
+
+# Surface Flinger Hardware Acceleration(enable gives smoother UI) 
+debug.sf.hw=1
+
+# enable UBWC(reduce bandwidth usage and power consumption if supported)
+debug.gralloc.enable_fb_ubwc=1
+vendor.gralloc.disable_ubwc=0
+
+# Xiaomi Speed Install Feature 
+ro.miui.pm.install.speedinstall=/data/apk-tmp
+
+# Dynamic sampling rates for certain UI rendering operations 
+dev.pm.dyn_samplingrate=1
+
+# Precompiles app layouts(reducing runtime CPU usage for UI tasks)
+dev.pm.precompile_layouts=1
+
+# System Performance Thread Optimization(Improve task scheduling efficiency)
+persist.sys.miui_sptm.enable=true
+
+
+#Hardware Tuning
+accelerated_enabled_for_all=true
+enable_gpu_debug_layers=0
+debug.sf.enable_gl_backpressure=1
+
+#Enable Xiaomi13/14 LTPO back
+persist.vendor.disable_idle_fps.threshold=492
