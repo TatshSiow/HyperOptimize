@@ -3,7 +3,7 @@ This is a Magisk Module for HyperOS based devices\
 Reduce Power and RAM consumption by optimizing system parameters, disabling Apps & System Process
 
 ## Requirements
-Device using HyperOS
+* Device using HyperOS
 
 ## Dev Notes
 * **MIUI** not tested
@@ -15,10 +15,10 @@ Tested on EliteROM 1.0.17.0 (Android 14)
 * Edit the _install.sh_ script if you want specific apps to not be disabled (eg. Gboard)
 
 ## How to install?
-Flash the zip in Magisk.
+* Flash the zip in Magisk.
 
 ## How to uninstall?
-Simply uninstall it in Magisk. (No leftovers)
+* Simply uninstall it in Magisk. (No leftovers)
 
 ## Just in case you bricked it
 - boot into TWRP
