@@ -8,9 +8,9 @@ Reduce Power and RAM consumption by optimizing system parameters, disabling Apps
 Device using HyperOS
 
 ## Dev Notes
-* **MIUI** not tested
-* **Brick Rescue Module** is always recommended
-* **NOT GUARANTEED** to work on all builds
+* **MIUI** not tested\
+* **Brick Rescue Module** is always recommended\
+* **NOT GUARANTEED** to work on all builds\
 Tested on EliteROM 1.0.17.0 (Android 14)
 
 ## Customize the disable applist
