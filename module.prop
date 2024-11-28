@@ -4,4 +4,4 @@ author=Tatsh
 description=Reduce Power and RAM consumption by optimizing system parameters,disabling Apps & System Process
 version=v2.1
 versionCode=241128
-updateJson=https://raw.githubusercontent.com/TatshSiow/HyperOptimize/main/update.json
+updateJson=https://raw.githubusercontent.com/TatshSiow/HyperOptimize/refs/heads/main/update.json
