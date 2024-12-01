@@ -1,5 +1,5 @@
 ![test](https://github.com/user-attachments/assets/5cf75f24-5993-4e64-b3b2-328f30d4ff31)
-Telegram Group : https://t.me/+gZZ2uwQqoWE4YWU1
+Telegram Group : https://t.me/TatshSecretCave
 # What is this?
 This is a Magisk Module for HyperOS based devices\
 Reduce Power and RAM consumption by optimizing system parameters, disabling Apps & System Process
