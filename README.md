@@ -13,6 +13,7 @@ Reduce Power and RAM consumption by optimizing system parameters, disabling Apps
 - **Brick Rescue Module** is always recommended
 - **NOT GUARANTEED** to work on all builds
 - Only Tested on EliteROM 1.0.17.0 (Android 14)
+- Not for Tablets/Pads
 
 ## Customize the disable applist
 - Edit `replace=""` section in the `install.sh` file if you want specific apps to not be disabled (eg. Gboard)
