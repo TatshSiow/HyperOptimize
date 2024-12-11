@@ -47,13 +47,6 @@ If you want to squeeze the max performance, it might not be the best module for 
 
 Don't compare it with different configuration and device
 
-
-<img src="https://github.com/user-attachments/assets/60b8279a-e5e1-48ce-b5b2-f6c7e6662e3d" width=25% height=25%>
-
-<img src="" width=25% height=25%>
-
-
-
 ## Disclaimer
 * I'm not responsible for bricked devices, dead SD cards, thermonuclear war, or you getting fired because the alarm app failed (like it did for me...).
 * YOU are choosing to make these modifications, and if you point the finger at me for messing up your device, I will laugh at you.
