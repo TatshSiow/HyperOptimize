@@ -5,7 +5,7 @@
 
 # What is this?
 This is a Magisk Module for HyperOS based devices\
-Reduce Power and RAM consumption by optimizing system parameters, disabling Apps & System Process\
+Reduce Power and RAM consumption by optimizing system parameters, disabling Apps & System Process
 
 This module strives to give better battery, not for outstanding performance\
 If you want to maximize performance, it might be not as powerful as you think
