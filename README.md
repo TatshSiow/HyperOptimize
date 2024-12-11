@@ -45,6 +45,8 @@ If you want to squeeze the max performance, it might not be the best module for 
 :-------------------------:|:-------------------------:
 ![](https://github.com/user-attachments/assets/60b8279a-e5e1-48ce-b5b2-f6c7e6662e3d)  |  ![](https://github.com/user-attachments/assets/016c0850-e8fa-43e6-99b5-b12312524a44)
 
+Don't compare it with different configuration and device
+
 
 <img src="https://github.com/user-attachments/assets/60b8279a-e5e1-48ce-b5b2-f6c7e6662e3d" width=25% height=25%>
 
