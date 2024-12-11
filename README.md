@@ -39,8 +39,8 @@ If you want to squeeze the max performance, it might not be the best module for 
 Device: Xiaomi 13\
 ROM: EliteHyper Lite 1.0.17.0.UMCCNXM (A14)\
 Kernel: hfdem GKI 5.15.167\
-SoC: Snapdragon 8 Gen 2
-![image](https://github.com/user-attachments/assets/016c0850-e8fa-43e6-99b5-b12312524a44)
+SoC: Snapdragon 8 Gen 2\
+<img src="https://github.com/user-attachments/assets/016c0850-e8fa-43e6-99b5-b12312524a44" width=25% height=25%>
 
 
 ## Disclaimer
