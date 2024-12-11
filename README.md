@@ -36,9 +36,9 @@ If you want to squeeze the max performance, it might not be the best module for 
 4. delete the module
 
 ## Stay Awake Idle Power Drain Result
-- Device: Xiaomi 13(Snapdragon 8 Gen 2)\
-- ROM: EliteHyper Lite 1.0.17.0.UMCCNXM (A14)\
-- Kernel: hfdem GKI 5.15.167\
+- Device: Xiaomi 13(Snapdragon 8 Gen 2)
+- ROM: EliteHyper Lite 1.0.17.0.UMCCNXM (Android 14)
+- Kernel: hfdem GKI 5.15.167
 - Device already debloated
 
 |  Without HyperOptimize (Minimum:115)  |  With HyperOptimize (Minimum:110) |
