@@ -1,5 +1,6 @@
 ![test](https://github.com/user-attachments/assets/5cf75f24-5993-4e64-b3b2-328f30d4ff31)
-Telegram Group : https://t.me/TatshSecretCave
+<div align="center">
+<a href="https://t.me/TatshSecretCave" ><img height="50" src="https://www.vectorlogo.zone/logos/telegram/telegram-tile.svg"/></a>
 
 # What is this?
 This is a Magisk Module for HyperOS based devices\
@@ -18,8 +19,8 @@ If you want to maximize performance, it might be not as powerful as you think
 - Not for Tablets/Pads
 - **NOT GUARANTEED** to work on all builds
 
-## Customize the disable applist
-- Edit `replace=""` section in the `install.sh` file if you want specific apps to not be disabled (eg. Gboard)
+## Customize debloat list
+- Edit `replace=""` section in the `setup.sh` file if you want specific apps to not be disabled (eg. Gboard)
 
 ## How to install?
 - Flash the zip in Magisk.
