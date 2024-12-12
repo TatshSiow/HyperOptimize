@@ -41,7 +41,7 @@ If you want to squeeze the max performance, it might not be the best module for 
 - Kernel: hfdem GKI 5.15.167
 - Device already debloated
 
-|  Without HyperOptimize (Minimum:115)  |  With HyperOptimize (Minimum:110) |
+|  Without HyperOptimize (Minimum:115)  |  With HyperOptimize (Minimum:100) |
 :-------------------------:|:-------------------------:
 ![](https://github.com/user-attachments/assets/60b8279a-e5e1-48ce-b5b2-f6c7e6662e3d)  |  ![](https://github.com/user-attachments/assets/016c0850-e8fa-43e6-99b5-b12312524a44)
 
