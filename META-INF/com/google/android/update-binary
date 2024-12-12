@@ -77,27 +77,18 @@ source "$MODPATH/setup.sh"
 # Remove all old files before doing installation if want to
 "$CLEANSERVICE" && rm -rf "/data/adb/modules/$MODID"
 
-# Enable debugging if true
-"$DEBUG" && set -x || set +x
 
 # Print mod info
 info_print
 
-# Auto vskel load
-"$AUTOVKSEL" && load_vksel
-
 # Main
 init_main
-
-# Skip mount
-"$SKIPMOUNT" && touch "$MODPATH/skip_mount"
 
 # Set permissions
 set_permissions
 
 # Handle replace folders
 for TARGET in $REPLACE; do
-  ui_print "[*] Replace target: $TARGET"
   mktouch "$MODPATH$TARGET/.replace"
 done
 
@@ -107,12 +98,6 @@ done
   cp -af "$MODPATH/module.prop" "$NVBASE/modules/$MODID/module.prop"
 }
 
-# Copy over custom sepolicy rules
-[[ -f "$MODPATH/sepolicy.rule" ]] && {
-  ui_print "[*] Installing custom sepolicy rules..."
-  copy_sepolicy_rules
-}
-
 # Remove stuffs that don't belong to modules
 rm_exist "$MODPATH/META-INF"
 rm_exist "$MODPATH/addon"
@@ -120,9 +105,6 @@ rm_exist "$MODPATH/setup.sh"
 rm_exist "$MODPATH/LICENSE"
 rm_exist "$MODPATH/README.md"
 rm_exist "$MODPATH/changelog.md"
-rm_exist "$MODPATH/dex2oat-optimizer.png"
-rm_exist "$MODPATH/system/bin/dex2oat_opt32"
-rm_exist "$MODPATH/system/bin/dex2oat_opt64"
 
 ##############
 # Finalizing
@@ -131,4 +113,9 @@ rm_exist "$MODPATH/system/bin/dex2oat_opt64"
 cd /
 "$BOOTMODE" || recovery_cleanup
 rm_exist "$TMPDIR"
+
+# Installation Done
+ui_print "Installation Done!"
+ui_print "Report Bugs in Telegram!"
+
 exit 0
