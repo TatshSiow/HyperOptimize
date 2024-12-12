@@ -11,24 +11,16 @@ wait_until_login() {
   done
   rm -f "$test_file"
 }
-####################################
-# release caches when boot
-####################################
-echo 3 > /proc/sys/vm/drop_caches
-echo 1 > /proc/sys/vm/compact_memory
 
 wait_until_login
-sleep 60
+sleep 30
 
 ####################################
 # Tweaking Android (Github:ionuttbara + Tatsh)
 ####################################
 su -c "cmd settings put global activity_starts_logging_enabled 0"
 su -c "cmd settings put global ble_scan_always_enabled 0"
-#su -c "cmd settings put global cached_apps_freezer enabled" #Cache AppFreeze
-su -c "cmd settings put global debug.gralloc.enable_fb_ubwc 1"
-su -c "cmd settings put global debug.sf.enable_gl_backpressure 1"
-su -c "cmd settings put global debug.sf.hw 1"
+#su -c "cmd settings put global cached_apps_freezer enabled"
 su -c "cmd settings put global enable_gpu_debug_layers 0"
 su -c "cmd settings put global ecg_disable_logging 1"
 su -c "cmd settings put global fast_connect_ble_scan_mode 0"
@@ -74,6 +66,7 @@ su -c "cmd appops set com.google.android.setupwizard RUN_IN_BACKGROUND ignore",
 su -c "cmd appops set com.android.printservice.recommendation RUN_IN_BACKGROUND ignore",
 su -c "cmd appops set com.android.onetimeinitializer RUN_IN_BACKGROUND ignore",
 su -c "cmd appops set com.qualcomm.qti.perfdump RUN_IN_BACKGROUND ignore",
+
 ####################################
 # Useless Services 
 ####################################
@@ -95,10 +88,7 @@ for i in "debug_mask" "log_level*" "debug_level*" "*debug_mode" "enable_ramdumps
         echo "0" > "$o"
     done
 done
-
 echo "1" > "/sys/module/spurious/parameters/noirqdebug"
-
-  
 
 ####################################
 # Printk (thx to KNTD-reborn)
@@ -182,11 +172,13 @@ fi
 # disable transparent_hugepage(reduce memory fragmentation)
 echo never > /sys/kernel/mm/transparent_hugepage/enabled
 
-#UFS Tuning
-#Disable All I/O stats
+####################################
+# UFS Tuning
+####################################
+# Disable All I/O stats
 echo 0 > /sys/block/*/queue/iostats
 
-#Disable All I/O Debug Helper
+# Disable All I/O Debug Helper
 echo 0 > /sys/block/*/queue/nomerges
 
 
@@ -200,7 +192,9 @@ echo 3150000 > /proc/sys/kernel/sched_rt_period_us
 echo 3000000 > /proc/sys/kernel/sched_rt_runtime_us
 echo 512 > /proc/sys/kernel/sched_util_clamp_min
 
-###########################Divider###########################
+####################################
+# Kill and Stop Services
+####################################
 
 sleep 5
 
@@ -256,8 +250,9 @@ for name in $process; do
 done
 
 ####################################
-# Wi-Fi Logs
+# Logs Removal
 ####################################
+# Wifi Logs
 rm -rf /data/vendor/wlan_logs
 touch /data/vendor/wlan_logs
 chmod 000 /data/vendor/wlan_logs
