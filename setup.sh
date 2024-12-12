@@ -15,6 +15,10 @@ info_print() {
 
 init_main(){
   ui_print " "
+  ui_print "Extracting System Files..."
+  ui_print " "
+  unzip -o "$ZIPFILE" 'system/*' -d $MODPATH >&2 
+
   ui_print "Debloating Apps..."
   ui_print " "
   REPLACE="
@@ -257,12 +261,7 @@ init_main(){
     /system/vendor/app/TrustedUIService
     /system/vendor/app/TrustZoneAccessService
   "
-  ui_print " "
-  ui_print "Extracting System Files..."
-  ui_print " "
-  unzip -o "$ZIPFILE" 'system/*' -d $MODPATH >&2 
 }
-
 set_permissions() {
   set_perm_recursive "$MODPATH" 0 0 0777 0755    
 }

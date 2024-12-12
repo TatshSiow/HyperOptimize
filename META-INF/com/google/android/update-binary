@@ -116,6 +116,7 @@ rm_exist "$TMPDIR"
 
 # Installation Done
 ui_print "Installation Done!"
+ui_print " "
 ui_print "Report Bugs in Telegram!"
 
 exit 0

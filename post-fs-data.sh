@@ -74,7 +74,7 @@ resetprop -n wifiP2pEnabled 0
 resetprop -n ro.config.hw_power_saving true
 
 # Allows the kernel to suspend operations when idle
-#resetprop -n ro.kernel.power_suspend 1
+resetprop -n ro.kernel.power_suspend 1
 
 # Testing
 resetprop -n profiler.force_disable_err_rpt 1
