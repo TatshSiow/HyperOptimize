@@ -20,7 +20,7 @@ sleep 30
 ####################################
 su -c "cmd settings put global activity_starts_logging_enabled 0"
 su -c "cmd settings put global ble_scan_always_enabled 0"
-#su -c "cmd settings put global cached_apps_freezer enabled"
+su -c "cmd settings put global cached_apps_freezer enabled"
 su -c "cmd settings put global enable_gpu_debug_layers 0"
 su -c "cmd settings put global ecg_disable_logging 1"
 su -c "cmd settings put global fast_connect_ble_scan_mode 0"
@@ -60,6 +60,7 @@ su -c "cmd device_config put activity_manager max_phantom_processes 2147483647"
 su -c "cmd device_config put activity_manager max_cached_processes 256"
 su -c "cmd device_config put activity_manager max_empty_time_millis 43200000"
 su -c "cmd settings put system anr_debugging_mechanism 0"
+su -c "cmd settings put secure doze_always_on 0" #turn off AOD
 
 su -c "cmd appops set com.android.backupconfirm RUN_IN_BACKGROUND ignore",
 su -c "cmd appops set com.google.android.setupwizard RUN_IN_BACKGROUND ignore",
@@ -76,8 +77,8 @@ su -c "pm disable com.google.android.gms/com.google.android.gms.mdm.receivers.Md
 ####################################
 # Disable Dual Apps Google Services
 ####################################
-#su -c "pm disable-user --user 999 com.google.android.gms"
-#su -c "pm disable-user --user 999 com.google.android.gsf"
+su -c "pm disable-user --user 999 com.google.android.gms"
+su -c "pm disable-user --user 999 com.google.android.gsf"
 
 
 ####################################
@@ -248,6 +249,39 @@ for name in $process; do
   am kill "$name" 2> /dev/null
   killall -9 "$name" 2> /dev/null
 done
+
+#cpu的应用分配
+#用户的后台应用（减少使用核心省电，影响后台下载，不过流畅）
+echo "0-1" > /dev/cpuset/background/cpus
+#系统的后台应用（减少使用核心省电）
+echo "0-1" > /dev/cpuset/system-background/cpus
+#前台的应用（不限制使用核心）
+echo "0-6" > /dev/cpuset/foreground/cpus
+#显示在上层的应用（不限制使用核心）
+echo "0-7" > /dev/cpuset/top-app/cpus
+
+#调节cpu激进度百分比%
+#前台的应用（100%会把cpu拉满）
+echo "5" > /dev/stune/foreground/schedtune.boost
+#显示在上层的应用
+echo "0" > /dev/stune/top-app/schedtune.boost
+#用户的后台应用（减少cpu乱跳，省电）
+echo "0" > /dev/stune/background/schedtune.boost
+
+#核心分配优化
+#大核 提高这个值有利于性能，不利于降低功耗。
+echo "50 50" > /proc/sys/kernel/sched_downmigrate
+#小核 提高这个值有利于降低功耗，不利于性能。
+echo "75 75" > /proc/sys/kernel/sched_upmigrate
+
+
+#cpu boost这项技术可以理解为自动超频，可以在主频不够用的情况,自动对CPU进行超频。
+#除了0代表关闭boost以外，其他3个等级灵活地控制功耗和性能的不同倾向程度。
+#0代表默认关闭，1代表QCOM建议为app第一次冷启，设置flag2秒
+#2代表QCOM建议在滑屏、按键、系统唤醒等场景使用
+#3代表QCOM建议为启动超过2秒的app设置2-15秒，如游戏，开机
+#等级越高，耗电越高
+echo "1" > /proc/sys/kernel/sched_boost
 
 ####################################
 # Logs Removal

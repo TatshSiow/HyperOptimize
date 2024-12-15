@@ -8,9 +8,25 @@ MODDIR=${0%/*}
 # General Optimization
 ####################################
 
-# MIUI optimizations
-resetprop -n persist.miui.extm.dm_opt.enable true
-resetprop -n persist.sys.miui_sptm.enable true
+# Memory Management
+resetprop -n persist.miui.extm.enable 0
+resetprop -n persist.sys.spc.enabled false
+resetprop -n persist.sys.spc.bindvisible true
+resetprop -n persist.sys.mfz.enable false
+resetprop -n persist.miui.boot.mopt.enable false
+
+# Native Super Resolution
+resetprop -n persist.sys.resolutiontuner.enable true
+
+# Faster game loading
+resetprop -n debug.game.video.support true
+
+# More blurring
+resetprop -n ro.launcher.blur.appLaunch 1
+resetprop -n persist.sys.background_blur_supported true
+resetprop -n persist.sys.background_blur_version 2
+resetprop -n ro.sf.blurs_are_expensive 0
+resetprop -n persist.sys.add_blurnoise_supported true
 
 # Tuning Based on Xiaomi Official Props
 resetprop -n vendor.display.enable_fb_scaling 0
@@ -24,16 +40,35 @@ resetprop -n vendor.display.timed_render_enable 1
 resetprop -n vendor.display.disable_system_load_check 1
 resetprop -n vendor.display.enable_posted_start_dyn 2
 
-# Disables Preload (Save Battery but longer app launch duration)
-resetprop -n persist.zygote.preload false #testing
+# Disables Preload/Prefetch
+resetprop -n persist.zygote.preload false
 resetprop -n persist.sys.prestart.proc false
 resetprop -n persist.sys.preload.enable false
 resetprop -n persist.sys.precache.enable false
 resetprop -n persist.sys.prestart.feedback.enable false
 resetprop -n persist.sys.app_dexfile_preload.enable false
-
-# Disable can reduce memory overhead
 resetprop -n persist.mm.enable.prefetch false
+resetprop -n persist.sys.dynamic_usap_enabled false
+
+# Removes Screen Dim and FPS dips on thermal problem
+resetprop -n ro.vendor.display.hwc_thermal_dimming false
+resetprop -n ro.vendor.fps.switch.thermal false
+resetprop -n ro.vendor.thermal.dimming.enable false
+
+# Sched
+resetprop -n persist.sys.miui.sf_cores 4-6
+resetprop -n persist.sys.miui_animator_sched.bigcores 4-6
+resetprop -n persist.sys.miui_animator_sched.sched_threads 0
+resetprop -n persist.vendor.display.miui.composer_boost 4-6
+resetprop -n ro.miui.affinity.sfui 4-6
+resetprop -n ro.miui.affinity.sfre 4-6
+resetprop -n ro.miui.affinity.sfuireset 0-6
+resetprop -n persist.sys.miuibooster.rtmode false
+resetprop -n persist.sys.miuibooster.launch.rtmode false
+resetprop -n persist.sys.launch_response_optimization.enable true
+
+# Debug
+resetprop -n persist.sys.debug.app.mtbf_test false
 
 # Power Management Dynamic sampling
 resetprop -n dev.pm.dyn_samplingrate 1
@@ -51,6 +86,7 @@ resetprop -n persist.device_config.runtime_native.usap_pool_enabled true
 # Unified Bandwidth Compression (Lower Power Consumption)
 resetprop -n vendor.gralloc.disable_ubwc false
 resetprop -n debug.gralloc.enable_fb_ubwc 1
+
 # Reenable Xiaomi13/14 LTPO feature
 resetprop -n vendor.disable_idle_fps.threshold 492
 
@@ -88,6 +124,14 @@ resetprop -n ro.bluetooth.request.master false
 resetprop -n ro.bluetooth.keep_alive false
 resetprop -n ro.wifi.power_management 1
 
+# AppCompact
+resetprop -n persist.sys.use_boot_compact false
+
+# Disallow framepacing in favor of FAS algorithms
+resetprop -n vendor.perf.framepacing.enable false
+
+# Disable CoreSight
+resetprop -n persist.debug.coresight.config ""
 ####################################
 # Graphics and Rendering
 ####################################
@@ -111,12 +155,16 @@ resetprop -n video.accelerate.hw 1
 resetprop -n persist.sys.ui.hwlayer_power_saving 1
 resetprop -n persist.sys.force_hw_accel true
 resetprop -n persist.sys.ui.hw_layers true
-resetprop -n debug.sf.hw 1
 resetprop -n accelerated_enabled_for_all true
+resetprop -n debug.egl.hw 1
 
-# Optimize Surface Flinger Latch
-resetprop -n debug.sf.latch_unsignaled false
-resetprop -n debug.sf.auto_latch_unsignaled false
+# Optimize Surface Flinger
+resetprop -n debug.sf.hw 1
+resetprop -n debug.sf.latch_unsignaled 0
+resetprop -n debug.sf.auto_latch_unsignaled 1
+
+# Disable surfaceflinger managed dynamic fps
+resetprop -n ro.surface_flinger.use_content_detection_for_refresh_rate true
 
 # Surface Flinger Optimization
 resetprop -n debug.sf.enable_transaction_tracing false
@@ -130,7 +178,7 @@ resetprop -n persist.sys.sf.enable_gpu_offload 1
 resetprop -n debug.sf.enable_frame_rate_hinting 1
 resetprop -n debug.sf.partial_update true
 
-# Disable Software GLES (Use Vulkan)
+# Software GLES
 resetprop -n persist.sys.force_sw_gles 0
 
 # Vulkan
@@ -143,7 +191,7 @@ resetprop -n debug.hwui.use_vulkan true
 resetprop -n debug.hwui.vulkan_cache true
 resetprop -n debug.hwui.vulkan_disable_rt false
 resetprop -n debug.hwui.vulkan_prefetch true  
-resetprop -n debug.renderengine.backend skiagl
+resetprop -n debug.renderengine.backend skiaglthreaded
 resetprop -n renderthread.skia.reduceopstasksplitting true
 
 # Logging and Debugging
@@ -152,7 +200,6 @@ resetprop -n debug.enable.gpu.debuglayers 0
 resetprop -n persist.sys.debug.sf.debug false
 resetprop -n debug.sys.fw.debug false
 resetprop -n debug.vendor.power false
-resetprop -n debug.egl.hw 0
 resetprop -n debug.sf.dump_hw_layers 0
 resetprop -n vendor.swvdec.log.level 0
 resetprop -n debug.hwc.otf 0
@@ -166,33 +213,51 @@ resetprop -n persist.vendor.graphics.log 0
 resetprop -n debug.sf.enable_egl_image_tracker 0
 resetprop -n persist.debug.sf.statistics 0
 
-
 ####################################
 # Dalvik VM 
 ####################################
 # Dalvik/ART Memory Management
-resetprop -n dalvik.vm.heapgrowthlimit 128m
-resetprop -n dalvik.vm.heapsize 256m
-resetprop -n dalvik.vm.heapstartsize 32m
-resetprop -n dalvik.vm.heaptargetutilization 0.75
+resetprop -n dalvik.vm.foreground-heap-growth-multiplier 2.5
+resetprop -n dalvik.vm.heapgrowthlimit 512m
+resetprop -n dalvik.vm.heapmaxfree 32m
+resetprop -n dalvik.vm.heapminfree 512k
+resetprop -n dalvik.vm.heapsize 512m
+resetprop -n dalvik.vm.heapstartsize 2m
+resetprop -n dalvik.vm.heaptargetutilization 0.8
 
 # Ahead-of-Time (AOT) Compilation
 resetprop -n dalvik.vm.dex2oat-flags "--compiler-filter=speed-profile"
 resetprop -n dalvik.vm.dex2oat-resolve-startup-strings true
 resetprop -n dalvik.vm.dex2oat-swap true
-resetprop -n dalvik.vm.dex2oat-threads 4
 resetprop -n dalvik.vm.systemservercompilerfilter speed-profile
 resetprop -n dalvik.vm.systemuicompilerfilter speed-profile
 
+# Multithreaded dex2oat
+resetprop -n dalvik.vm.background-dex2oat-cpu-set 2,3,4,5,6,7
+resetprop -n dalvik.vm.bg-dex2oat-threads 6
+resetprop -n dalvik.vm.boot-dex2oat-cpu-set 2,3,4,5,6,7
+resetprop -n dalvik.vm.boot-dex2oat-threads 6
+resetprop -n dalvik.vm.default-dex2oat-cpu-set 2,3,4,5,6,7
+resetprop -n dalvik.vm.dex2oat-cpu-set 2,3,4,5,6,7
+resetprop -n dalvik.vm.dex2oat-threads 6
+resetprop -n dalvik.vm.image-dex2oat-cpu-set 2,3,4,5,6,7
+resetprop -n dalvik.vm.image-dex2oat-threads 6
+
 # Memory Allocation
 resetprop -n dalvik.vm.usap_pool_enabled true
+resetprop -n persist.device_config.runtime_native.usap_pool_enabled true
 resetprop -n dalvik.vm.jit.code_cache_size 1MB
+resetprop -n dalvik.vm.usap_pool_refill_delay_ms 3000
+resetprop -n dalvik.vm.usap_pool_size_max 3
+resetprop -n dalvik.vm.usap_pool_size_min 1
+resetprop -n dalvik.vm.usap_refill_threshold 1
 
 # Debugging and Verification
 resetprop -n dalvik.vm.dex2oat-minidebuginfo false
 resetprop -n dalvik.vm.check-dex-sum true
 resetprop -n dalvik.vm.checkjni false
 resetprop -n dalvik.vm.verify-bytecode true
+resetprop -n dalvik.vm.minidebuginfo false
 
 # Garbage Collection (GC)
 resetprop -n dalvik.gc.type generational_cc
@@ -352,9 +417,9 @@ resetprop -n ro.lmk.debug false
 resetprop -n ro.lmk.log_stats false
 resetprop -n persist.sys.lmk.reportkills false
 
-####################################
-# Log Tags
-####################################
+#####################################
+## Log Tags
+#####################################
 
 # General
 resetprop -n log.tag.all 0
@@ -459,7 +524,6 @@ resetprop -n log.tag.IAudioFlinger 0
 resetprop -n log.tag.MediaPlayer 0
 resetprop -n log.tag.ToneGenerator 0
 
-
 ####################################
 # Parameters ideas and credits
 ####################################
@@ -468,6 +532,7 @@ resetprop -n log.tag.ToneGenerator 0
 # 
 # @nonosvaimos
 # @LeanHijosdesusMadres
+#
 # Looper(iamlooper) - Github
 # ionuttbara - GitHub
 # KTSR - GitHub
