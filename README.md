@@ -17,7 +17,7 @@ If you want to squeeze the max performance, it might not be the best module for 
 ## Dev Notes
 - **Brick Rescue Module** is always recommended
 - **MIUI** not tested
-- Not for Tablets/Pads
+- **Tablets/Pads** not tested
 - **NOT GUARANTEED** to work on all builds
 
 ## Customize debloat list
