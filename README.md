@@ -29,6 +29,10 @@ If you want to squeeze the max performance, it might not be the best module for 
 ## How to uninstall?
 - Uninstall it in Magisk. (No leftovers)
 
+## My Magisk break after uninstalling, what should I do?
+- AFter remove the module, you might face this at the first time
+- Reboot again will fix it
+
 ## Just in case you bricked it
 1. boot into TWRP or `adb reboot recovery` or `fastboot reboot recovery`
 2. Open File manager
