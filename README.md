@@ -10,7 +10,7 @@ This is a Magisk Module for HyperOS based devices\
 Reduce Power and RAM consumption by optimizing system parameters, disabling Apps & System Process
 
 ## Changes made in this module
-- Debloat Apps (Replace Apps with empty folder)
+- Debloat PreInstalled Apps
 - Disable logging services
 - Debloat Android core process
 - GPU/KGSL Optimization
