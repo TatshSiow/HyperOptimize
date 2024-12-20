@@ -88,6 +88,7 @@ init_main(){
     /system/priv-app/MIUIVipService
     /system/priv-app/MiBrowser
     /system/priv-app/MiGameCenterSDKService
+    /system/priv-app/MusicFX
     /system/priv-app/ONS
     /system/priv-app/Provision
     /system/priv-app/ProxyHandler
