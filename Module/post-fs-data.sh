@@ -5,6 +5,11 @@
 # More info in the main Magisk thread
 MODDIR=${0%/*}
 ####################################
+# Testing Phase lines
+####################################
+
+
+####################################
 # General Optimization
 ####################################
 
@@ -47,12 +52,13 @@ resetprop -n persist.sys.debug.app.mtbf_test false
 # Power Management Dynamic sampling
 resetprop -n dev.pm.dyn_samplingrate 1
 
-# Wifi Tuning (Powersaving)
-resetprop -n wifi.supplicant_scan_interval 180
-resetprop -n persist.wifi.scan_power_saving true
+# event processing framerate cap (Mi Highest RR screen is 144)
+resetprop -n windowsmgr.max_events_per_sec 144
+
 
 # USAP Pool (Android Runtime Optimization)
 resetprop -n persist.device_config.runtime_native.usap_pool_enabled true
+resetprop -n persist.sys.usap_pool_enabled true
 
 # Unified Bandwidth Compression (Lower Power Consumption)
 resetprop -n vendor.gralloc.disable_ubwc false
@@ -68,29 +74,15 @@ resetprop -n ro.ril.disable.power.collapse 0
 # Disables profiling for app launches
 resetprop -n profiler.launch false
 
-# Disable whetstone benchmark tool
-resetprop -n persist.sys.whetstone.level 0
 
-# Disable P2P/Wi-Fi Direct
-resetprop -n wifiP2pEnabled 0
-
-# Hardware Power Saving  
-resetprop -n ro.config.hw_power_saving true
-
-# Allows the kernel to suspend operations when idle
-resetprop -n ro.kernel.power_suspend 1
-
-# Testing
-resetprop -n persist.sys.purgeable_assets 1
-resetprop -n persist.sys.use_dithering 0
-resetprop -n dalvik.vm.dexopt-flags "m=y"
-resetprop -n persist.sys.enable_cache_fusion 0
-resetprop -n ro.bluetooth.request.master false
-resetprop -n ro.bluetooth.keep_alive false
-resetprop -n ro.wifi.power_management 1
-
-# AppCompact
-resetprop -n persist.sys.use_boot_compact false
+resetprop -n persist.sys.whetstone.level 0 # Disable whetstone benchmark
+resetprop -n wifiP2pEnabled 0 # P2P/Wi-Fi Direct
+resetprop -n ro.kernel.power_suspend 1 # Allows the kernel to suspend operations when idle
+resetprop -n ro.config.hw_power_saving true # Hardware Power Saving  
+resetprop -n persist.sys.purgeable_assets 1 # release memory used by drawable and bitmap assets that are not in use
+resetprop -n persist.sys.enable_cache_fusion true #optimize app data caching
+resetprop -n ro.bluetooth.request.master false #Prevents the device from being the "master" in Bluetooth connections (Save Power)
+resetprop -n persist.sys.use_boot_compact false #Disabling increase boot time slightly but could save some system resources during boot
 
 # Disallow framepacing in favor of FAS algorithms
 resetprop -n vendor.perf.framepacing.enable false
@@ -100,25 +92,30 @@ resetprop -n persist.debug.coresight.config ""
 
 # Strict mode (for developers only)
 resetprop -n persist.android.strictmode 0
+
+# Wifi Tuning (Powersaving)
+resetprop -n wifi.supplicant_scan_interval 180
+resetprop -n persist.wifi.scan_power_saving true
+resetprop -n ro.wifi.power_management 1 # Adjust Wifi Power Dynamically
+
 ####################################
 # Graphics and Rendering
 ####################################
 
 # Testing
 resetprop -n debug.hwui.render_dirty_regions false
-resetprop -n ro.surface_flinger.max_frame_buffer_acquired_buffers 2
-
 
 # General Optimization
 resetprop -n ro.zygote.disable_gl_preload false
-resetprop -n debug.sf.enable_hwc_vds 0
 resetprop -n debug.sf.disable_backpressure 1
 resetprop -n debug.sf.enable_gl_backpressure 0
+resetprop -n persist.sys.use_dithering 0
 
 # Optimize Layout Compilation (reducing UI tasks CPU usage)
 resetprop -n dev.pm.precompile_layouts 1
 
 # Hardware Acceleration
+resetprop -n debug.sf.hw 1
 resetprop -n video.accelerate.hw 1
 resetprop -n persist.sys.ui.hwlayer_power_saving 1
 resetprop -n persist.sys.force_hw_accel true
@@ -127,16 +124,15 @@ resetprop -n accelerated_enabled_for_all true
 resetprop -n debug.egl.hw 1
 resetprop -n debug.egl.profiler 1
 resetprop -n persist.sys.ui.hw 1
-
-# Optimize Surface Flinger
-resetprop -n debug.sf.hw 1
-resetprop -n debug.sf.latch_unsignaled 0
-resetprop -n debug.sf.auto_latch_unsignaled 1
+resetprop -n ro.hwui.use_vulkan true
 
 # Disable surfaceflinger managed dynamic fps
 resetprop -n ro.surface_flinger.use_content_detection_for_refresh_rate true
 
 # Surface Flinger Optimization
+resetprop -n debug.sf.latch_unsignaled 0
+resetprop -n debug.sf.auto_latch_unsignaled 1
+resetprop -n ro.surface_flinger.max_frame_buffer_acquired_buffers 2
 resetprop -n debug.sf.enable_transaction_tracing false
 resetprop -n debug.sf.enable_advanced_sf_phase_offset 0
 resetprop -n debug.sf.region_sampling_period_ns 500000000
@@ -195,38 +191,12 @@ resetprop -n dalvik.vm.heapsize 512m
 resetprop -n dalvik.vm.heapstartsize 2m
 resetprop -n dalvik.vm.heaptargetutilization 0.8
 
-# Ahead-of-Time (AOT) Compilation
-resetprop -n dalvik.vm.dex2oat-flags "--compiler-filter=speed-profile"
-resetprop -n dalvik.vm.dex2oat-resolve-startup-strings true
-resetprop -n dalvik.vm.dex2oat-swap true
-resetprop -n dalvik.vm.systemservercompilerfilter speed-profile
-resetprop -n dalvik.vm.systemuicompilerfilter speed-profile
-
-# # Multithreaded dex2oat
-# resetprop -n dalvik.vm.background-dex2oat-cpu-set 2,3,4,5,6,7
-# resetprop -n dalvik.vm.bg-dex2oat-threads 6
-# resetprop -n dalvik.vm.boot-dex2oat-cpu-set 2,3,4,5,6,7
-# resetprop -n dalvik.vm.boot-dex2oat-threads 6
-# resetprop -n dalvik.vm.default-dex2oat-cpu-set 2,3,4,5,6,7
-# resetprop -n dalvik.vm.dex2oat-cpu-set 2,3,4,5,6,7
-# resetprop -n dalvik.vm.dex2oat-threads 6
-# resetprop -n dalvik.vm.image-dex2oat-cpu-set 2,3,4,5,6,7
-# resetprop -n dalvik.vm.image-dex2oat-threads 6
-
-# # Memory Allocation
-# resetprop -n dalvik.vm.usap_pool_enabled true
-# resetprop -n dalvik.vm.jit.code_cache_size 1MB
-# resetprop -n dalvik.vm.usap_pool_refill_delay_ms 3000
-# resetprop -n dalvik.vm.usap_pool_size_max 3
-# resetprop -n dalvik.vm.usap_pool_size_min 1
-# resetprop -n dalvik.vm.usap_refill_threshold 1
-
 # Debugging and Verification
-resetprop -n dalvik.vm.dex2oat-minidebuginfo false
+
 resetprop -n dalvik.vm.check-dex-sum true
 resetprop -n dalvik.vm.checkjni false
 resetprop -n dalvik.vm.verify-bytecode true
-resetprop -n dalvik.vm.minidebuginfo false
+
 
 # Garbage Collection (GC)
 resetprop -n dalvik.gc.type generational_cc
@@ -263,11 +233,10 @@ resetprop -n libc.debug.malloc 0
 resetprop -n log.shaders 0
 resetprop -n log_ao 0
 resetprop -n log_frame_info 0
-#resetprop -n persist.debug.sensors.hal 0 
-resetprop -n persist.debug.wfd.enable false
+resetprop -n persist.debug.sensors.hal 0 
 resetprop -n persist.sys.perf.debug false
 resetprop -n persist.sys.ssr.enable_debug false
-resetprop -n persist.sys.ssr.restart_level 1
+resetprop -n persist.sys.ssr.restart_level ALL_DISABLE
 resetprop -n persist.sys.strictmode.disable true
 resetprop -n persist.traced.enable false
 resetprop -n persist.traced_perf.enable false
@@ -281,6 +250,15 @@ resetprop -n ro.statsd.enable false
 resetprop -n rw.logger 0
 resetprop -n sys.miui.ndcd off
 resetprop -n debugtool.anrhistory 0
+resetprop -n persist.sys.watchdog_enhanced false
+resetprop -n persist.sys.oom_crash_on_watchdog false
+
+# Dalvik
+resetprop -n dalvik.vm.dex2oat-minidebuginfo false
+resetprop -n dalvik.vm.minidebuginfo false
+
+# Wifi Logging
+resetprop -n sys.wifitracing.started 0
 
 # Logd
 resetprop -n logd.disable 1
@@ -293,7 +271,7 @@ resetprop -n logd.logpersistd.enable false
 resetprop -n persist.service.logd.enable false
 resetprop -n ro.logd.size.stats OFF
 resetprop -n persist.logd.limit OFF
-resetprop -n persist.logd.size OFF
+resetprop -n persist.logd.size 0M
 resetprop -n persist.logd.size.crash OFF
 resetprop -n persist.logd.size.main OFF
 resetprop -n persist.logd.size.radio OFF

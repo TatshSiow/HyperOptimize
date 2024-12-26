@@ -1,6 +1,6 @@
 #!/sbin/sh
 SKIPMOUNT=false
-PROPFILE=true
+PROPFILE=false
 POSTFSDATA=true
 LATESTARTSERVICE=true
 
@@ -16,10 +16,9 @@ info_print() {
 init_main(){
   ui_print " "
   ui_print "Extracting System Files..."
+  unzip -o "$ZIPFILE" 'system/*' -d $MODPATH >&2
   ui_print " "
-  unzip -o "$ZIPFILE" 'system/*' -d $MODPATH >&2 
-
-  ui_print "Debloating Apps..."
+  ui_print "services.sh will be execute on next boot"
   ui_print " "
   REPLACE="
     /system/app/AnalyticsCore
@@ -41,20 +40,19 @@ init_main(){
     /system/app/GooglePrintRecommendationService
     /system/app/HybridAccessory
     /system/app/HybridPlatform
-    /system/app/Joyose
+    /system/app/KeyChain
+    /system/app/mab
     /system/app/MDMConfig
     /system/app/MDMLSample
-    /system/app/mab
+    /system/app/MiBugReport
     /system/app/MIUIAccessibility
+    /system/app/MIUIgreenguard
+    /system/app/MiuiPrintSpoolerBeta
     /system/app/MIUISuperMarket
     /system/app/MIUITouchAssistant
     /system/app/MIUIVpnSdkManager
-    /system/app/MIUIgreenguard
     /system/app/MIUPTsmService
     /system/app/MSA
-    /system/app/MiBugReport
-    /system/app/MiuiPrintSpoolerBeta
-    /system/app/KeyChain
     /system/app/OtaProvision
     /system/app/PacProcessor
     /system/app/PartnerBookmarksProvider
@@ -83,11 +81,10 @@ init_main(){
     /system/priv-app/LocalTransport
     /system/priv-app/ManagedProvisioning
     /system/priv-app/MediaProviderLegacy
-    /system/priv-app/MIService
-    /system/priv-app/MIUIMusic
-    /system/priv-app/MIUIVipService
     /system/priv-app/MiBrowser
     /system/priv-app/MiGameCenterSDKService
+    /system/priv-app/MIService
+    /system/priv-app/MIUIVipService
     /system/priv-app/MusicFX
     /system/priv-app/ONS
     /system/priv-app/Provision
@@ -110,7 +107,6 @@ init_main(){
     /system/product/app/CarWith
     /system/product/app/CatchLog
     /system/product/app/com.xiaomi.macro
-    /system/product/app/com.xiaomi.ugd
     /system/product/app/ConferenceDialer
     /system/product/app/DeviceInfoQR
     /system/product/app/EidService
@@ -119,11 +115,9 @@ init_main(){
     /system/product/app/FrequentPhrase
     /system/product/app/GoogleLocationHistory
     /system/product/app/GooglePrintRecommendationService
-    /system/product/app/Gboard
     /system/product/app/Health
     /system/product/app/HybridPlatform
     /system/product/app/IFAAService
-    /system/product/app/LatinImeGoogle
     /system/product/app/MediaViewer
     /system/product/app/MetokNLP
     /system/product/app/MiAONService
@@ -131,9 +125,9 @@ init_main(){
     /system/product/app/MiBugReport
     /system/product/app/MiDevAuthService
     /system/product/app/MiGalleryLockscreen
+    /system/product/app/MiLinkService
     /system/product/app/MiMacro
     /system/product/app/MINextpay
-    /system/product/app/MiLinkService
     /system/product/app/MipayService
     /system/product/app/MIS
     /system/product/app/MiTrustService
@@ -143,6 +137,7 @@ init_main(){
     /system/product/app/MIUIFrequentPhrase
     /system/product/app/MIUIgreenguard
     /system/product/app/MIUIReporter
+    /system/product/app/MIUISuperMarket_M2_M3
     /system/product/app/MIUITouchAssistant
     /system/product/app/VpnSdkManager
     /system/product/app/MSA
@@ -160,11 +155,13 @@ init_main(){
     /system/product/app/system
     /system/product/app/talkback
     /system/product/app/TouchAssistant
+    /system/product/app/com.xiaomi.ugd
     /system/product/app/uimgbaservice
     /system/product/app/uimlpaservice
     /system/product/app/uimremoteclient
     /system/product/app/uimremoteserver
     /system/product/app/UPTsmService
+    /system/product/app/VpnSdkManager
     /system/product/app/WMService
     /system/product/app/XiaoaiRecommendation
     /system/product/app/XiaomiSimActivateService
@@ -192,12 +189,12 @@ init_main(){
     /system/product/priv-app/PersonalAssistant
     /system/product/priv-app/RegService
     /system/product/priv-app/SettingsIntelligence
-    /system/product/overlay/NavigationBarMode3Button
-    /system/product/overlay/NavigationBarModeGestural
-    /system/product/overlay/NavigationBarModeGesturalExtraWideBack
-    /system/product/overlay/NavigationBarModeGesturalNarrowBack
-    /system/product/overlay/NavigationBarModeGesturalWideBack
+    /system/product/overlay/FontNotoSerifSource
+    /system/product/overlay/MiuiServiceOverlay
+    /system/product/overlay/NotesRoleEnabled
+    /system/product/overlay/VoiceAssistAndroidOverlay
     /system/system_ext/app/AtFwd2
+    /system/system_ext/app/BluetoothExtension
     /system/system_ext/app/colorservice
     /system/system_ext/app/datastatusnotification
     /system/system_ext/app/DeviceInfo
@@ -205,7 +202,6 @@ init_main(){
     /system/system_ext/app/digitalkey
     /system/system_ext/app/DynamicDDSService
     /system/system_ext/app/FM
-    /system/system_ext/app/ModemTestBox
     /system/system_ext/app/ImsDataChannelService
     /system/system_ext/app/ImsRcsService
     /system/system_ext/app/MiraVision
@@ -245,14 +241,8 @@ init_main(){
     /system/system_ext/priv-app/WfdService
     /system/system_ext/priv-app/xrcbservice
     /system/system_ext/priv-app/xrvdservice
-    /system/product/overlay/FontNotoSerifSource
-    /system/product/overlay/MiuiServiceOverlay
-    /system/product/overlay/NotesRoleEnabled
-    /system/product/overlay/TransparentNavigationBar
-    /system/product/overlay/VoiceAssistAndroidOverlay
     /system/vendor/app/CACertService
     /system/vendor/app/CneApp
-    /system/vendor/app/com.qualcomm.qti.gpudrivers.kalama.api33
     /system/vendor/app/EidService
     /system/vendor/app/IWlanService
     /system/vendor/app/QFingerprintService
@@ -260,8 +250,9 @@ init_main(){
     /system/vendor/app/TimeService
     /system/vendor/app/TrustedUIService
     /system/vendor/app/TrustZoneAccessService
-  "
+    /system/vendor/bin/qmi-framework-tests"
 }
+#/system/app/Joyose
 set_permissions() {
   set_perm_recursive "$MODPATH" 0 0 0777 0755    
 }

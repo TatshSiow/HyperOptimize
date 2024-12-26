@@ -92,24 +92,14 @@ su -c "cmd device_config put activity_manager max_empty_time_millis 43200000"
 su -c "cmd device_config put activity_manager use_compaction false"
 su -c "cmd settings put system miui_app_cache_optimization 0"
 
-# Disable not so useful apps to run in backgroud
-su -c "cmd appops set com.android.backupconfirm RUN_IN_BACKGROUND ignore"
+# Restrict Background Process
 su -c "cmd appops set com.google.android.setupwizard RUN_IN_BACKGROUND ignore"
-su -c "cmd appops set com.android.printservice.recommendation RUN_IN_BACKGROUND ignore"
-su -c "cmd appops set com.android.onetimeinitializer RUN_IN_BACKGROUND ignore"
-su -c "cmd appops set com.qualcomm.qti.perfdump RUN_IN_BACKGROUND ignore"
-
-####################################
-# Useless Services 
-####################################
-su -c "pm disable com.google.android.gms/.chimera.GmsIntentOperationService"
-su -c "pm disable com.google.android.gms/com.google.android.gms.mdm.receivers.MdmDeviceAdminReceiver"
 
 ####################################
 # Disable Dual Apps Google Services
 ####################################
-su -c "pm disable-user --user 999 com.google.android.gms"
-su -c "pm disable-user --user 999 com.google.android.gsf"
+#su -c "pm disable-user --user 999 com.google.android.gms"
+#su -c "pm disable-user --user 999 com.google.android.gsf"
 
 ####################################
 # Kernel Debugging (thx to KTSR)
@@ -188,7 +178,6 @@ echo "0" > /sys/kernel/debug/tracing/tracing_on
 if [ -f /proc/kmsg ]; then
     chmod 0400 /proc/kmsg
 fi
-
 
 
 wakelocks1="
@@ -332,7 +321,12 @@ echo "NO_WAKEUP_PREEMPTION" > /sys/kernel/debug/sched_features
 echo "NO_GENTLE_FAIR_SLEEPERS" > /sys/kernel/debug/sched_features
 echo "ARCH_POWER" > /sys/kernel/debug/sched_features
 
+# Find my Device
+su -c "pm disable com.google.android.gms/com.google.android.gms.mdm.receivers.MdmDeviceAdminReceiver"
+
 # Google play services wakelocks
+su -c "pm disable com.google.android.gms/com.google.android.gms.auth.managed.admin.DeviceAdminReceiver"
+su -c "pm disable com.google.android.gms/.chimera.GmsIntentOperationService"
 su -c "pm disable com.google.android.gms/.ads.AdRequestBrokerService"
 su -c "pm disable com.google.android.gms/.ads.identifier.service.AdvertisingIdService"
 su -c "pm disable com.google.android.gms/.ads.social.GcmSchedulerWakeupService"
@@ -353,6 +347,16 @@ su -c "pm disable com.google.android.gsf/.update.SystemUpdateService"
 su -c "pm disable com.google.android.gsf/.update.SystemUpdateService$Receiver"
 su -c "pm disable com.google.android.gsf/.update.SystemUpdateService$SecretCodeReceiver"
 
+# 关闭MIUI负优化服务
+pm disable "com.xiaomi.joyose/.cloud.CloudServerReceiver"
+pm disable "com.xiaomi.joyose/.smartop.gamebooster.receiver.BoostRequestReceiver"
+pm disable "com.xiaomi.joyose/.smartop.SmartOpService" 
+pm disable "com.xiaomi.joyose.sysbase.MetokClService" 
+pm disable "com.miui.powerkeeper/com.miui.powerkeeper.cloudcontrol.CloudUpdateReceiver"
+pm disable "com.miui.powerkeeper/com.miui.powerkeeper.cloudcontrol.CloudUpdateJobService"
+pm disable "com.miui.powerkeeper/com.miui.powerkeeper.ui.CloudInfoActivity"
+pm disable "com.miui.powerkeeper/com.miui.powerkeeper.feedbackcontrol.abnormallog.ThermalLogService"
+pm disable "com.miui.powerkeeper/com.miui.powerkeeper.logsystem.LogSystemService"
 ####################################
 # Kill and Stop Services
 ####################################
@@ -441,7 +445,10 @@ mobile_log_d
 mobile_log_d.rc
 mtdoopslog.sh
 minidump64
+mi_thermald
+miuibooster
 miuiupdater.rc
+mqsasd
 netdiag
 netdiag.rc
 pktlogconf
@@ -449,6 +456,7 @@ poweroff_charger_log.sh
 qesdk-manager
 qesdk-manager.rc
 ramdump
+ssgqmigd
 ssr_diag
 ssr_setup
 stats
@@ -483,10 +491,10 @@ chmod 000 /data/vendor/wlan_logs
 
 # Magisk Logs
 rm -rf /cache/magisk.log
-touch   /cache/magisk.log
-chmod 000  /cache/magisk.log
+touch /cache/magisk.log
+chmod 000 /cache/magisk.log
 
 #MIUI Home Debug Log
 rm -rf /data/user_de/0/com.miui.home/cache/debug_log
-touch   /data/user_de/0/com.miui.home/cache/debug_log
-chmod 000  /data/user_de/0/com.miui.home/cache/debug_log
+touch /data/user_de/0/com.miui.home/cache/debug_log
+chmod 000 /data/user_de/0/com.miui.home/cache/debug_log
