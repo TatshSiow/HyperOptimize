@@ -1,7 +1,7 @@
 ![test](https://github.com/user-attachments/assets/5cf75f24-5993-4e64-b3b2-328f30d4ff31)
 <div align="center">
 <a href="https://t.me/TatshSecretCave" ><img height="50" src="https://www.vectorlogo.zone/logos/telegram/telegram-tile.svg"/></a>
-  
+
 <a href="https://t.me/TatshSecretCave" >Telegram</a>
 </div>
 
@@ -9,7 +9,7 @@
 This is a Magisk Module for HyperOS based devices\
 Reduce Power and RAM consumption by optimizing system parameters, disabling Apps & System Process
 
-## Changes made in this module
+## What's inside?
 - Debloat PreInstalled Apps
 - Disable logging services
 - Debloat Android core process
@@ -29,6 +29,7 @@ Reduce Power and RAM consumption by optimizing system parameters, disabling Apps
 - **MIUI** not tested
 - **Tablets/Pads** not tested
 - **NOT GUARANTEED** to work on all builds
+- **CONFLICT** with module with same purpose
 
 ## Customize debloat list
 - Edit `replace=""` section in the `setup.sh` file if you want specific apps to not be disabled (eg. Gboard)
@@ -40,8 +41,7 @@ Reduce Power and RAM consumption by optimizing system parameters, disabling Apps
 - Uninstall it in Magisk. (No leftovers)
 
 ## My Magisk break after uninstalling, what should I do?
-- AFter remove the module, you might face this at the first time
-- Reboot again will fix it
+- Reboot again
 
 ## Just in case you bricked it
 1. boot into TWRP or `adb reboot recovery` or `fastboot reboot recovery`
