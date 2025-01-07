@@ -1,3 +1,7 @@
+####################################
+# Functions
+####################################
+
 # $1:value $2:filepaths
 lock_val() {
     for p in $2; do
@@ -37,13 +41,15 @@ wait_until_login() {
   rm -f "$test_file"
 }
 
+####################################
+# Initialize
+####################################
 wait_until_login
-sleep 30
+sleep 15
 
 ####################################
-# Tweaking Android (Github:ionuttbara + Tatsh)
+# Tweak system parameters
 ####################################
-
 
 # Logs
 su -c "cmd settings put global activity_starts_logging_enabled 0"
@@ -64,28 +70,21 @@ su -c "cmd settings put global personalized_ad_enabled 0"
 # System behaviour tuning
 su -c "cmd settings put global fast_connect_ble_scan_mode 0"
 su -c "cmd settings put global hotword_detection_enabled 0" #OK Google
-su -c "cmd settings put global mobile_data_always_on 0"
 su -c "cmd settings put global network_recommendations_enabled 0"
-su -c "cmd settings put global TV_SENSOR_JAR_ENABLE 0"
 su -c "cmd settings put global pmiui_ambient_scan_support 0"
 su -c "cmd settings put global wifi_scan_always_enabled 0"
-su -c "cmd settings put secure adaptive_sleep 0"
-su -c "cmd settings put secure screensaver_activate_on_dock 0"
-su -c "cmd settings put secure screensaver_activate_on_sleep 0" 
-su -c "cmd settings put secure screensaver_enabled 0"
 su -c "cmd settings put system air_motion_engine 0"
 su -c "cmd settings put system air_motion_wake_up 0"
 su -c "cmd settings put system master_motion 0"
 su -c "cmd settings put system motion_engine 0"
 su -c "cmd settings put system nearby_scanning_enabled 0"
 su -c "cmd settings put system nearby_scanning_permission_allowed 0"
-su -c "cmd settings put secure doze_always_on 0" # AOD
 su -c "cmd settings put system low_battery_dialog_disabled 1" #Low Battery Dialog
+su -c "cmd device_config set_sync_disabled_for_tests until_reboot"
+su -c "cmd device_config put runtime_native_boot iorap_readahead_enable false"
 
 # Memory/Process Management
 su -c "cmd settings put global settings_enable_monitor_phantom_procs false"
-su -c "cmd device_config set_sync_disabled_for_tests until_reboot"
-su -c "cmd device_config put runtime_native_boot iorap_readahead_enable false"
 su -c "cmd device_config put activity_manager max_phantom_processes 65535"
 su -c "cmd device_config put activity_manager max_cached_processes 65535"
 su -c "cmd device_config put activity_manager max_empty_time_millis 43200000"
@@ -93,7 +92,7 @@ su -c "cmd device_config put activity_manager use_compaction false"
 su -c "cmd settings put system miui_app_cache_optimization 0"
 
 # Restrict Background Process
-su -c "cmd appops set com.google.android.setupwizard RUN_IN_BACKGROUND ignore"
+# su -c "cmd appops set com.google.android.setupwizard RUN_IN_BACKGROUND ignore"
 
 ####################################
 # Disable Dual Apps Google Services
@@ -106,7 +105,7 @@ su -c "cmd appops set com.google.android.setupwizard RUN_IN_BACKGROUND ignore"
 ####################################
 for i in "debug_mask" "log_level*" "debug_level*" "*debug_mode" "enable_ramdumps" "enable_mini_ramdumps" "edac_mc_log*" "enable_event_log" "*log_level*" "*log_ue*" "*log_ce*" "log_ecn_error" "snapshot_crashdumper" "seclog*" "compat-log" "*log_enabled" "tracing_on" "mballoc_debug"; do
     for o in $(find /sys/ -type f -name "$i"); do
-        echo "0" > "$o"
+        echo "0" > "$o" 2>/dev/null
     done
 done
 echo "1" > "/sys/module/spurious/parameters/noirqdebug"
@@ -127,6 +126,7 @@ debug_list="
 /proc/sys/debug/exception-trace
 /proc/sys/fs/by-name/userdata/iostat_enable
 /proc/sys/fs/dir-notify-enable
+/proc/sys/kernel/bpf_stats_enabled
 /proc/sys/kernel/core_pattern
 /proc/sys/kernel/panic
 /proc/sys/kernel/panic_on_oops
@@ -179,7 +179,9 @@ if [ -f /proc/kmsg ]; then
     chmod 0400 /proc/kmsg
 fi
 
-
+####################################
+# Wakelocks
+####################################
 wakelocks1="
 /sys/module/wakeup/parameters/enable_ipa_ws
 /sys/module/wakeup/parameters/enable_qcom_rx_wakelock_ws
@@ -190,21 +192,19 @@ wakelocks1="
 /sys/module/wakeup/parameters/enable_wlan_wow_wl_ws
 /sys/module/wakeup/parameters/enable_wlan_ipa_ws
 /sys/module/wakeup/parameters/enable_wlan_pno_wl_ws
-/sys/module/wakeup/parameters/enable_wcnss_filter_lock_ws
-"
+/sys/module/wakeup/parameters/enable_wcnss_filter_lock_ws"
+
 for wakelock1 in $wakelocks1; do
   if [ -f "$wakelock1" ]; then
     echo "N" > "$wakelock1" 2>/dev/null
   fi
 done
 
-
 wakelocks2="
 /sys/module/wakeup/parameters/enable_bluetooth_timer
 /sys/module/wakeup/parameters/enable_netlink_ws
 /sys/module/wakeup/parameters/enable_netmgr_wl_ws
-/sys/module/wakeup/parameters/enable_timerfd_ws
-"
+/sys/module/wakeup/parameters/enable_timerfd_ws"
 
 for wakelock2 in $wakelocks2; do
   if [ -f "$wakelock2" ]; then
@@ -218,9 +218,13 @@ elif [ -f /sys/class/misc/boeffla_wakelock_blocker/wakelock_blocker ]; then
   echo "wlan_pno_wl;wlan_ipa;wcnss_filter_lock;hal_bluetooth_lock;IPA_WS;sensor_ind;wlan;netmgr_wl;qcom_rx_wakelock;wlan_wow_wl;wlan_extscan_wl;NETLINK;bam_dmux_wakelock;IPA_RM12" > /sys/class/misc/boeffla_wakelock_blocker/wakelock_blocker
 fi
 
-# disable THP(reduce memory fragmentation)
-echo never > /sys/kernel/mm/transparent_hugepage/enabled
-echo never > /sys/kernel/mm/transparent_hugepage/defrag
+####################################
+# Transparent Hugepage
+####################################
+if [ -d "/sys/kernel/mm/transparent_hugepage/" ]; then
+  echo never > /sys/kernel/mm/transparent_hugepage/enabled
+  echo never > /sys/kernel/mm/transparent_hugepage/defrag
+fi
 
 ####################################
 # UFS Tuning
@@ -236,15 +240,17 @@ echo 0 > /sys/block/*/queue/add_random
 echo 64 > /sys/block/*/queue/rq_affinity
 echo 128 > /sys/block/*/queue/read_ahead_kb
 
-
+####################################
+# Performance Tuning
+####################################
 
 stop perf-hal-2-3
 stop vendor.perfservice
 
-# Kernel Tuning
-echo 1 > /proc/sys/kernel/sched_energy_aware
-echo 1 > /proc/sys/kernel/sched_child_runs_first
-echo 0 > /proc/sys/kernel/sched_iowait_expires
+# # Kernel Tuning
+# echo 1 > /proc/sys/kernel/sched_energy_aware
+# echo 1 > /proc/sys/kernel/sched_child_runs_first
+# echo 0 > /proc/sys/kernel/sched_iowait_expires
 
 # disable WALT CPU Boost
 mask_val "0" /proc/sys/walt/sched_boost
@@ -283,8 +289,10 @@ echo 150 > /proc/sys/vm/dirty_writeback_centisecs
 echo 1 > /proc/sys/vm/laptop_mode
 
 # MGLRU
-lock_val "Y" /sys/kernel/mm/lru_gen/enabled
-lock_val "1000" /sys/kernel/mm/lru_gen/min_ttl_ms
+if [ -f "/sys/kernel/mm/lru_gen/enabled" ]; then
+  lock_val "N" /sys/kernel/mm/lru_gen/enabled
+  lock_val "" /sys/kernel/mm/lru_gen/min_ttl_ms
+fi
 
 
 # Ensure deeper C-states are allowed to save power
@@ -294,9 +302,9 @@ if [ -f "/sys/module/workqueue/parameters/power_efficient" ]; then
   echo "Y" > /sys/module/workqueue/parameters/power_efficient
 fi
 
-mount -t debugfs none /sys/kernel/debug
-echo "5000000" >/sys/kernel/debug/sched/migration_cost_ns
-echo "12500000" >/sys/kernel/debug/sched/wakeup_granularity_ns
+# mount -t debugfs none /sys/kernel/debug
+# echo "5000000" >/sys/kernel/debug/sched/migration_cost_ns
+# echo "12500000" >/sys/kernel/debug/sched/wakeup_granularity_ns
 
 # Xiaomi Config
 mask_val "0" /sys/module/migt/parameters/enable_pkg_monitor
@@ -315,11 +323,11 @@ mask_val "0" /sys/module/metis/parameters/cluaff_control
 # mask_val "2" /proc/sys/kernel/sched_pelt_multiplier
 
 # Linux Scheduler
-echo "NEXT_BUDDY" > /sys/kernel/debug/sched_features
-echo "TTWU_QUEUE" > /sys/kernel/debug/sched_features
-echo "NO_WAKEUP_PREEMPTION" > /sys/kernel/debug/sched_features
-echo "NO_GENTLE_FAIR_SLEEPERS" > /sys/kernel/debug/sched_features
-echo "ARCH_POWER" > /sys/kernel/debug/sched_features
+# echo "NEXT_BUDDY" > /sys/kernel/debug/sched_features
+# echo "TTWU_QUEUE" > /sys/kernel/debug/sched_features
+# echo "NO_WAKEUP_PREEMPTION" > /sys/kernel/debug/sched_features
+# echo "NO_GENTLE_FAIR_SLEEPERS" > /sys/kernel/debug/sched_features
+# echo "ARCH_POWER" > /sys/kernel/debug/sched_features
 
 # Find my Device
 su -c "pm disable com.google.android.gms/com.google.android.gms.mdm.receivers.MdmDeviceAdminReceiver"
@@ -347,7 +355,7 @@ su -c "pm disable com.google.android.gsf/.update.SystemUpdateService"
 su -c "pm disable com.google.android.gsf/.update.SystemUpdateService$Receiver"
 su -c "pm disable com.google.android.gsf/.update.SystemUpdateService$SecretCodeReceiver"
 
-# 关闭MIUI负优化服务
+# 關閉MIUI負優化
 pm disable "com.xiaomi.joyose/.cloud.CloudServerReceiver"
 pm disable "com.xiaomi.joyose/.smartop.gamebooster.receiver.BoostRequestReceiver"
 pm disable "com.xiaomi.joyose/.smartop.SmartOpService" 
@@ -369,7 +377,6 @@ aee.log-1-0.rc
 aee.log-1-1
 aplogd
 athdiag
-atrace.rc
 boot_logo_updater
 bootlogoupdater.rc
 bootlog.sh
@@ -451,6 +458,7 @@ miuiupdater.rc
 mqsasd
 netdiag
 netdiag.rc
+perfectto
 pktlogconf
 poweroff_charger_log.sh
 qesdk-manager
@@ -482,19 +490,41 @@ for name in $process; do
 done
 
 ####################################
-# Logs Removal
+# Logs Cleanup
 ####################################
-# Wifi Logs
-rm -rf /data/vendor/wlan_logs
-touch /data/vendor/wlan_logs
-chmod 000 /data/vendor/wlan_logs
+log_folders="
+/data/anr
+/data/log
+/data/misc/bluetooth/logs
+/data/misc/logd
+/data/misc/nfc/logs
+/data/misc/update_engine_log
+/data/misc/snapshotctl_log
+/data/miuilog/*
+/data/system/dropbox
+/data/system/procstats
+/data/system/usagestats
+/data/system/miuilog
+/data/system_de/0/metrics
+/data/tombstones
+/data/user_de/0/com.miui.home/cache/debug_log
+/data/vendor/tz_log
+/data/vendor/log
+/data/vendor/imslogs
+/data/vendor/bsplog
+/data/vendor/camera/offlinelog
+/data/vendor/modem/diag_logs
+/data/vendor/wifi/logs
+/data/vendor/wlan_logs
+/cache/magisk.log
+"
 
-# Magisk Logs
-rm -rf /cache/magisk.log
-touch /cache/magisk.log
-chmod 000 /cache/magisk.log
+for log_folder in $log_folders; do
+  if [ -d "$log_folder" ]; then
+    rm -rf "$log_folder"
+    touch "$log_folder"
+    chmod 000 "$log_folder"
+  fi
+done
 
-#MIUI Home Debug Log
-rm -rf /data/user_de/0/com.miui.home/cache/debug_log
-touch /data/user_de/0/com.miui.home/cache/debug_log
-chmod 000 /data/user_de/0/com.miui.home/cache/debug_log
+exit 0

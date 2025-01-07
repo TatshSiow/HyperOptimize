@@ -18,7 +18,7 @@ init_main(){
   ui_print "Extracting System Files..."
   unzip -o "$ZIPFILE" 'system/*' -d $MODPATH >&2
   ui_print " "
-  ui_print "services.sh will be execute on next boot"
+  ui_print "Replacing Apps"
   ui_print " "
   REPLACE="
     /system/app/AnalyticsCore
@@ -251,6 +251,8 @@ init_main(){
     /system/vendor/app/TrustedUIService
     /system/vendor/app/TrustZoneAccessService
     /system/vendor/bin/qmi-framework-tests"
+    ui_print "Service will be executed on next boot."
+    ui_print " "
 }
 #/system/app/Joyose
 set_permissions() {
