@@ -1,6 +1,6 @@
 # Developer Notice
 To adapt HyperOS 2 and eliminate compatibility problems\
-I decided to revise everything again\
+I decided to rebuild from scratch again (polish and revise)\
 Hoping it will be another good start on next release
 
 ![test](https://github.com/user-attachments/assets/5cf75f24-5993-4e64-b3b2-328f30d4ff31)
