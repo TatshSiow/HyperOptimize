@@ -41,64 +41,9 @@ wait_until_login() {
   rm -f "$test_file"
 }
 
-####################################
-# Initialize
-####################################
 wait_until_login
 sleep 15
 
-####################################
-# Tweak system parameters
-####################################
-
-# Logs
-su -c "cmd settings put global activity_starts_logging_enabled 0"
-su -c "cmd settings put global ble_scan_always_enabled 0"
-su -c "cmd settings put global enable_gpu_debug_layers 0"
-su -c "cmd settings put global ecg_disable_logging 1"
-su -c "cmd settings put global netstats_enabled 0" # won't affect mobile data usage record
-su -c "cmd settings put secure send_action_app_error 0"
-su -c "cmd settings put system call_log 0" #won't affect miui caller
-su -c "cmd settings put system send_security_reports 0"
-su -c "cmd settings put system anr_debugging_mechanism 0"
-su -c "cmd device_config put runtime_native_boot disable_lock_profiling true"
-
-# Ads Control
-su -c "cmd settings put global passport_ad_status OFF"
-su -c "cmd settings put global personalized_ad_enabled 0"
-
-# System behaviour tuning
-su -c "cmd settings put global fast_connect_ble_scan_mode 0"
-su -c "cmd settings put global hotword_detection_enabled 0" #OK Google
-su -c "cmd settings put global network_recommendations_enabled 0"
-su -c "cmd settings put global pmiui_ambient_scan_support 0"
-su -c "cmd settings put global wifi_scan_always_enabled 0"
-su -c "cmd settings put system air_motion_engine 0"
-su -c "cmd settings put system air_motion_wake_up 0"
-su -c "cmd settings put system master_motion 0"
-su -c "cmd settings put system motion_engine 0"
-su -c "cmd settings put system nearby_scanning_enabled 0"
-su -c "cmd settings put system nearby_scanning_permission_allowed 0"
-su -c "cmd settings put system low_battery_dialog_disabled 1" #Low Battery Dialog
-su -c "cmd device_config set_sync_disabled_for_tests until_reboot"
-su -c "cmd device_config put runtime_native_boot iorap_readahead_enable false"
-
-# Memory/Process Management
-su -c "cmd settings put global settings_enable_monitor_phantom_procs false"
-su -c "cmd device_config put activity_manager max_phantom_processes 65535"
-su -c "cmd device_config put activity_manager max_cached_processes 65535"
-su -c "cmd device_config put activity_manager max_empty_time_millis 43200000"
-su -c "cmd device_config put activity_manager use_compaction false"
-su -c "cmd settings put system miui_app_cache_optimization 0"
-
-# Restrict Background Process
-# su -c "cmd appops set com.google.android.setupwizard RUN_IN_BACKGROUND ignore"
-
-####################################
-# Disable Dual Apps Google Services
-####################################
-#su -c "pm disable-user --user 999 com.google.android.gms"
-#su -c "pm disable-user --user 999 com.google.android.gsf"
 
 ####################################
 # Kernel Debugging (thx to KTSR)
@@ -108,70 +53,96 @@ for i in "debug_mask" "log_level*" "debug_level*" "*debug_mode" "enable_ramdumps
         echo "0" > "$o" 2>/dev/null
     done
 done
-echo "1" > "/sys/module/spurious/parameters/noirqdebug"
+echo "Y" > "/sys/module/spurious/parameters/noirqdebug"
 
 ####################################
 # Printk (thx to KNTD-reborn)
 ####################################
 echo "0 0 0 0" > "/proc/sys/kernel/printk"
-echo "1" > "/sys/module/printk/parameters/console_suspend"
-echo "1" > "/sys/module/printk/parameters/ignore_loglevel"
 echo "off" > "/proc/sys/kernel/printk_devkmsg"
+echo "Y" > "/sys/module/printk/parameters/console_suspend"
+echo "Y" > "/sys/module/printk/parameters/ignore_loglevel"
+echo "N" > "/sys/module/printk/parameters/always_kmsg_dump"
+echo "N" > "/sys/module/printk/parameters/time"
 
 ############################################################
 # Ramdumps | File System | Kernel Panic | Driver Debugging #
 #  Printk  |     CRC     | Kernel Debugging                #
 ############################################################
-debug_list="
+debug_list_1="
 /proc/sys/debug/exception-trace
-/proc/sys/fs/by-name/userdata/iostat_enable
-/proc/sys/fs/dir-notify-enable
+/proc/sys/dev/scsi/logging_level
 /proc/sys/kernel/bpf_stats_enabled
 /proc/sys/kernel/core_pattern
+/proc/sys/kernel/ftrace_dump_on_oops
+/proc/sys/kernel/nmi_watchdog
 /proc/sys/kernel/panic
 /proc/sys/kernel/panic_on_oops
 /proc/sys/kernel/panic_on_rcu_stall
 /proc/sys/kernel/panic_on_warn
+/proc/sys/kernel/panic_print
 /proc/sys/kernel/sched_schedstats
+/proc/sys/kernel/tracepoint_printk
+/proc/sys/kernel/traceoff_on_warning
+/proc/sys/kernel/watchdog
+/proc/sys/vm/panic_on_oom
+/proc/sys/walt/panic_on_walt_bug
 /proc/sys/migt/migt_sched_debug
-/sys/fs/f2fs/sda32/iostat_enable
+/proc/sys/glk/load_debug
+/sys/kernel/debug/charger_ulog/enable
 /sys/kernel/debug/dri/0/debug/enable
+/sys/kernel/debug/dri/0/debug/evtlog_dump
+/sys/kernel/debug/dri/0/debug/reglog_enable
+/sys/kernel/debug/mi_display/backlight_log
+/sys/kernel/debug/mi_display/debug_log
+/sys/kernel/debug/mi_display/disp_log
+/sys/kernel/debug/sps/debug_level_option
+/sys/kernel/debug/sps/desc_option
+/sys/kernel/debug/sps/log_level_sel
+/sys/kernel/debug/sps/logging_option
 /sys/kernel/debug/sde_rotator0/evtlog/enable
 /sys/kernel/debug/tracing/tracing_on
+/sys/kernel/tracing/options/trace_printk
+/sys/kernel/tracing/options/print-msg-only
 /sys/module/alarm_dev/parameters/debug_mask
+/sys/module/audio_plt_dlkm/parameters/debug_mask
 /sys/module/binder/parameters/debug_mask
 /sys/module/binder_alloc/parameters/debug_mask
-/sys/module/kernel/parameters/initcall_debug
+/sys/module/msm_show_resume_irq/parameters/debug_mask
 /sys/module/kernel/parameters/panic
 /sys/module/kernel/parameters/panic_on_warn
+/sys/module/kernel/parameters/panic_print
 /sys/module/kernel/parameters/panic_on_oops
 /sys/module/lowmemorykiller/parameters/debug_level
 /sys/module/millet_core/parameters/millet_debug
 /sys/module/mmc_core/parameters/crc
 /sys/module/mmc_core/parameters/removable
 /sys/module/mmc_core/parameters/use_spi_crc
-/sys/module/msm_show_resume_irq/parameters/debug_mask
 /sys/module/powersuspend/parameters/debug_mask
-/sys/module/printk/parameters/cpu
-/sys/module/printk/parameters/pid
-/sys/module/printk/parameters/printk_ratelimit
-/sys/module/printk/parameters/time
+/sys/module/sdhci/parameters/debug_quirks*
 /sys/module/subsystem_restart/parameters/enable_mini_ramdumps
 /sys/module/subsystem_restart/parameters/enable_ramdumps
 /sys/module/rmnet_data/parameters/rmnet_data_log_level
-/sys/module/xt_qtaguid/parameters/debug_mask
-/sys/vm/panic_on_oom"
+/sys/module/xt_qtaguid/parameters/debug_mask"
 
-for debug in $debug_list; do
-  if [ -f "$debug" ]; then
-    echo "0" > "$debug" 2>/dev/null
+for debug_1 in $debug_list_1; do
+  if [ -f "$debug_1" ]; then
+    echo "0" > "$debug_1" 2>/dev/null
   fi
 done
 
+debug_list_2="
+/sys/module/cryptomgr/parameters/panic_on_fail
+/sys/kernel/debug/debug_enabled
+/sys/kernel/debug/soc:qcom,pmic_glink_log/enable
+/sys/module/kernel/parameters/initcall_debug
+"
 
-echo "N" > /sys/kernel/debug/debug_enabled
-echo "N" > /sys/kernel/debug/seclog/seclog_debug
-echo "0" > /sys/kernel/debug/tracing/tracing_on
+for debug_2 in $debug_list_2; do
+  if [ -f "$debug_2" ]; then
+    echo "N" > "$debug_2" 2>/dev/null
+  fi
+done
 
 
 # Change permissions of /proc/kmsg to make it read-only
@@ -189,7 +160,6 @@ wakelocks1="
 /sys/module/wakeup/parameters/enable_wlan_wow_wl_ws
 /sys/module/wakeup/parameters/enable_wlan_ws
 /sys/module/wakeup/parameters/enable_netmgr_wl_ws
-/sys/module/wakeup/parameters/enable_wlan_wow_wl_ws
 /sys/module/wakeup/parameters/enable_wlan_ipa_ws
 /sys/module/wakeup/parameters/enable_wlan_pno_wl_ws
 /sys/module/wakeup/parameters/enable_wcnss_filter_lock_ws"
@@ -203,7 +173,6 @@ done
 wakelocks2="
 /sys/module/wakeup/parameters/enable_bluetooth_timer
 /sys/module/wakeup/parameters/enable_netlink_ws
-/sys/module/wakeup/parameters/enable_netmgr_wl_ws
 /sys/module/wakeup/parameters/enable_timerfd_ws"
 
 for wakelock2 in $wakelocks2; do
@@ -222,23 +191,23 @@ fi
 # Transparent Hugepage
 ####################################
 if [ -d "/sys/kernel/mm/transparent_hugepage/" ]; then
-  echo never > /sys/kernel/mm/transparent_hugepage/enabled
-  echo never > /sys/kernel/mm/transparent_hugepage/defrag
+  echo never > /sys/kernel/mm/transparent_hugepage/enabled 2>/dev/null
+  echo never > /sys/kernel/mm/transparent_hugepage/defrag 2>/dev/null
 fi
 
 ####################################
 # UFS Tuning
 ####################################
 # Disable All I/O stats
-echo 0 > /sys/block/*/queue/iostats
+echo 0 > /sys/block/*/queue/iostats 2>/dev/null
 
 # Disable All I/O Debug Helper
-echo 0 > /sys/block/*/queue/nomerges
+echo 0 > /sys/block/*/queue/nomerges 2>/dev/null
 
 #Tune
-echo 0 > /sys/block/*/queue/add_random
-echo 64 > /sys/block/*/queue/rq_affinity
-echo 128 > /sys/block/*/queue/read_ahead_kb
+echo 0 > /sys/block/*/queue/add_random 2>/dev/null
+echo 64 > /sys/block/*/queue/rq_affinity 2>/dev/null
+echo 128 > /sys/block/*/queue/read_ahead_kb 2>/dev/null
 
 ####################################
 # Performance Tuning
@@ -246,11 +215,6 @@ echo 128 > /sys/block/*/queue/read_ahead_kb
 
 stop perf-hal-2-3
 stop vendor.perfservice
-
-# # Kernel Tuning
-# echo 1 > /proc/sys/kernel/sched_energy_aware
-# echo 1 > /proc/sys/kernel/sched_child_runs_first
-# echo 0 > /proc/sys/kernel/sched_iowait_expires
 
 # disable WALT CPU Boost
 mask_val "0" /proc/sys/walt/sched_boost
@@ -277,7 +241,6 @@ lock_val "0" /sys/class/kgsl/kgsl-3d0/force_rail_on
 lock_val "10" /sys/class/kgsl/kgsl-3d0/idle_timer
 lock_val "0" /sys/class/devfreq/*kgsl-3d0/min_freq
 lock_val "2147483647" /sys/class/devfreq/*kgsl-3d0/max_freq
-lock_val "0" /sys/class/kgsl/kgsl-3d0/force_no_nap
 lock_val "1" /sys/class/kgsl/kgsl-3d0/bus_split
 lock_val "92" /sys/class/kgsl/kgsl-3d0/devfreq/mod_percent
 
@@ -285,8 +248,8 @@ start vendor.perfservice
 start perf-hal-2-3
 
 # Laptop-Mode
-echo 150 > /proc/sys/vm/dirty_writeback_centisecs
-echo 1 > /proc/sys/vm/laptop_mode
+echo 150 > /proc/sys/vm/dirty_writeback_centisecs 2>/dev/null
+echo 1 > /proc/sys/vm/laptop_mode 2>/dev/null
 
 # MGLRU
 if [ -f "/sys/kernel/mm/lru_gen/enabled" ]; then
@@ -296,15 +259,11 @@ fi
 
 
 # Ensure deeper C-states are allowed to save power
-echo 1 > /sys/module/cpuidle/parameters/enable
+echo 1 > /sys/module/cpuidle/parameters/enable 2>/dev/null
 
 if [ -f "/sys/module/workqueue/parameters/power_efficient" ]; then
-  echo "Y" > /sys/module/workqueue/parameters/power_efficient
+  echo "Y" > /sys/module/workqueue/parameters/power_efficient 2>/dev/null
 fi
-
-# mount -t debugfs none /sys/kernel/debug
-# echo "5000000" >/sys/kernel/debug/sched/migration_cost_ns
-# echo "12500000" >/sys/kernel/debug/sched/wakeup_granularity_ns
 
 # Xiaomi Config
 mask_val "0" /sys/module/migt/parameters/enable_pkg_monitor
@@ -322,209 +281,42 @@ mask_val "0" /sys/module/metis/parameters/cluaff_control
 # lock_val "0" /sys/kernel/rcu_expedited
 # mask_val "2" /proc/sys/kernel/sched_pelt_multiplier
 
-# Linux Scheduler
-# echo "NEXT_BUDDY" > /sys/kernel/debug/sched_features
-# echo "TTWU_QUEUE" > /sys/kernel/debug/sched_features
-# echo "NO_WAKEUP_PREEMPTION" > /sys/kernel/debug/sched_features
-# echo "NO_GENTLE_FAIR_SLEEPERS" > /sys/kernel/debug/sched_features
-# echo "ARCH_POWER" > /sys/kernel/debug/sched_features
+# # Kernel Tuning
+# echo 1 > /proc/sys/kernel/sched_energy_aware
+# echo 1 > /proc/sys/kernel/sched_child_runs_first
+# echo 0 > /proc/sys/kernel/sched_iowait_expires
 
-# Find my Device
-su -c "pm disable com.google.android.gms/com.google.android.gms.mdm.receivers.MdmDeviceAdminReceiver"
-
-# Google play services wakelocks
-su -c "pm disable com.google.android.gms/com.google.android.gms.auth.managed.admin.DeviceAdminReceiver"
-su -c "pm disable com.google.android.gms/.chimera.GmsIntentOperationService"
-su -c "pm disable com.google.android.gms/.ads.AdRequestBrokerService"
-su -c "pm disable com.google.android.gms/.ads.identifier.service.AdvertisingIdService"
-su -c "pm disable com.google.android.gms/.ads.social.GcmSchedulerWakeupService"
-su -c "pm disable com.google.android.gms/.analytics.AnalyticsService"
-su -c "pm disable com.google.android.gms/.analytics.service.PlayLogMonitorIntervalService"
-su -c "pm disable com.google.android.gms/.backup.BackupTransportService"
-su -c "pm disable com.google.android.gms/.update.SystemUpdateActivity"
-su -c "pm disable com.google.android.gms/.update.SystemUpdateService"
-su -c "pm disable com.google.android.gms/.update.SystemUpdateActivity"
-su -c "pm disable com.google.android.gms/.update.SystemUpdateService"
-su -c "pm disable com.google.android.gms/.update.SystemUpdateService$ActiveReceiver"
-su -c "pm disable com.google.android.gms/.update.SystemUpdateService$Receiver"
-su -c "pm disable com.google.android.gms/.update.SystemUpdateService$SecretCodeReceiver"
-su -c "pm disable com.google.android.gms/.thunderbird.settings.ThunderbirdSettingInjectorService"
-su -c "pm disable com.google.android.gsf/.update.SystemUpdateActivity"
-su -c "pm disable com.google.android.gsf/.update.SystemUpdatePanoActivity"
-su -c "pm disable com.google.android.gsf/.update.SystemUpdateService"
-su -c "pm disable com.google.android.gsf/.update.SystemUpdateService$Receiver"
-su -c "pm disable com.google.android.gsf/.update.SystemUpdateService$SecretCodeReceiver"
-
-# 關閉MIUI負優化
-pm disable "com.xiaomi.joyose/.cloud.CloudServerReceiver"
-pm disable "com.xiaomi.joyose/.smartop.gamebooster.receiver.BoostRequestReceiver"
-pm disable "com.xiaomi.joyose/.smartop.SmartOpService" 
-pm disable "com.xiaomi.joyose.sysbase.MetokClService" 
-pm disable "com.miui.powerkeeper/com.miui.powerkeeper.cloudcontrol.CloudUpdateReceiver"
-pm disable "com.miui.powerkeeper/com.miui.powerkeeper.cloudcontrol.CloudUpdateJobService"
-pm disable "com.miui.powerkeeper/com.miui.powerkeeper.ui.CloudInfoActivity"
-pm disable "com.miui.powerkeeper/com.miui.powerkeeper.feedbackcontrol.abnormallog.ThermalLogService"
-pm disable "com.miui.powerkeeper/com.miui.powerkeeper.logsystem.LogSystemService"
 ####################################
 # Kill and Stop Services
 ####################################
 
-sleep 2
-
+sleep 3 
 process="
-aee.log-1-0
-aee.log-1-0.rc
-aee.log-1-1
-aplogd
-athdiag
-boot_logo_updater
-bootlogoupdater.rc
-bootlog.sh
-bootstat
-bootstat.rc
-bugreport
-bugreport_procdump
-bugreportz
-bt_dump
-bt_logger
-charge_logger
-cnss_diag
-connsyslogger
-connsyslogger.rc
-debug-diag
-debuggerd
-diag_dci_sample
-diag_dci_sample_system
-diag_klog
-diag_mdlog
-diag_mdlog_system
-diag_socket_log
-diag_uart_log
-diag-router
-dmesgd
-dmesgd.rc
-dmpd
-dpmd.rc
-dumpstate
-dumpstate.rc
-dumpstate
-dumpsys
-emdlogger
-emdlogger1
-emdlogger1.rc
-emdlogger2
-emdlogger2.rc
-emdlogger3
-emdlogger3.rc
-emdlogger5
-emdlogger5.rc
-fsync
-i2cdump
-idd-logreader
-idd-logreadermain
-init.charge_logger.rc
-init.nativedebug.rc
-init.offline.log.rc
-init.qseelogd.rc
-init.qti.bt.logger.rc
-iorap.cmd.compiler
-iostat
-ipacm-diag
-ipacm-diag.rc
-log
 logcat
-logcatkernel.sh
-logcatlog.sh
-logcatd
 logd
-logd.rc
-logger
-logname
-logwrapper
-lpdump
-lpdumpd
-lpdumpd.rc
-mdlogger
-mdlogger.rc
-mdnsd
-mdnsd.rc
-mobile_log_d
-mobile_log_d.rc
-mtdoopslog.sh
-minidump64
-mi_thermald
-miuibooster
-miuiupdater.rc
-mqsasd
-netdiag
-netdiag.rc
-perfectto
-pktlogconf
-poweroff_charger_log.sh
-qesdk-manager
-qesdk-manager.rc
-ramdump
-ssgqmigd
-ssr_diag
-ssr_setup
-stats
-statsd
-subsystem_ramdump
-tcpdump
-test_diag
-test_diag_system
 tombstoned
 traced
-vendor.tcpdump
-vendor_tcpdump
-vendor.cnss_diag
-vendor.ipacm-diag
-vendor.qti.diag_userdebug.rc
-wifi_dump
-com.miui.daemon"
-
-for name in $process; do
-  stop "$name"
-  am kill "$name"
-  killall -9 "$name"
-done
-
-####################################
-# Logs Cleanup
-####################################
-log_folders="
-/data/anr
-/data/log
-/data/misc/bluetooth/logs
-/data/misc/logd
-/data/misc/nfc/logs
-/data/misc/update_engine_log
-/data/misc/snapshotctl_log
-/data/miuilog/*
-/data/system/dropbox
-/data/system/procstats
-/data/system/usagestats
-/data/system/miuilog
-/data/system_de/0/metrics
-/data/tombstones
-/data/user_de/0/com.miui.home/cache/debug_log
-/data/vendor/tz_log
-/data/vendor/log
-/data/vendor/imslogs
-/data/vendor/bsplog
-/data/vendor/camera/offlinelog
-/data/vendor/modem/diag_logs
-/data/vendor/wifi/logs
-/data/vendor/wlan_logs
-/cache/magisk.log
+traced_probes
+diag-router
+ipacm-diag
+mi-thermald
+ssgqmigd
+subsystem_ramdump
+statsd
 "
 
-for log_folder in $log_folders; do
-  if [ -d "$log_folder" ]; then
-    rm -rf "$log_folder"
-    touch "$log_folder"
-    chmod 000 "$log_folder"
-  fi
+for name in $process; do
+  stop "$name" 2>/dev/null
+  am kill "$name" 2>/dev/null
+  killall -9 "$name" 2>/dev/null
 done
 
-exit 0
+exit
+
+# /proc/sys/glk/freq_break_enable
+# 1 : aggresive scaling GPU frequency
+# 0 : avoid frequent GPU performance jumps
+
+# /proc/sys/glk/glk_disable
+# 1 : reduce GPU-related overhead
+# 0 : Graphics Lock or synchronization features are active
