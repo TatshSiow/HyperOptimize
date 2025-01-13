@@ -1,3 +1,12 @@
+
+
+![test](https://github.com/user-attachments/assets/5cf75f24-5993-4e64-b3b2-328f30d4ff31)
+<div align="center">
+<a href="https://t.me/TatshSecretCave" ><img height="50" src="https://www.vectorlogo.zone/logos/telegram/telegram-tile.svg"/></a>
+
+<a href="https://t.me/TatshSecretCave" >Telegram</a>
+</div>
+
 # Never download from source!
 Only download from releases
 
@@ -6,13 +15,6 @@ To adapt HyperOS 2 and eliminate compatibility problems\
 I decided to rebuild from scratch again (polish and revise)\
 Hoping it will be another good start on next release\
 **[Not so soon]**
-
-![test](https://github.com/user-attachments/assets/5cf75f24-5993-4e64-b3b2-328f30d4ff31)
-<div align="center">
-<a href="https://t.me/TatshSecretCave" ><img height="50" src="https://www.vectorlogo.zone/logos/telegram/telegram-tile.svg"/></a>
-
-<a href="https://t.me/TatshSecretCave" >Telegram</a>
-</div>
 
 # What is this?
 This is a Magisk Module for HyperOS based devices\
@@ -46,10 +48,7 @@ Reduce Power and RAM consumption by optimizing system parameters, disabling Apps
 ## How to install?
 - Flash the zip in Magisk.
 
-## How to uninstall?
-- Uninstall it in Magisk. (No leftovers)
-
-## My Magisk break after uninstalling, what should I do?
+## My Magisk break after uninstalled, what should I do?
 - Reboot again
 
 ## Just in case you bricked it
