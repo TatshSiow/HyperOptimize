@@ -1,3 +1,6 @@
+# Never download from source!
+Only download from releases
+
 # Developer Notice
 To adapt HyperOS 2 and eliminate compatibility problems\
 I decided to rebuild from scratch again (polish and revise)\
