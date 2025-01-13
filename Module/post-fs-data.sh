@@ -19,7 +19,11 @@ fi
 
 if [ "$(getprop ro.mi.os.version.name)" = "OS2.0" ]; then
     # ZRAM 1:1
+    resetprop -n persist.miui.extm.enable true 
     resetprop -n persist.miui.extm.dm_opt.enable true
+
+else
+    resetprop -n persist.miui.extm.enable false
 fi
 
 # getprop | grep -i (prop-properties)

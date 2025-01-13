@@ -1,15 +1,139 @@
-# Test
+# sensor event to onetrack
+persist.vendor.sensor.onetrack=false
+
+# Disable Gralloc logs
+vendor.gralloc.enable_logs=0
+
+# Disable Sensor HAL Trigger
+persist.vendor.sensors.debug.hal_trigger_crash=false
+persist.vendor.sensors.debug.hal_trigger_ssr=false
+
+#disable Coresight
+persist.debug.coresight.config=disable
+
+# Camera Log
+persist.vendor.camera.logstate=0
+
+# LMK
+persist.sys.lmk.reportkills=false
+
+# qseelogd
+persist.sys.qseelogd=false
+
+# Logd
+persist.logd.limit=Off
+persist.logd.size=-1
+persist.logd.size.crash=Off
+persist.logd.size.main=-1
+persist.logd.size.radio=Off
+persist.logd.size.system=Off
+ro.logd.size=-1
+ro.logd.size.stats=-1
+
+# Out Of Memory Watchdog
+persist.sys.oom_crash_on_watchdog=false
+
+# Just-In-Time (JIT)
+dalvik.vm.usejit=true
+
+# USAP Pool
+dalvik.vm.usap_pool_enabled=true
+
+# SF refresh rate detection
+ro.surface_flinger.use_content_detection_for_refresh_rate=true
+
+# backpressure
+debug.sf.disable_backpressure=0
+debug.sf.enable_gl_backpressure=1
+
+# some logs
+debug.mdpcomp.logs=0
+persist.vendor.radio.adb_log_on=0
+persist.traced.enable=0
+
+#MiniDebug
+dalvik.vm.dex2oat-minidebuginfo=false
+dalvik.vm.minidebuginfo=false
+
+# Disable Wi-Fi Round Trip Time
+config.disable_rtt=true
+
+#Disable Power Monitor Tools
+debug.power.monitor_tools=false
+
+# Hides Debug Environment detection
+ro.debuggable=0
+
+# Disabling increase boot time slightly but could save some system resources during boot
+persist.sys.use_boot_compact=false
+
+# Dynamic Refresh Rate Support (RC=RefreshrateControl)
+vendor.display.enable_rc_support=1
+
+# Disallow framepacing in favor of FAS algorithms
+vendor.perf.framepacing.enable=false
+
+# Disable Skia Atrace Debug
+debug.hwui.skia_atrace_enabled=false
+
+# Disable atrace flags
+debug.atrace.tags.enableflags=0
+
+# Disable force Software GL (enable hw acceleration)
+persist.sys.force_sw_gles=0
+
+# 启用`scout`相关的调试功能，通过socket接口进行数据转储。通常用于开发者在特定场景下进行数据采集和分析。
+persist.sys.scout_dumpbysocket=false
+
+#启用内存恢复监控，特别关注`scout`进程在内存恢复时的行为，帮助开发人员调试内存管理问题。
+persist.sys.debug.enable_scout_memory_resume=false
+
+# Ramdump
+persist.vendor.ssr.enable_ramdumps=0
+ro.vendor.displayfeature.dump=false
+vendor.display.disable_hw_recovery_dump=1
+
+# OfflineLog
+persist.sys.offlinelog=false
+persist.sys.offlinelog.bootlog=false
+persist.sys.offlinelog.kernel=false
+persist.sys.offlinelog.logcat=false
+service.offlinelog.bootloader=false
+
+# SmartOP
+persist.sys.smartop.support_ysre=true
+
+# SmartPower
+persist.sys.smartpower.fz.enable=true
+
+# 启用或切换MMS服务的某些功能。这个配置项可能涉及与MMS相关的后台服务、消息传输协议或数据管理。
 persist.sys.mmms.switch=false
-persist.sys.smartpower.intercept.enable=false
-persist.sys.smartpower.appstate.enable=false
 
-# Disables Preload/Prefetch
+# 启用智能电源拦截功能。这个功能可能用于在特定情况下自动调整设备的电源使用策略，以延长电池寿命。
+persist.sys.smartpower.intercept.enable=true
+
+# 启用了智能功耗管理功能，特别针对显示屏功耗优化。
+persist.sys.smartpower.display.enable=true
+
+# 启用预加载功能，以在系统启动时预先加载某些应用程序或资源。这可以提高应用启动速度和用户体验。
 persist.zygote.preload=false
-persist.sys.app_dexfile_preload.enable=false
 
-# Sched
-persist.sys.smart_gc.enable=false
-persist.sys.stability.gcImproveEnable.8false8=false
+# 启用了智能垃圾收集（Smart Garbage Collection，GC）功能，优化内存的使用和回收，减少性能开销。
+persist.sys.smart_gc.enable=true
+
+# 这些配置启用了智能 I/O 操作和可回收状态缓存机制，提高系统稳定性和 I/O 性能。
+persist.sys.stability.abreuse_status=on
+persist.sys.stability.smartfocusio=on
+
+# 启用快速休眠功能，有助于节省电池寿命并提高网络响应速度。
+ro.vendor.radio.fastdormancy=true
+
+# 启用MIUI的新的性能调节机制（SPTM）。这个设置可能与系统的资源调度和电池管理有关，以优化整体性能。
+persist.sys.miui_sptm_new.enable=true
+persist.sys.miui_sptm.enable=true
+
+# 启用启动响应优化，可能旨在缩短应用程序的启动时间，提高用户体验。
+persist.sys.launch_response_optimization.enable=true
 
 # Unified Bandwidth Compression (Lower Power Consumption if supported)
 video.disable.ubwc=0
@@ -18,11 +142,72 @@ vendor.video.disable.ubwc=0
 debug.gralloc.enable_fb_ubwc=1
 vendor.gralloc.enable_fb_ubwc=1
 
-# Touch Events detection
-resetprop -n windowsmgr.max_events_per_sec 240
 
-# Power Management Dynamic sampling
-resetprop -n dev.pm.dyn_samplingrate 1
+
+# 启用视频的音频卸载，允许将视频流的音频处理从CPU转移到其他硬件，以提高性能。
+audio.offload.video=true
+
+# 启用深缓冲（Deep Buffer）媒体功能，这通常用于提高音频流的平稳性，减少音频播放中的卡顿。
+audio.deep_buffer.media=true
+
+# 启用MIUI的性能优化服务“MiPerf”。这个配置通常用于提高系统的整体性能，通过优化调度或资源分配来提供更流畅的用户体验。
+persist.miui.miperf.enable=false
+
+#Log Tags
+log.tag.AF::MmapTrack=S
+log.tag.AF::OutputTrack=S
+log.tag.AF::PatchRecord=S
+log.tag.AF::PatchTrack=S
+log.tag.AF::RecordHandle=S
+log.tag.AF::RecordTrack=S
+log.tag.AF::Track=S
+log.tag.AF::TrackBase=S
+log.tag.AF::TrackHandle=S
+log.tag.APM::AudioCollections=S
+log.tag.APM::AudioInputDescriptor=S
+log.tag.APM::AudioOutputDescriptor=S
+log.tag.APM::AudioPatch=S
+log.tag.APM::AudioPolicyEngine=S
+log.tag.APM::AudioPolicyEngine::Base=S
+log.tag.APM::AudioPolicyEngine::Config=S
+log.tag.APM::AudioPolicyEngine::ProductStrategy=S
+log.tag.APM::AudioPolicyEngine::VolumeGroup=S
+log.tag.APM::Devices=S
+log.tag.APM::IOProfile=S
+log.tag.APM::Serializer=S
+log.tag.APM::VolumeCurve=S
+log.tag.APM_AudioPolicyManager=S
+log.tag.APM_ClientDescriptor=S
+log.tag.AudioAttributes=S
+log.tag.AudioEffect=S
+log.tag.AudioFlinger=S
+log.tag.AudioFlinger::DeviceEffectProxy=S
+log.tag.AudioFlinger::DeviceEffectProxy::ProxyCallback=S
+log.tag.AudioFlinger::EffectBase=S
+log.tag.AudioFlinger::EffectChain=S
+log.tag.AudioFlinger::EffectHandle=S
+log.tag.AudioFlinger::EffectModule=S
+log.tag.AudioFlinger_Threads=S
+log.tag.AudioHwDevice=S
+log.tag.AudioPolicy=S
+log.tag.AudioPolicyEffects=S
+log.tag.AudioPolicyIntefaceImpl=S
+log.tag.AudioPolicyService=S
+log.tag.AudioProductStrategy=S
+log.tag.AudioRecord=S
+log.tag.AudioSystem=S
+log.tag.AudioTrack=S
+log.tag.AudioTrackShared=S
+log.tag.AudioVolumeGroup=S
+log.tag.FastCapture=S
+log.tag.FastMixer=S
+log.tag.FastMixerState=S
+log.tag.FastThread=S
+log.tag.IAudioFlinger=S
+log.tag.MDnsDS=S
+log.tag.ToneGenerator=S
+log.tag.stats_log=S
+persist.log.tag=S
 
 #######################################
 # 以下來自 Nakixii 的 r2p1 magisk 模塊 #
@@ -124,6 +309,7 @@ persist.sys.force_sw_gles=0
 
 # Faster game loading
 debug.game.video.support=true
+debug.game.video.speed=true
 
 # LTPO Optimize
 ro.vendor.mi_sf.support_automode_for_normalfps=true
@@ -137,7 +323,6 @@ ro.sf.blurs_are_expensive=0
 persist.sys.add_blurnoise_supported=true
 
 # Memory Management
-persist.miui.extm.enable=false
 persist.sys.mms.bg_apps_limit=65535
 persist.sys.mms.compact_enable=false
 persist.sys.mms.single_compact_enable=false
@@ -180,14 +365,9 @@ persist.sys.dynamic_usap_enabled=false
 persist.sys.stability.iorapEnable=false
 
 # Sched
-persist.sys.miui_animator_sched.sched_threads=0
-persist.miui.miperf.enable=false
 persist.sys.precache.enable=false
 persist.sys.enable_perf_hint=false
 persist.sys.miui_scout_enable=false
-persist.sys.miui_sptm.enable=false
-persist.sys.miui_sptm_new.enable=false
-persist.sys.miui_sptm.ignore_cloud_enable=false
 persist.sys.miui_startup_mode.enable=false
 persist.sys.miui_slow_startup_mode.enable=false
 persist.sys.miuibooster.launch.rtmode=false
@@ -237,7 +417,3 @@ persist.sys.stability.reboot_days=-1
 persist.sys.stability.smartfocusio=off
 persist.sys.stability.fbo_hal_stop=false
 persist.sys.fboservice.ctrl=true
-
-#Log Tags
-log.tag=S
-persist.log.tag=S
