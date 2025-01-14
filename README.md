@@ -24,10 +24,10 @@ Reduce Power and RAM consumption by optimizing system parameters, disabling Apps
 - Debloat PreInstalled Apps
 - Disable logging services
 - Debloat Android core process
-- GPU/KGSL Optimization
-- CPU/Core Optimization
+- GPU Optimization
+- CPU Optimization
 - Load Balancing Tweaks
-- Linux I/O Tweaks
+- I/O Tweaks
 - Hardware Optimization
 - HyperOS System Optimization
 
