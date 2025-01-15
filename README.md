@@ -20,7 +20,8 @@ Hoping it will be another good start on next release\
 This is a Magisk Module for HyperOS based devices\
 Reduce Power and RAM consumption by optimizing system parameters, disabling Apps & System Process
 
-## What's inside?
+## What it does?
+- **Hides Momo Zygisk Inject Detection**
 - Debloat PreInstalled Apps
 - Disable logging services
 - Debloat Android core process
