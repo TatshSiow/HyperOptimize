@@ -41,7 +41,8 @@ Reduce Power and RAM consumption by optimizing system parameters, disabling Apps
 - Flash the zip in Magisk.
 
 ## My Magisk break after uninstalled, what should I do?
-- Reboot again
+- Force close and launch again
+- If still fails, reboot again
 
 ## Just in case you bricked it
 1. boot into TWRP or `adb reboot recovery` or `fastboot reboot recovery`
@@ -56,5 +57,5 @@ Reduce Power and RAM consumption by optimizing system parameters, disabling Apps
 
 
 ## This project is protected under GPL 3.0 License
-<a href="https://github.com/TatshSiow/HyperOptimize/blob/main/LICENSE" ><img height="50" src="https://upload.wikimedia.org/wikipedia/commons/9/93/GPLv3_Logo.svg"/></a>
+<a href="https://github.com/TatshSiow/HyperOptimize/blob/main/LICENSE" ><img src="https://upload.wikimedia.org/wikipedia/commons/9/93/GPLv3_Logo.svg"/></a>
 
