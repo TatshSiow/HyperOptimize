@@ -55,6 +55,6 @@ Reduce Power and RAM consumption by optimizing system parameters, disabling Apps
 * Your warranty will be void if you tamper with any part of your device / software.
 
 
-## This project is created under GPL 3.0 License
+## This project is protected under GPL 3.0 License
 <a href="https://github.com/TatshSiow/HyperOptimize/blob/main/LICENSE" ><img height="50" src="https://upload.wikimedia.org/wikipedia/commons/9/93/GPLv3_Logo.svg"/></a>
 
