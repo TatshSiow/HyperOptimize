@@ -22,6 +22,7 @@ Reduce Power and RAM consumption by optimizing system parameters, disabling Apps
 
 ## What it does?
 - **Hides Detection : Zygisk Injected**
+- **Hides Detection : Debugging Environment**
 - Debloat Apps
 - Debloat system process
 - Disable logging
