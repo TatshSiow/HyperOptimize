@@ -21,23 +21,24 @@ This is a Magisk Module for HyperOS based devices\
 Reduce Power and RAM consumption by optimizing system parameters, disabling Apps & System Process
 
 ## What it does?
-- **Hides Momo Zygisk Inject Detection**
-- Debloat PreInstalled Apps
-- Disable logging services
-- Debloat Android core process
-- GPU Optimization
+- **Hides Detection : Zygisk Injected**
+- Debloat Apps
+- Debloat system process
+- Disable logging
+- Disable Wakelocks
 - CPU Optimization
-- Load Balancing Tweaks
-- I/O Tweaks
-- Hardware Optimization
+- GPU Optimization
+- I/O Optimization
+- Surface Flinger Tweaks
+- Memory Management Tweaks
+- System parameters Optimization
 - HyperOS System Optimization
 
 ## Requirements
 - Device using HyperOS
-- Android 13+
 
 ## Dev Notes
-- **Brick Rescue Module** is always recommended
+- **Bootloop Rescue Module** is always recommended
 - **MIUI** not tested
 - **Tablets/Pads** not tested
 - **NOT GUARANTEED** to work on all builds
