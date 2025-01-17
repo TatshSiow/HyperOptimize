@@ -79,12 +79,6 @@ if [ "$(getprop ro.hardware)" = "qcom" ]; then
   mask_val "4" /proc/sys/kernel/sched_pelt_multiplier
 fi
 
-# CPUset Adjustment
-lock_val "0-2" /dev/cpuset/background/cpus
-lock_val "0-2" /dev/cpuset/system-background/cpus
-lock_val "0-6" /dev/cpuset/foreground/cpus
-lock_val "0-7" /dev/cpuset/top-app/cpus
-
 # Xiaomi Config
 stop mimd-service
 mask_val "0" /sys/module/migt/parameters/enable_pkg_monitor
@@ -103,24 +97,31 @@ logd
 tombstoned
 traced
 traced_probes
-diag-router
-ipacm-diag
-mi-thermald
-ssgqmigd
+vendor.diag-router
+vendor.ipacm-diag
+mi_thermald
 subsystem_ramdump
+qesdk-manager
+vendor.modemManager
+vendor.qesdk-mgr
 statsd
 misight
 update_engine
+mqsasd
+vendor.mi_misight
 "
-#statsd
-#misight
-#update_engine
 
 for name in $process; do
-  stop "$name" 2>/dev/null
-  am kill "$name" 2>/dev/null
-  killall -9 "$name" 2>/dev/null
+  su -c stop "$name" 2>/dev/null 
+  su -c killall -9 "$name" 2>/dev/null 
 done
+  # am kill "$name" 2>/dev/null 
+
+# CPUset Adjustment
+lock_val "0-2" /dev/cpuset/background/cpus
+lock_val "0-2" /dev/cpuset/system-background/cpus
+lock_val "0-6" /dev/cpuset/foreground/cpus
+lock_val "0-7" /dev/cpuset/top-app/cpus
 
 exit
 

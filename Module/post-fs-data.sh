@@ -212,3 +212,14 @@ if [ -d "/sys/block/sda" ] && [ "$(getprop init.svc.vendor.fbo-hal-1-0)" ] && [ 
     resetprop -n persist.sys.fboservice.ctrl true
     resetprop -n persist.sys.stability.miui_fbo_start_count 1
 fi
+
+
+# 有些設定system.prop吃不到，我放這裡總可以了吧（？
+#Disable Power Monitor Tools
+su -c "resetprop -n debug.power.monitor_tools false"
+# LMK
+su -c "resetprop -n persist.sys.lmk.reportkills false"
+
+# statsd
+su -c "resetprop -n persist.device_config.runtime_native.metrics.write-to-statsd false"
+su -c "resetprop -n persist.device_config.statsd_native_boot.enable_restricted_metrics false"

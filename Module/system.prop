@@ -1,8 +1,117 @@
-# 智能I/O優化，查到的文檔寫ON=cpq,OFF=mq-deadline（UFS普遍用ssg）
-persist.sys.stability.smartfocusio=on
+# 禁用調試環境 Hides Debug Environment detection
+ro.debuggable=0
+
+# SF refresh rate detection
+# （如果有使用自定義的刷新率偵測dfps等，不適用）
+# ro.surface_flinger.use_content_detection_for_refresh_rate=true
+
+# Dynamic Refresh Rate Support (RC=RefreshrateControl)
+# 暫時不改這個，dfps之類的可能會受影響
+# vendor.display.enable_rc_support=1
+
+#启用了额外的模糊噪点效果，增强 UI 的视觉体验。
+persist.sys.add_blurnoise_supported=false
+
+
+
+#####################
+#	修復後台卡死 		#
+#####################
+# 启用了智能垃圾收集（Smart Garbage Collection，GC）功能，优化内存的使用和回收，减少性能开销。
+# 所有【智能】相關的，通常都會有意想不到的驚喜:)
+persist.sys.stability.gcImproveEnable.808=false
+persist.sys.smart_gc.enable=false
+persist.sys.smart_gc.packages=
+
+#################
+#	I/O 調整 	#
+#################
+# 智能I/O優化，查到的文檔寫ON=cpq,OFF=mq-deadline
+#（此項功能會為了快速達成I/O傳輸，提升功耗）
+persist.sys.stability.smartfocusio=off
+
+# I/O 加速
+vendor.mi.mpbe.enable=1
+vendor.mi.mpbe.ioboost.enable=1
+
+#####################
+#	安卓系統相關		#
+#####################
+
+# 启用视频的音频卸载，允许将视频流的音频处理从CPU转移到其他硬件，以提高性能。
+audio.offload.video=true
+
+# 启用深缓冲（Deep Buffer）媒体功能，这通常用于提高音频流的平稳性，减少音频播放中的卡顿。
+#（音遊之類的會有延遲）
+# audio.deep_buffer.media=true
+
+# 启用或切换MMS服务的某些功能。这个配置项可能涉及与MMS相关的后台服务、消息传输协议或数据管理。
+persist.sys.mmms.switch=false
+
+# Disable Wi-Fi Round Trip Time
+config.disable_rtt=true
 
 # 启用快速休眠功能，有助于节省电池寿命并提高网络响应速度。
+# (此項功能並未列入近期安卓的build.prop中，稱之為玄學) #
 ro.vendor.radio.fastdormancy=true
+
+# Just-In-Time (JIT)
+# Reduces app lag but increases CPU usage and power consumption during runtime
+# dalvik.vm.usejit=true
+
+# 在我還沒有好好了解backpressure之前，先不修改
+# debug.sf.disable_backpressure=0
+# debug.sf.enable_gl_backpressure=1
+
+#################
+#	智能相關		#
+#################
+
+# 启用智能电源拦截功能。这个功能可能用于在特定情况下自动调整设备的电源使用策略，以延长电池寿命。
+# （我開關體感沒有區別，所以有【智能】兩個字的一般都要額外耗費資源）
+persist.sys.smartpower.intercept.enable=false
+
+# 启用了智能功耗管理功能，特别针对显示屏功耗优化。
+# （我開關體感沒有區別，所以有【智能】兩個字的一般都要額外耗費資源）
+persist.sys.smartpower.display.enable=false
+
+# SmartOP
+# 看不到什麼文檔，但是根據酷安那裡的資料
+# 大概YSRE=YuanShenResolutionEnabler，我不知道哈哈哈
+persist.sys.smartop.support_ysre=false
+
+# SmartPower
+persist.sys.smartpower.fz.enable=false
+
+#####################
+#	小米策略相關		#
+#####################
+
+# 启用MIUI的性能优化服务“MiPerf”。这个配置通常用于提高系统的整体性能，通过优化调度或资源分配来提供更流畅的用户体验。
+# persist.miui.miperf.enable=false
+
+# 启用MIUI的新的性能调节机制（SPTM）。这个设置可能与系统的资源调度和电池管理有关，以优化整体性能。
+# persist.sys.miui_sptm_new.enable=true
+# persist.sys.miui_sptm.enable=true
+
+# Disallow framepacing in favor of FAS algorithms
+# （FAS基本上可以算是遊戲專用了，其餘你沒機會用）
+# vendor.perf.framepacing.enable=false
+
+#####################
+#	Preload 相關		#
+#####################
+
+# 启用启动响应优化，可能旨在缩短应用程序的启动时间，提高用户体验。
+#（也是屬於Preload）
+persist.sys.launch_response_optimization.enable=false
+
+# 启用预加载功能，以在系统启动时预先加载某些应用程序或资源。这可以提高应用启动速度和用户体验。
+persist.zygote.preload=false
+
+#########################
+# Logging and Debugging #
+#########################
 
 # vendor/etc/init/hw/init.qcom.rc
 persist.debug.trace=0
@@ -12,82 +121,15 @@ persist.logd.diag.mobilelog=false
 persist.sys.qlogd=0
 
 # init.qti.kernel.rc
-persist.sys.ssr.enable_debug=
+persist.sys.ssr.enable_debug=false
 persist.vendor.sys.rawdump_copy=0
 
-# SmartOP
-# persist.sys.smartop.support_ysre=true
+# histograms for system metrics and usage statistics
+ro.vendor.histogram.enable=false
+vendor.display.disable_sdr_histogram=1
 
-# SmartPower
-# persist.sys.smartpower.fz.enable=true
-
-# Disallow framepacing in favor of FAS algorithms
-# vendor.perf.framepacing.enable=false
-
-# Just-In-Time (JIT)
-dalvik.vm.usejit=true
-
-# SF refresh rate detection
-ro.surface_flinger.use_content_detection_for_refresh_rate=true
-
-# backpressure
-debug.sf.disable_backpressure=0
-debug.sf.enable_gl_backpressure=1
-
-# Disable Wi-Fi Round Trip Time
-config.disable_rtt=true
-
-#Disable Power Monitor Tools
-debug.power.monitor_tools=false
-
-# Hides Debug Environment detection
-ro.debuggable=0
-
-# Dynamic Refresh Rate Support (RC=RefreshrateControl)
-vendor.display.enable_rc_support=1
-
-
-# 启用或切换MMS服务的某些功能。这个配置项可能涉及与MMS相关的后台服务、消息传输协议或数据管理。
-persist.sys.mmms.switch=false
-
-# 启用智能电源拦截功能。这个功能可能用于在特定情况下自动调整设备的电源使用策略，以延长电池寿命。
-persist.sys.smartpower.intercept.enable=true
-
-# 启用了智能功耗管理功能，特别针对显示屏功耗优化。
-persist.sys.smartpower.display.enable=true
-
-# 启用预加载功能，以在系统启动时预先加载某些应用程序或资源。这可以提高应用启动速度和用户体验。
-persist.zygote.preload=false
-
-# 启用了智能垃圾收集（Smart Garbage Collection，GC）功能，优化内存的使用和回收，减少性能开销。
-# persist.sys.smart_gc.enable=true
-
-# 这些配置启用了智能 I/O 操作和可回收状态缓存机制，提高系统稳定性和 I/O 性能。
-persist.sys.stability.abreuse_status=on
-
-# 启用快速休眠功能，有助于节省电池寿命并提高网络响应速度。
-ro.vendor.radio.fastdormancy=true
-
-# 启用MIUI的新的性能调节机制（SPTM）。这个设置可能与系统的资源调度和电池管理有关，以优化整体性能。
-# persist.sys.miui_sptm_new.enable=true
-# persist.sys.miui_sptm.enable=true
-
-# 启用启动响应优化，可能旨在缩短应用程序的启动时间，提高用户体验。
-# persist.sys.launch_response_optimization.enable=true
-
-
-# 启用视频的音频卸载，允许将视频流的音频处理从CPU转移到其他硬件，以提高性能。
-audio.offload.video=true
-
-# 启用深缓冲（Deep Buffer）媒体功能，这通常用于提高音频流的平稳性，减少音频播放中的卡顿。
-audio.deep_buffer.media=true
-
-# 启用MIUI的性能优化服务“MiPerf”。这个配置通常用于提高系统的整体性能，通过优化调度或资源分配来提供更流畅的用户体验。
-persist.miui.miperf.enable=false
-
-#########################
-# Logging and Debugging #
-#########################
+#LMK
+sys.lmk.reportkills=0
 
 # 启用`scout`相关的调试功能，通过socket接口进行数据转储。通常用于开发者在特定场景下进行数据采集和分析。
 persist.sys.scout_dumpbysocket=false
@@ -102,7 +144,7 @@ debug.atrace.tags.enableflags=0
 debug.mdpcomp.logs=0
 persist.vendor.radio.adb_log_on=0
 persist.traced.enable=0
-
+persist.vendor.camera.mawlog.main=0
 
 #启用内存恢复监控，特别关注`scout`进程在内存恢复时的行为，帮助开发人员调试内存管理问题。
 persist.sys.debug.enable_scout_memory_resume=false
@@ -132,9 +174,6 @@ service.offlinelog.bootloader=false
 # Camera Log
 persist.vendor.camera.logstate=0
 
-# LMK
-persist.sys.lmk.reportkills=false
-
 # qseelogd
 persist.sys.qseelogd=false
 
@@ -152,60 +191,9 @@ ro.logd.size.stats=-1
 persist.sys.oom_crash_on_watchdog=false
 
 #Log Tags
-log.tag.AF::MmapTrack=S
-log.tag.AF::OutputTrack=S
-log.tag.AF::PatchRecord=S
-log.tag.AF::PatchTrack=S
-log.tag.AF::RecordHandle=S
-log.tag.AF::RecordTrack=S
-log.tag.AF::Track=S
-log.tag.AF::TrackBase=S
-log.tag.AF::TrackHandle=S
-log.tag.APM::AudioCollections=S
-log.tag.APM::AudioInputDescriptor=S
-log.tag.APM::AudioOutputDescriptor=S
-log.tag.APM::AudioPatch=S
-log.tag.APM::AudioPolicyEngine=S
-log.tag.APM::AudioPolicyEngine::Base=S
-log.tag.APM::AudioPolicyEngine::Config=S
-log.tag.APM::AudioPolicyEngine::ProductStrategy=S
-log.tag.APM::AudioPolicyEngine::VolumeGroup=S
-log.tag.APM::Devices=S
-log.tag.APM::IOProfile=S
-log.tag.APM::Serializer=S
-log.tag.APM::VolumeCurve=S
-log.tag.APM_AudioPolicyManager=S
-log.tag.APM_ClientDescriptor=S
-log.tag.AudioAttributes=S
-log.tag.AudioEffect=S
-log.tag.AudioFlinger=S
-log.tag.AudioFlinger::DeviceEffectProxy=S
-log.tag.AudioFlinger::DeviceEffectProxy::ProxyCallback=S
-log.tag.AudioFlinger::EffectBase=S
-log.tag.AudioFlinger::EffectChain=S
-log.tag.AudioFlinger::EffectHandle=S
-log.tag.AudioFlinger::EffectModule=S
-log.tag.AudioFlinger_Threads=S
-log.tag.AudioHwDevice=S
-log.tag.AudioPolicy=S
-log.tag.AudioPolicyEffects=S
-log.tag.AudioPolicyIntefaceImpl=S
-log.tag.AudioPolicyService=S
-log.tag.AudioProductStrategy=S
-log.tag.AudioRecord=S
-log.tag.AudioSystem=S
-log.tag.AudioTrack=S
-log.tag.AudioTrackShared=S
-log.tag.AudioVolumeGroup=S
-log.tag.FastCapture=S
-log.tag.FastMixer=S
-log.tag.FastMixerState=S
-log.tag.FastThread=S
-log.tag.IAudioFlinger=S
-log.tag.MDnsDS=S
-log.tag.ToneGenerator=S
 log.tag.stats_log=S
 persist.log.tag=S
+persist.log.tag.snet_event_log=S
 
 #######################################
 # 以下來自 Nakixii 的 r2p1 magisk 模塊 #
@@ -303,7 +291,6 @@ debug.renderengine.backend=skiaglthreaded
 debug.stagefright.renderengine.backend=threaded
 persist.sys.force_sw_gles=0
 
-
 # Faster game loading
 debug.game.video.support=true
 debug.game.video.speed=true
@@ -312,12 +299,12 @@ debug.game.video.speed=true
 ro.vendor.mi_sf.support_automode_for_normalfps=true
 
 # More blurring
-# ro.launcher.blur.appLaunch=1
-# persist.sys.background_blur_supported=true
-# persist.sys.background_blur_version=2
-# persist.sys.advanced_visual_release=3
-# ro.sf.blurs_are_expensive=0
-# persist.sys.add_blurnoise_supported=true
+ro.launcher.blur.appLaunch=1
+persist.sys.background_blur_supported=true
+persist.sys.background_blur_version=2
+persist.sys.advanced_visual_release=3
+ro.sf.blurs_are_expensive=0
+persist.sys.add_blurnoise_supported=true
 
 # Memory Management
 persist.miui.extm.enable=false
@@ -372,7 +359,7 @@ persist.sys.miuibooster.launch.rtmode=false
 persist.sys.miuibooster.rtmode=false
 # persist.miui.home_reuse_leash=true
 # ro.miui.shell_anim_enable_fcb=false
-# persist.sys.hyper_transition=true
+persist.sys.hyper_transition=false
 # persist.sys.hyper.barfollow_anim=true
 # persist.sys.gesture_anim_magic_speed=1.0
 
