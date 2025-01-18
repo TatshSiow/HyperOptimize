@@ -35,6 +35,9 @@ Reduce Power and RAM consumption by optimizing system parameters, disabling Apps
 > - **Bootloop Rescue Module** is always recommended
 > - **CONFLICT** with module with same purpose
 
+> [!WARNING]  
+> - Created especially for magisk
+> - KSU and APatch, test yourself
 ### How to install?
 - Flash in Magisk
 
