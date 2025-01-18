@@ -10,7 +10,7 @@ This is a Magisk Module for HyperOS based devices\
 Reduce Power and RAM consumption by optimizing system parameters, disabling Apps & System Process
 
 ## What it does?
-- **Hides Detection : Zygisk Injected**
+- **Hides Detection : Zygisk Injected** (with ReZygisk)
 - **Hides Detection : Debugging Environment**
 - Debloat Apps
 - Debloat system process
@@ -34,21 +34,23 @@ Reduce Power and RAM consumption by optimizing system parameters, disabling Apps
 - **NOT GUARANTEED** to work on all builds
 - **CONFLICT** with module with same purpose
 
-## Customize debloat list
+## FAQ
+
+### Customize debloat list
 - Edit `replace=""` section in the `setup.sh` file if you want specific apps to not be disabled (eg. Gboard)
 
-## How to install?
+### How to install?
 - Flash the zip in Magisk.
 
-## My Magisk break after uninstalled, what should I do?
+### My Magisk break after uninstalled, what should I do?
 - Force close and launch again
 - If still fails, reboot again
 
-## Just in case you bricked it
-1. boot into TWRP or `adb reboot recovery` or `fastboot reboot recovery`
-2. Open File manager
-3. Goto data/adb/modules
-4. delete the module
+### I bricked my phone, what should I do?!
+1. boot into TWRP **or** `adb reboot recovery` **or** `fastboot reboot recovery`
+3. Open File manager
+4. Go to `data/adb/modules`
+5. delete the module and reboot
 
 ## Disclaimer
 * I'm not responsible for bricked devices, dead SD cards, thermonuclear war, or you getting fired because the alarm app failed (like it did for me...).
