@@ -1,5 +1,4 @@
-DEV NOTES: FIXING BOOTLOOP ISSUES, WILL BE FIXED ON NEXT RELEASE
-![test](https://github.com/user-attachments/assets/5cf75f24-5993-4e64-b3b2-328f30d4ff31)
+![](https://github.com/user-attachments/assets/5cf75f24-5993-4e64-b3b2-328f30d4ff31)
 <div align="center">
 <a href="https://t.me/TatshSecretCave" ><img height="50" src="https://www.vectorlogo.zone/logos/telegram/telegram-tile.svg"/></a>
 
