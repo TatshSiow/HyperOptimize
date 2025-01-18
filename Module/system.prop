@@ -12,8 +12,6 @@ ro.debuggable=0
 #启用了额外的模糊噪点效果，增强 UI 的视觉体验。
 persist.sys.add_blurnoise_supported=false
 
-
-
 #####################
 #	修復後台卡死 		#
 #####################
