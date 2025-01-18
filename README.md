@@ -7,6 +7,9 @@
 </div>
 
 # What is this?
+> [!IMPORTANT]  
+> Only for Hyper OS
+
 This is a Magisk Module for HyperOS based devices\
 Reduce Power and RAM consumption by optimizing system parameters, disabling Apps & System Process
 
@@ -25,12 +28,15 @@ Reduce Power and RAM consumption by optimizing system parameters, disabling Apps
 - System parameters Optimization
 - HyperOS System Optimization
 
-> [!IMPORTANT]  
-> Only for Hyper OS
 
+
+## FAQ
 > [!CAUTION]  
 > - **Bootloop Rescue Module** is always recommended
 > - **CONFLICT** with module with same purpose
+
+### How to install?
+- Flash in Magisk
 
 ### My Magisk break after uninstalled, what should I do?
 - Force close and launch again
