@@ -1,8 +1,9 @@
-![](https://github.com/user-attachments/assets/5cf75f24-5993-4e64-b3b2-328f30d4ff31)
-<div align="center">
-<a href="https://t.me/TatshSecretCave" ><img height="50" src="https://www.vectorlogo.zone/logos/telegram/telegram-tile.svg"/></a>
 
-<a href="https://t.me/TatshSecretCave" >Telegram</a>
+<div align="center">
+  
+  ![](https://github.com/user-attachments/assets/5cf75f24-5993-4e64-b3b2-328f30d4ff31)\
+  <a href="https://t.me/TatshSecretCave" ><img height="50" src="https://www.vectorlogo.zone/logos/telegram/telegram-tile.svg"/></a>\
+  <a href="https://t.me/TatshSecretCave" >Telegram</a>
 </div>
 
 # What is this?
@@ -10,7 +11,7 @@ This is a Magisk Module for HyperOS based devices\
 Reduce Power and RAM consumption by optimizing system parameters, disabling Apps & System Process
 
 ## What it does?
-- **Hides Detection : Zygisk Injected** (with ReZygisk)
+- **Hides Detection : Zygisk Injected** ( with [ReZygisk](https://github.com/PerformanC/ReZygisk) )
 - **Hides Detection : Debugging Environment**
 - Debloat Apps
 - Debloat system process
