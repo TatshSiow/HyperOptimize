@@ -24,20 +24,12 @@ Reduce Power and RAM consumption by optimizing system parameters, disabling Apps
 - System parameters Optimization
 - HyperOS System Optimization
 
-## Requirements
-- Device using HyperOS
+> [!IMPORTANT]  
+> Only for Hyper OS
 
-## Dev Notes
-- **Bootloop Rescue Module** is always recommended
-- **CONFLICT** with module with same purpose
-
-## FAQ
-
-### Customize debloat list
-- Edit `replace=""` section in the `setup.sh` file if you want specific apps to not be disabled (eg. Gboard)
-
-### How to install?
-- Flash the zip in Magisk.
+> [!CAUTION]  
+> - **Bootloop Rescue Module** is always recommended
+> - **CONFLICT** with module with same purpose
 
 ### My Magisk break after uninstalled, what should I do?
 - Force close and launch again
