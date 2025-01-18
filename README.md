@@ -29,9 +29,6 @@ Reduce Power and RAM consumption by optimizing system parameters, disabling Apps
 
 ## Dev Notes
 - **Bootloop Rescue Module** is always recommended
-- **MIUI** not tested
-- **Tablets/Pads** not tested
-- **NOT GUARANTEED** to work on all builds
 - **CONFLICT** with module with same purpose
 
 ## FAQ
