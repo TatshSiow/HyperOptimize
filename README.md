@@ -1,4 +1,6 @@
-
+> [!IMPORTANT]
+> Only download from releases\
+> Don't clone the module or expect things to break
 <div align="center">
   
   ![](https://github.com/user-attachments/assets/5cf75f24-5993-4e64-b3b2-328f30d4ff31)\
@@ -7,7 +9,7 @@
 </div>
 
 # What is this?
-> [!IMPORTANT]  
+> [!NOTE]  
 > Only for Hyper OS
 
 Reduce Power and RAM consumption by optimizing system parameters, disabling Apps & System Process\
