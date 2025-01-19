@@ -6,10 +6,12 @@
 MODDIR=${0%/*}
 
 ####################################
-# UFS Tuning
+# I/O Tuning
 ####################################
-# Doc: https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/8/html/monitoring_and_managing_system_status_and_performance/factors-affecting-i-o-and-file-system-performance_monitoring-and-managing-system-status-and-performance#generic-block-device-tuning-parameters_factors-affecting-i-o-and-file-system-performance
-
+# Doc:
+# 1. https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/8/html/monitoring_and_managing_system_status_and_performance/factors-affecting-i-o-and-file-system-performance_monitoring-and-managing-system-status-and-performance#generic-block-device-tuning-parameters_factors-affecting-i-o-and-file-system-performance
+# 2. https://brendangregg.com/blog/2015-03-03/performance-tuning-linux-instances-on-ec2.html
+# 3. https://blog.csdn.net/yiyeguzhou100/article/details/100068115
 # Disable All I/O stats
 echo 0 > /sys/block/*/queue/iostats 2>/dev/null
 
@@ -20,10 +22,50 @@ echo 0 > /sys/block/*/queue/nomerges 2>/dev/null
 echo 0 > /sys/block/*/queue/add_random 2>/dev/null
 
 # Set rq_affinity to 2 will evenly distribute load to all cores
-# Doc: https://blog.csdn.net/yiyeguzhou100/article/details/100068115
 echo 2 > /sys/block/*/queue/rq_affinity 2>/dev/null
 
-# echo 128 > /sys/block/*/queue/read_ahead_kb 2>/dev/null
+####################################
+# Kernel Tuning
+####################################
+# never enable this unless you have special usage
+echo 0 > /proc/sys/kernel/sched_child_runs_first 2>/dev/null
+
+# 1 : Optimize for multi core
+echo 1 > /proc/sys/kernel/timer_migration 2>/dev/null
+
+# Enable Power Efficient WQ
+echo "Y" > /sys/module/workqueue/parameters/power_efficient 2>/dev/null
+
+
+# Use vendor default
+# echo 128 > /sys/block/*/queue/nr_requests
+# echo 128 > /sys/block/*/queue/read_ahead_kb
+# 
+#  find / -name '*power_efficient*' 2>/dev/null
+# 
+# sysctl -a
+
+
+#################
+# Memory Tuning
+#################
+echo 50 > /proc/sys/vm/vfs_cache_pressure 2>/dev/null
+echo 30 > /proc/sys/vm/stat_interval 2>/dev/null
+echo 0 > /proc/sys/vm/compaction_proactiveness 2>/dev/null
+
+####################################
+# Net Tuning
+####################################
+echo 0 > /proc/sys/net/ipv4/tcp_timestamps 2>/dev/null
+
+
+####################################
+# Transparent Hugepage
+####################################
+if [ -d "/sys/kernel/mm/transparent_hugepage/" ]; then
+  echo never > /sys/kernel/mm/transparent_hugepage/enabled 2>/dev/null
+  echo never > /sys/kernel/mm/transparent_hugepage/defrag 2>/dev/null
+fi
 
 ############################################################
 # Ramdumps | File System | Kernel Panic | Driver Debugging #
@@ -104,13 +146,6 @@ for debug_2 in $debug_list_2; do
   fi
 done
 
-####################################
-# Transparent Hugepage
-####################################
-if [ -d "/sys/kernel/mm/transparent_hugepage/" ]; then
-  echo never > /sys/kernel/mm/transparent_hugepage/enabled 2>/dev/null
-  echo never > /sys/kernel/mm/transparent_hugepage/defrag 2>/dev/null
-fi
 
 ####################################
 # Printk (thx to KNTD-reborn)

@@ -1,3 +1,19 @@
+# 解除所有 TurboSched
+persist.sys.turbosched.enable=false
+persist.sys.turbosched.enable.coreApp.optimizer=false
+persist.sys.turbosched.enable_v2=false
+persist.sys.turbosched.enabletop20app=false
+persist.sys.turbosched.gaea.enable=false
+
+# 禁用 sf 事務跟蹤
+debug.sf.enable_transaction_tracing=false
+
+# 讓桌面留存後台
+ro.HOME_APP_ADJ=1
+
+###############上面是測試啦~幹你娘#################
+
+
 # 禁用調試環境 Hides Debug Environment detection
 ro.debuggable=0
 
@@ -28,9 +44,10 @@ persist.sys.smart_gc.packages=
 #（此項功能會為了快速達成I/O傳輸，提升功耗）
 persist.sys.stability.smartfocusio=off
 
-# I/O 加速
+# MBPE I/O 加速
 vendor.mi.mpbe.enable=1
 vendor.mi.mpbe.ioboost.enable=1
+#vendor.mi.mpbe.ioturbo.enable=1
 
 #####################
 #	安卓系統相關		#
@@ -53,13 +70,10 @@ config.disable_rtt=true
 # (此項功能並未列入近期安卓的build.prop中，稱之為玄學) #
 ro.vendor.radio.fastdormancy=true
 
-# Just-In-Time (JIT)
-# Reduces app lag but increases CPU usage and power consumption during runtime
-# dalvik.vm.usejit=true
 
-# 在我還沒有好好了解backpressure之前，先不修改
-# debug.sf.disable_backpressure=0
-# debug.sf.enable_gl_backpressure=1
+# 避免冗餘的frame rendering
+debug.sf.disable_backpressure=0
+debug.sf.enable_gl_backpressure=1
 
 #################
 #	智能相關		#
