@@ -27,7 +27,9 @@ Not For Gaming!!!
 - Memory Management Tweaks
 - System parameters Optimization
 - HyperOS System Optimization
-
+> [!TIP]  
+> - [Freezer](https://github.com/Freezer-Team/Freezer) to obtain better battery life
+> - [FCMFix](https://github.com/kooritea/fcmfix) fix notification problem while using tombstone
 
 
 ## FAQ
@@ -35,12 +37,13 @@ Not For Gaming!!!
 > - **Bootloop Rescue Module** is always recommended
 > - **CONFLICT** with module with same purpose
 
-> [!WARNING]  
-> - Created especially for magisk
-> - KSU and APatch, test yourself
+
 
 ### How to install?
 - Flash in Magisk
+> [!WARNING]  
+> - Created especially for magisk
+> - KSU and APatch, test yourself
 
 ### My Magisk break after uninstalled, what should I do?
 - Force close and launch again
