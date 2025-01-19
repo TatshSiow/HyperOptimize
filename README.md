@@ -10,7 +10,8 @@
 > [!IMPORTANT]  
 > Only for Hyper OS
 
-Reduce Power and RAM consumption by optimizing system parameters, disabling Apps & System Process
+Reduce Power and RAM consumption by optimizing system parameters, disabling Apps & System Process\
+Not For Gaming!!!
 
 ## What it does?
 - **Hides Detection : Zygisk Injected** ( with [ReZygisk](https://github.com/PerformanC/ReZygisk) )
@@ -37,6 +38,7 @@ Reduce Power and RAM consumption by optimizing system parameters, disabling Apps
 > [!WARNING]  
 > - Created especially for magisk
 > - KSU and APatch, test yourself
+
 ### How to install?
 - Flash in Magisk
 
