@@ -10,7 +10,6 @@
 > [!IMPORTANT]  
 > Only for Hyper OS
 
-This is a Magisk Module for HyperOS based devices\
 Reduce Power and RAM consumption by optimizing system parameters, disabling Apps & System Process
 
 ## What it does?
