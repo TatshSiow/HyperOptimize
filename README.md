@@ -31,7 +31,7 @@ Not For Gaming!!!
 - HyperOS System Optimization
 > [!TIP]  
 > - [Freezer](https://github.com/Freezer-Team/Freezer) to obtain better battery life
-> - [FCMFix](https://github.com/kooritea/fcmfix) fix notification problem while using tombstone
+> - [FCMFix](https://github.com/kooritea/fcmfix) fix notification problem while using tombstone(eg. Freezer, NoActive)
 
 
 ## FAQ
