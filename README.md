@@ -11,9 +11,8 @@
 # What is this?
 > [!NOTE]  
 > Only for Hyper OS
-
-Reduce Power and RAM consumption by optimizing system parameters, disabling Apps & System Process\
-Not For Gaming!!!
+> 
+Reduce Power and RAM consumption by optimizing system parameters, disabling Apps & System Process
 
 ## What it does?
 - **Hides Detection : Zygisk Injected** ( with [ReZygisk](https://github.com/PerformanC/ReZygisk) )
@@ -33,13 +32,10 @@ Not For Gaming!!!
 > - [Freezer](https://github.com/Freezer-Team/Freezer) to obtain better battery life
 > - [FCMFix](https://github.com/kooritea/fcmfix) fix notification problem while using tombstone(eg. Freezer, NoActive)
 
-
 ## FAQ
 > [!CAUTION]  
 > - **Bootloop Rescue Module** is always recommended
 > - **CONFLICT** with module with same purpose
-
-
 
 ### How to install?
 - Flash in Magisk
