@@ -4,6 +4,207 @@
 # This script will be executed in post-fs-data mode
 # More info in the main Magisk thread
 MODDIR=${0%/*}
+# Some tools
+# sysctl -a
+# find "/sys/module/" -type f -name "debug_enabled"
+
+# write "$file" "$val"
+write() {
+  local file="$1"
+  shift
+  [ -f "$file" ] && echo "$@" > "$file" 2>/dev/null
+}
+
+####################################
+# Disable Debug and Logs
+####################################
+for i in "debug_mask" "*log_level*" "*debug_level*" "*debug_mode" "enable_ramdumps" "enable_mini_ramdumps" "edac_mc_log*" "enable_event_log" "*log_ue*" "*log_ce*" "log_ecn_error" "snapshot_crashdumper" "seclog*" "compat-log" "*log_enable*" "tracing_on" "mballoc_debug" "evtlog_dump" "klog_lvl" "ipc_log_lvl" "*stats_enabled" "enable_cmd_dma_stats" "debug_output"; do
+    for path in /sys/kernel/ /sys/module/; do
+        for o in $(find "$path" -type f -name "$i" 2>/dev/null); do
+            write "$o" "0"
+        done
+    done
+done
+
+debug_list_1="
+/proc/sys/debug/exception-trace
+/proc/sys/dev/scsi/logging_level
+/proc/sys/kernel/bpf_stats_enabled
+/proc/sys/kernel/core_pattern
+/proc/sys/kernel/ftrace_dump_on_oops
+/proc/sys/kernel/sched_schedstats
+/proc/sys/kernel/tracepoint_printk
+/proc/sys/kernel/traceoff_on_warning
+/proc/sys/vm/block_dump
+/proc/sys/vm/oom_dump_tasks
+/proc/sys/walt/panic_on_walt_bug
+/proc/sys/migt/migt_sched_debug
+/proc/sys/migt/enable_pkg_monitor
+/proc/sys/glk/load_debug
+/sys/kernel/debug/charger_ulog/enable
+/sys/kernel/debug/mi_display/backlight_log
+/sys/kernel/debug/mi_display/debug_log
+/sys/kernel/debug/mi_display/disp_log
+/sys/kernel/debug/sps/desc_option
+/sys/kernel/debug/sps/logging_option
+/sys/kernel/debug/sde_rotator0/evtlog/enable
+/sys/kernel/debug/tracing/options/trace_printk
+/sys/kernel/tracing/options/trace_printk
+/sys/kernel/tracing/options/print-msg-only
+/sys/module/kernel/parameters/panic
+/sys/module/kernel/parameters/panic_on_warn
+/sys/module/kernel/parameters/panic_print
+/sys/module/kernel/parameters/panic_on_oops
+/sys/module/millet_core/parameters/millet_debug
+/sys/module/mmc_core/parameters/crc
+/sys/module/mmc_core/parameters/removable
+/sys/module/mmc_core/parameters/use_spi_crc
+/sys/module/sdhci/parameters/debug_quirks*
+/sys/module/scsi_mod/parameters/scsi_logging_level
+/sys/kernel/debug/dri/0/debug/enable
+/sys/kernel/debug/dri/0/debug/hw_log_mask
+/sys/kernel/debug/dri/0/debug/evtlog_dump
+/sys/kernel/debug/dri/0/debug/reglog_enable
+/sys/module/microdump_collector/parameters/enable_microdump
+/sys/module/microdump_collector/parameters/start_qcomdump
+/sys/module/qcom_ramdump/parameters/enable_dump_collection
+/sys/module/rcupdate/parameters/rcu_cpu_stall_ftrace_dump
+/sys/kernel/debug/msm_cvp/minidump_enable
+/sys/kernel/debug/msm_cvp/fw_debug_mode
+/sys/module/metis/parameters/doublecyc_debug
+/sys/module/metis/parameters/fboost_debug
+/sys/module/metis/parameters/link_debug
+/sys/module/metis/parameters/metis_debug
+/sys/module/metis/parameters/tsched_debug
+/sys/module/migt/parameters/enable_pkg_monitor
+/sys/module/migt/parameters/flw_debug
+/sys/module/migt/parameters/flw_enable
+/sys/module/migt/parameters/game_link_debug
+/sys/module/migt/parameters/migt_debug
+/sys/module/camera/parameters/cpas_dump
+/sys/kernel/debug/kgsl/kgsl-3d0/profiling/enable
+/sys/kernel/debug/camera/isp_ctx/enable_cdm_cmd_buffer_dump
+/sys/kernel/debug/camera/isp_ctx/enable_state_monitor_dump
+/sys/kernel/debug/msm_vidc/enable_bugon
+/sys/module/msm_video/parameters/msm_vidc_fw_dump
+/sys/kernel/debug/kprobes/enabled
+/sys/module/can/parameters/stats_timer
+/sys/kernel/debug/gsi/enable_dp_stats
+/proc/sys/net/netfilter/nf_conntrack_log_invalid
+/proc/sys/net/netfilter/nf_log_all_netns
+/proc/sys/kernel/hung_task_all_cpu_backtrace
+/proc/sys/kernel/oops_all_cpu_backtrace
+/proc/sys/kernel/softlockup_all_cpu_backtrace
+/proc/sys/net/netfilter/nf_conntrack_log_invalid
+/proc/sys/fs/suid_dumpable
+/sys/module/ramoops/parameters/dump_oops"
+# /sys/kernel/debug/gsi/enable_dp_stats is not accessible
+for debug_1 in $debug_list_1; do
+  write "$debug_1" "0"
+done
+
+debug_list_2="
+/sys/module/cryptomgr/parameters/panic_on_fail
+/sys/kernel/debug/debug_enabled
+/sys/kernel/debug/soc:qcom,pmic_glink_log/enable
+/sys/module/kernel/parameters/initcall_debug
+/sys/module/printk/parameters/always_kmsg_dump
+/sys/module/printk/parameters/time
+/sys/module/kiwi_v2/parameters/qdf_log_dump_at_kernel_enable
+/sys/module/msm_drm/parameters/reglog
+/sys/module/msm_drm/parameters/dumpstate
+/sys/module/blk_cgroup/parameters/blkcg_debug_stats
+/sys/kernel/debug/camera/smmu/cb_dump_enable
+/sys/kernel/debug/camera/ife/enable_req_dump
+/sys/kernel/debug/camera/smmu/map_profile_enable
+/sys/kernel/debug/camera/memmgr/alloc_profile_enable
+/sys/module/drm_kms_helper/parameters/poll"
+
+for debug_2 in $debug_list_2; do
+  write "$debug_2" "N"
+done
+
+####################################
+# Printk
+####################################
+write "/proc/sys/kernel/printk" "0 0 0 0"
+write "/proc/sys/kernel/printk_devkmsg" "off"
+write "/sys/module/printk/parameters/console_suspend" "Y"
+write "/sys/module/printk/parameters/ignore_loglevel" "Y" 
+write "/sys/module/spurious/parameters/noirqdebug" "Y" 
+
+####################################
+# Misc Optimization
+####################################
+# BT
+# Lower BT Performance but Lower Power Consumption
+write "/sys/module/bluetooth/parameters/disable_ertm" "Y"
+# Lower the latency but might affect buffering (audio glitches)
+write "/sys/module/bluetooth/parameters/disable_ertm" "Y"
+write "/sys/module/bluetooth/parameters/disable_esco" "Y"
+
+# Apple Peripherals You won't use it for 99.9% of time
+write "/sys/module/hid_apple/parameters/fnmode" "0"
+write "/sys/module/hid_apple/parameters/iso_layout" "0"
+write "/sys/module/hid_magicmouse/parameters/emulate_3button" "N"
+write "/sys/module/hid_magicmouse/parameters/emulate_scroll_wheel" "N"
+write "/sys/module/hid_magicmouse/parameters/scroll_speed" "0"
+
+# Disable Audit Log
+write "/sys/module/lsm_audit/parameters/disable_audit_log" "1"
+
+# Disable Event Tracing
+write "/sys/kernel/debug/tracing/set_event" ""
+write "/sys/kernel/debug/tracing/events/enable" "0"
+write "/sys/kernel/tracing/events/enable" "0"
+
+# Turn Off va-minidump
+for minidump in /sys/kernel/va-minidump/*/enable;do
+  write "$minidump" "0"
+done
+
+# disables watchdogs and panics (don't apply if your device frequently crashes)
+# watchdog_cpumask : Watchdog will only use the CPU written
+wps="/proc/sys/kernel/nmi_watchdog
+/proc/sys/kernel/soft_watchdog
+/proc/sys/kernel/watchdog
+/proc/sys/kernel/hung_task_panic
+/proc/sys/kernel/max_rcu_stall_to_panic
+/proc/sys/kernel/panic
+/proc/sys/kernel/panic_on_oops
+/proc/sys/kernel/panic_on_rcu_stall
+/proc/sys/kernel/panic_on_warn
+/proc/sys/kernel/panic_print
+/proc/sys/kernel/softlockup_panic
+/proc/sys/vm/panic_on_oom
+/proc/sys/walt/panic_on_walt_bug
+/proc/sys/kernel/watchdog_cpumask"
+for wp in $wps;do
+  write "$wp" "0"
+done
+
+# ULPS tuning
+for file in /sys/kernel/debug/*/*; do
+    if [[ -f "$file" ]]; then
+        if [[ "$file" == *dsi-phy-0_allow_phy_power_off* ]]; then
+            write "$file" "Y"
+        elif [[ "$file" == *ulps_feature_enable* ]]; then
+            write "$file" "Y"
+        elif [[ "$file" == *ulps_suspend_feature_enable* ]]; then
+            write "$file" "Y"
+        fi
+    fi
+done
+
+write "/sys/module/cryptomgr/parameters/notests" "Y"
+write "/sys/module/hid/parameters/ignore_special_drivers" "1"
+
+# MGLRU
+# if [ -d /sys/kernel/mm/lru_gen/ ]; then
+#     lock_val "Y" /sys/kernel/mm/lru_gen/enabled
+#     # 高：提升後台留存能力，吃內存，可以減少swap開銷
+#     lock_val "5000" /sys/kernel/mm/lru_gen/min_ttl_ms
+# fi
 
 ####################################
 # I/O Tuning
@@ -12,249 +213,74 @@ MODDIR=${0%/*}
 # 1. https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/8/html/monitoring_and_managing_system_status_and_performance/factors-affecting-i-o-and-file-system-performance_monitoring-and-managing-system-status-and-performance#generic-block-device-tuning-parameters_factors-affecting-i-o-and-file-system-performance
 # 2. https://brendangregg.com/blog/2015-03-03/performance-tuning-linux-instances-on-ec2.html
 # 3. https://blog.csdn.net/yiyeguzhou100/article/details/100068115
-# Disable All I/O stats
-echo 0 > /sys/block/*/queue/iostats 2>/dev/null
-
-#Enable Merging
-echo 0 > /sys/block/*/queue/nomerges 2>/dev/null
-
-# Disable add_random can slightly reduce overhead
-echo 0 > /sys/block/*/queue/add_random 2>/dev/null
-
-# Set rq_affinity to 2 will evenly distribute load to all cores
-echo 2 > /sys/block/*/queue/rq_affinity 2>/dev/null
+# for file in /sys/devices/virtual/block/*/queue/read_ahead_kb; do echo "$file $(cat $file)"; done
 
 ####################################
-# Kernel Tuning
+# I/O Improvements
 ####################################
-# never enable this unless you have special usage
-echo 0 > /proc/sys/kernel/sched_child_runs_first 2>/dev/null
 
-# 1 : Optimize for multi core
-echo 1 > /proc/sys/kernel/timer_migration 2>/dev/null
+# Disable I/O stats, MB_Stats, No-Merge, Add-Random
+for io in /sys/block/*/queue/iostats /sys/devices/virtual/block/*/queue/iostats /sys/fs/ext4/*/mb_stats /sys/block/*/queue/nomerges /sys/devices/virtual/block/*/queue/nomerges /sys/block/*/queue/add_random /sys/devices/virtual/block/*/queue/add_random; do
+  write "$io" "0"
+done;
 
-# Enable Power Efficient WQ
-echo "Y" > /sys/module/workqueue/parameters/power_efficient 2>/dev/null
-
-
-# Use vendor default
-# echo 128 > /sys/block/*/queue/nr_requests
-# echo 128 > /sys/block/*/queue/read_ahead_kb
-# 
-#  find / -name '*power_efficient*' 2>/dev/null
-# 
-# sysctl -a
-
-
-#################
-# Memory Tuning
-#################
-echo 50 > /proc/sys/vm/vfs_cache_pressure 2>/dev/null
-echo 30 > /proc/sys/vm/stat_interval 2>/dev/null
-echo 0 > /proc/sys/vm/compaction_proactiveness 2>/dev/null
+# RQ_AFFINITY
+# 0 : I/O completion requests can be processed by any CPU cores.
+# 1 : I/O completion requests are handled only by the same CPU core that initiated the request.
+# 2 : I/O completion requests are processed by any CPU core within the same NUMA node as the core that initiated the request.
+for rq in /sys/block/*/queue/rq_affinity $(find /sys/devices -name rq_affinity); do
+    write "$rq" "1"
+done;
 
 ####################################
-# Net Tuning
+# Network Tuning
 ####################################
-echo 0 > /proc/sys/net/ipv4/tcp_timestamps 2>/dev/null
+# Network tweaks for saving battery
+write "/proc/sys/net/ipv4/tcp_timestamps" "0"
+write "/proc/sys/net/ipv4/tcp_dsack" "0"
+write "/proc/sys/net/ipv4/tcp_ecn" "0"
+write "/proc/sys/net/ipv4/tcp_slow_start_after_idle" "0"
 
+# Disable IPv6, saves battery and lower the exploit risk if not using
+write "/proc/sys/net/ipv6/conf/all/disable_ipv6" "1"
 
 ####################################
 # Transparent Hugepage
 ####################################
 if [ -d "/sys/kernel/mm/transparent_hugepage/" ]; then
-  echo never > /sys/kernel/mm/transparent_hugepage/enabled 2>/dev/null
-  echo never > /sys/kernel/mm/transparent_hugepage/defrag 2>/dev/null
-fi
-
-############################################################
-# Ramdumps | File System | Kernel Panic | Driver Debugging #
-#  Printk  |     CRC     | Kernel Debugging                #
-############################################################
-debug_list_1="
-/proc/sys/debug/exception-trace
-/proc/sys/dev/scsi/logging_level
-/proc/sys/kernel/bpf_stats_enabled
-/proc/sys/kernel/core_pattern
-/proc/sys/kernel/ftrace_dump_on_oops
-/proc/sys/kernel/nmi_watchdog
-/proc/sys/kernel/panic
-/proc/sys/kernel/panic_on_oops
-/proc/sys/kernel/panic_on_rcu_stall
-/proc/sys/kernel/panic_on_warn
-/proc/sys/kernel/panic_print
-/proc/sys/kernel/sched_schedstats
-/proc/sys/kernel/tracepoint_printk
-/proc/sys/kernel/traceoff_on_warning
-/proc/sys/kernel/watchdog
-/proc/sys/vm/panic_on_oom
-/proc/sys/walt/panic_on_walt_bug
-/proc/sys/migt/migt_sched_debug
-/proc/sys/glk/load_debug
-/sys/kernel/debug/charger_ulog/enable
-/sys/kernel/debug/dri/0/debug/enable
-/sys/kernel/debug/dri/0/debug/evtlog_dump
-/sys/kernel/debug/dri/0/debug/reglog_enable
-/sys/kernel/debug/mi_display/backlight_log
-/sys/kernel/debug/mi_display/debug_log
-/sys/kernel/debug/mi_display/disp_log
-/sys/kernel/debug/sps/debug_level_option
-/sys/kernel/debug/sps/desc_option
-/sys/kernel/debug/sps/log_level_sel
-/sys/kernel/debug/sps/logging_option
-/sys/kernel/debug/sde_rotator0/evtlog/enable
-/sys/kernel/debug/tracing/tracing_on
-/sys/kernel/tracing/options/trace_printk
-/sys/kernel/tracing/options/print-msg-only
-/sys/module/alarm_dev/parameters/debug_mask
-/sys/module/audio_plt_dlkm/parameters/debug_mask
-/sys/module/binder/parameters/debug_mask
-/sys/module/binder_alloc/parameters/debug_mask
-/sys/module/msm_show_resume_irq/parameters/debug_mask
-/sys/module/kernel/parameters/panic
-/sys/module/kernel/parameters/panic_on_warn
-/sys/module/kernel/parameters/panic_print
-/sys/module/kernel/parameters/panic_on_oops
-/sys/module/lowmemorykiller/parameters/debug_level
-/sys/module/millet_core/parameters/millet_debug
-/sys/module/mmc_core/parameters/crc
-/sys/module/mmc_core/parameters/removable
-/sys/module/mmc_core/parameters/use_spi_crc
-/sys/module/powersuspend/parameters/debug_mask
-/sys/module/sdhci/parameters/debug_quirks*
-/sys/module/subsystem_restart/parameters/enable_mini_ramdumps
-/sys/module/subsystem_restart/parameters/enable_ramdumps
-/sys/module/rmnet_data/parameters/rmnet_data_log_level
-/sys/module/xt_qtaguid/parameters/debug_mask"
-
-for debug_1 in $debug_list_1; do
-  if [ -f "$debug_1" ]; then
-    echo "0" > "$debug_1" 2>/dev/null
-  fi
-done
-
-debug_list_2="
-/sys/module/cryptomgr/parameters/panic_on_fail
-/sys/kernel/debug/debug_enabled
-/sys/kernel/debug/soc:qcom,pmic_glink_log/enable
-/sys/module/kernel/parameters/initcall_debug
-"
-
-for debug_2 in $debug_list_2; do
-  if [ -f "$debug_2" ]; then
-    echo "N" > "$debug_2" 2>/dev/null
-  fi
-done
-
-
-####################################
-# Printk (thx to KNTD-reborn)
-####################################
-echo "0 0 0 0" > "/proc/sys/kernel/printk"
-echo "off" > "/proc/sys/kernel/printk_devkmsg"
-echo "Y" > "/sys/module/printk/parameters/console_suspend"
-echo "Y" > "/sys/module/printk/parameters/ignore_loglevel"
-echo "N" > "/sys/module/printk/parameters/always_kmsg_dump"
-echo "N" > "/sys/module/printk/parameters/time"
-
-####################################
-# Kernel Debugging (thx to KTSR)
-####################################
-for i in "debug_mask" "log_level*" "debug_level*" "*debug_mode" "enable_ramdumps" "enable_mini_ramdumps" "edac_mc_log*" "enable_event_log" "*log_level*" "*log_ue*" "*log_ce*" "log_ecn_error" "snapshot_crashdumper" "seclog*" "compat-log" "*log_enabled" "tracing_on" "mballoc_debug"; do
-    for o in $(find /sys/ -type f -name "$i"); do
-        echo "0" > "$o" 2>/dev/null
-    done
-done
-echo "Y" > "/sys/module/spurious/parameters/noirqdebug"
-
-# Change permissions of /proc/kmsg to make it read-only
-if [ -f /proc/kmsg ]; then
-    chmod 0400 /proc/kmsg
-fi
-
-
-####################################
-# Wakelock Control
-####################################
-wakelocks1="
-/sys/module/wakeup/parameters/enable_ipa_ws
-/sys/module/wakeup/parameters/enable_qcom_rx_wakelock_ws
-/sys/module/wakeup/parameters/enable_wlan_extscan_wl_ws
-/sys/module/wakeup/parameters/enable_wlan_wow_wl_ws
-/sys/module/wakeup/parameters/enable_wlan_ws
-/sys/module/wakeup/parameters/enable_netmgr_wl_ws
-/sys/module/wakeup/parameters/enable_wlan_ipa_ws
-/sys/module/wakeup/parameters/enable_wlan_pno_wl_ws
-/sys/module/wakeup/parameters/enable_wcnss_filter_lock_ws"
-
-for wakelock1 in $wakelocks1; do
-  if [ -f "$wakelock1" ]; then
-    echo "N" > "$wakelock1" 2>/dev/null
-  fi
-done
-
-wakelocks2="
-/sys/module/wakeup/parameters/enable_bluetooth_timer
-/sys/module/wakeup/parameters/enable_netlink_ws
-/sys/module/wakeup/parameters/enable_timerfd_ws"
-
-for wakelock2 in $wakelocks2; do
-  if [ -f "$wakelock2" ]; then
-    echo "Y" > "$wakelock2" 2>/dev/null
-  fi
-done
-
-# Boeffla
-if [ -f /sys/devices/virtual/misc/boeffla_wakelock_blocker/wakelock_blocker ]; then
-  echo "wlan_pno_wl;wlan_ipa;wcnss_filter_lock;hal_bluetooth_lock;IPA_WS;sensor_ind;wlan;netmgr_wl;qcom_rx_wakelock;wlan_wow_wl;wlan_extscan_wl;NETLINK;bam_dmux_wakelock;IPA_RM12" > /sys/devices/virtual/misc/boeffla_wakelock_blocker/wakelock_blocker 
-elif [ -f /sys/class/misc/boeffla_wakelock_blocker/wakelock_blocker ]; then
-  echo "wlan_pno_wl;wlan_ipa;wcnss_filter_lock;hal_bluetooth_lock;IPA_WS;sensor_ind;wlan;netmgr_wl;qcom_rx_wakelock;wlan_wow_wl;wlan_extscan_wl;NETLINK;bam_dmux_wakelock;IPA_RM12" > /sys/class/misc/boeffla_wakelock_blocker/wakelock_blocker
+    write "/sys/kernel/mm/transparent_hugepage/enabled" "never"
+    write "/sys/kernel/mm/transparent_hugepage/defrag" "never"
+    write "/sys/kernel/mm/transparent_hugepage/khugepaged/defrag" "0"
+    write "/sys/kernel/mm/transparent_hugepage/khugepaged/scan_sleep_millisecs" "1000000"
 fi
 
 ####################################
-# Additional Props Config
+# Misc Tuning
 ####################################
-# getprop | grep -i (prop-properties)
+# 數字越高，安全等級越高，0等於完全不用 (Address Space Layout Randomization)
+write "/proc/sys/kernel/randomize_va_space" "1"
 
-# SoC Config
-if [ "$(getprop ro.hardware)" = "qcom" ]; then
-    #Qualcomm
-    resetprop -n persist.debug.coresight.config ""
-else
-    #MediaTeK
-    resetprop -n ro.vendor.mtk_prefer_64bit_proc 1
-    resetprop -n persist.vendor.duraspeed.support 0
-    resetprop -n persist.vendor.duraspeed.lowmemory.enable 0
-    resetprop -n persist.vendor.duraeverything.support 0
-    resetprop -n persist.vendor.duraeverything.lowmemory.enable 0
-fi
+# 不可被驱逐的内存是一种无法从内存中移除的内存，例如被锁定的内存或内核数据结构等。
+write "/proc/sys/vm/compact_unevictable_allowed" "1"
+# /proc/sys/vm/compact_memory
 
-# Enables ZRAM 1:1 if device is Hyper OS 2.0
-if [ "$(getprop ro.mi.os.version.name)" = "OS2.0" ]; then
-    resetprop -n persist.miui.extm.dm_opt.enable true
-fi
+# never enable this unless you have special usage
+write "/proc/sys/kernel/sched_child_runs_first" "0"
 
-# Enables LZ4asm if LZ4 ZRAM Compression is present
-if [ -f "/sys/block/zram0/comp_algorithm" ] && grep -q "\[lz4\]" /sys/block/zram0/comp_algorithm; then
-    resetprop -n persist.sys.stability.lz4asm on
-else
-    resetprop -n persist.sys.stability.lz4asm off
-fi
+# timers on the OS CPUs can be migrated to one of the application CPUs
+write "/proc/sys/kernel/timer_migration" "1"
 
-# Enables FBO service if HAL and props found, only for UFS
-if [ -d "/sys/block/sda" ] && [ "$(getprop init.svc.vendor.fbo-hal-1-0)" ] && [ "$(getprop persist.sys.stability.miui_fbo_enable)" = "true" ]; then
-    resetprop -n persist.sys.stability.fbo_hal_stop false
-    resetprop -n persist.sys.fboservice.ctrl true
-    resetprop -n persist.sys.stability.miui_fbo_start_count 1
-fi
+# # Enable Power Efficient WQ
+write "/sys/module/workqueue/parameters/power_efficient" "Y"
 
+# RCU Tuning
+write "/sys/kernel/rcu_expedited" "0"
+write "/sys/kernel/rcu_normal" "1"
 
-# 有些設定system.prop吃不到，我放這裡總可以了吧（？
-#Disable Power Monitor Tools
-su -c "resetprop -n debug.power.monitor_tools false"
-# LMK
-su -c "resetprop -n persist.sys.lmk.reportkills false"
+# 0 balanced
+# 1 excessive swapping
+# 2avoid memory overcommitment and reduce swapping
+write "/proc/sys/vm/overcommit_memory" "2"
 
-# statsd
-su -c "resetprop -n persist.device_config.runtime_native.metrics.write-to-statsd false"
-su -c "resetprop -n persist.device_config.statsd_native_boot.enable_restricted_metrics false"
+# Energy Efficient
+write "/proc/sys/kernel/sched_energy_aware" "1"

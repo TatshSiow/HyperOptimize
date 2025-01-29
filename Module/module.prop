@@ -2,6 +2,6 @@ id=HyperOptimize_Tatsh
 name=Hyper Optimize
 author=Tatsh
 description=Reduce Power and RAM consumption by optimizing system parameters,disabling Apps & System Process
-version=testbuild
+version=你好
 versionCode=999999
 updateJson=https://raw.githubusercontent.com/TatshSiow/HyperOptimize/main/update.json

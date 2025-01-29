@@ -105,14 +105,9 @@ if [ "$(getprop ro.hardware)" = "qcom" ]; then
         mask_val "35" /proc/sys/walt/sched_min_task_util_for_colocation
         mask_val "20000000" /proc/sys/walt/sched_task_unfilter_period
     fi
-
-    # Kernel adjust
-    # 0 : Lower responsiveness but save CPU resource
-    mask_val "0" /sys/kernel/rcu_expedited
-
     # Reduce PERF Monitoring overhead
     # Stock:25
-    mask_val "10" /proc/sys/kernel/perf_cpu_time_max_percent
+    # mask_val "25" /proc/sys/kernel/perf_cpu_time_max_percent
 
     # Restart PERF service
     start vendor.perfservice
@@ -128,17 +123,10 @@ lock_val "0-7" /dev/cpuset/top-app/cpus
 
 # Xiaomi Config
 stop mimd-service
-mask_val "0" /sys/module/migt/parameters/enable_pkg_monitor
-mask_val "0" /proc/sys/migt/enable_pkg_monitor
 mask_val "0" /sys/module/migt/parameters/glk_freq_limit_walt
 mask_val "0" /sys/module/metis/parameters/cluaff_control
 
-# MGLRU
-if [ -d /sys/kernel/mm/lru_gen/ ]; then
-    lock_val "Y" /sys/kernel/mm/lru_gen/enabled
-    # 高：可以提升後台留存能力，缺點就是比較吃內存，但可以減少不必要的swap開銷
-    lock_val "5000" /sys/kernel/mm/lru_gen/min_ttl_ms
-fi
+
 
 ####################################
 # Kill and Stop Services
@@ -146,30 +134,31 @@ fi
 
 sleep 3 
 process="
+charge_logger
 logcat
-logd
-tombstoned
 traced
 traced_probes
-vendor.diag-router
 vendor.ipacm-diag
 mi_thermald
-subsystem_ramdump
-qesdk-manager
 vendor.modemManager
 vendor.qesdk-mgr
 statsd
 misight
 update_engine
-mqsasd
-vendor.mi_misight
-"
+mqsasd"
 
 for name in $process; do
   su -c stop "$name" 2>/dev/null 
-  su -c killall -9 "$name" 2>/dev/null 
-  sleep .1
 done
+
+# 有些設定system.prop吃不到，我放這裡總可以了吧（？
+#Disable Power Monitor Tools
+su -c "resetprop -n debug.power.monitor_tools false"
+# LMK
+su -c "resetprop -n persist.sys.lmk.reportkills false"
+# statsd
+su -c "resetprop -n persist.device_config.runtime_native.metrics.write-to-statsd false"
+su -c "resetprop -n persist.device_config.statsd_native_boot.enable_restricted_metrics false"
 
 exit
 
