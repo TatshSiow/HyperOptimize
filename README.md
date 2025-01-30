@@ -3,15 +3,13 @@
 > Don't clone the source or expect things to break
 <div align="center">
   
-  ![](https://github.com/user-attachments/assets/5cf75f24-5993-4e64-b3b2-328f30d4ff31)\
+  ![](https://github.com/user-attachments/assets/5cf75f24-5993-4e64-b3b2-328f30d4ff31)
+  
   <a href="https://t.me/TatshSecretCave" ><img height="50" src="https://www.vectorlogo.zone/logos/telegram/telegram-tile.svg"/></a>\
   <a href="https://t.me/TatshSecretCave" >Telegram</a>
 </div>
 
 # What is this?
-> [!NOTE]  
-> Only for Hyper OS
-> 
 Reduce Power and RAM consumption by optimizing system parameters, disabling Apps & System Process
 
 ## What it does?
