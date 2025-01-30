@@ -213,24 +213,73 @@ write "/sys/module/hid/parameters/ignore_special_drivers" "1"
 # 1. https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/8/html/monitoring_and_managing_system_status_and_performance/factors-affecting-i-o-and-file-system-performance_monitoring-and-managing-system-status-and-performance#generic-block-device-tuning-parameters_factors-affecting-i-o-and-file-system-performance
 # 2. https://brendangregg.com/blog/2015-03-03/performance-tuning-linux-instances-on-ec2.html
 # 3. https://blog.csdn.net/yiyeguzhou100/article/details/100068115
-# for file in /sys/devices/virtual/block/*/queue/read_ahead_kb; do echo "$file $(cat $file)"; done
+# for file in /sys/devices/virtual/block/*/queue/read_ahead_kb ; do echo "$file $(cat $file)" ; done
 
 ####################################
 # I/O Improvements
 ####################################
 
 # Disable I/O stats, MB_Stats, No-Merge, Add-Random
-for io in /sys/block/*/queue/iostats /sys/devices/virtual/block/*/queue/iostats /sys/fs/ext4/*/mb_stats /sys/block/*/queue/nomerges /sys/devices/virtual/block/*/queue/nomerges /sys/block/*/queue/add_random /sys/devices/virtual/block/*/queue/add_random; do
+for io in /sys/block/*/queue/iostats /sys/devices/virtual/block/*/queue/iostats /sys/fs/ext4/*/mb_stats /sys/block/*/queue/add_random /sys/devices/virtual/block/*/queue/add_random; do
   write "$io" "0"
 done;
+
+for nomerge in /sys/block/*/queue/nomerges /sys/devices/virtual/block/*/queue/nomerges; do
+    write "$nomerge" "2"
+done
 
 # RQ_AFFINITY
 # 0 : I/O completion requests can be processed by any CPU cores.
 # 1 : I/O completion requests are handled only by the same CPU core that initiated the request.
 # 2 : I/O completion requests are processed by any CPU core within the same NUMA node as the core that initiated the request.
 for rq in /sys/block/*/queue/rq_affinity $(find /sys/devices -name rq_affinity); do
-    write "$rq" "1"
+    write "$rq" "2"
 done;
+
+if [ -d /sys/block/sda ]; then
+    # UFS
+    for i in /sys/block/sd*/queue/nr_requests; do 
+        write "$i" "16"
+    done
+
+    for i in /sys/block/sd*/queue/read_ahead_kb; do 
+        write "$i" "64"
+    done
+
+else
+    # eMMC
+    for i in /sys/block/mmcblk*/queue/nr_requests; do 
+        write "$i" "8"
+    done
+    for i in /sys/block/mmcblk*/queue/read_ahead_kb; do 
+        write "$i" "32"
+    done
+done
+
+
+# DM
+for i in /sys/block/dm-*/queue/nr_requests /sys/devices/virtual/block/dm-*/queue/nr_requests; do 
+    write "$i" "16"
+done
+
+for i in /sys/block/dm-*/queue/read_ahead_kb /sys/devices/virtual/block/dm-*/queue/read_ahead_kb; do 
+    write "$i" "64"
+done
+
+# RAM
+for i in /sys/block/ram*/queue/nr_requests /sys/devices/virtual/block/ram*/queue/nr_requests; do 
+    write "$i" "8" 
+done
+
+for i in /sys/block/ram*/queue/read_ahead_kb /sys/devices/virtual/block/ram*/queue/read_ahead_kb; do 
+    write "$i" "16" 
+done
+
+# ZRAM
+write "/sys/block/zram0/queue/nr_requests" "16"
+write "/sys/block/zram0/queue/read_ahead_kb" "32"
+write "/sys/devices/virtual/block/zram0/queue/nr_requests" "16"
+write "/sys/devices/virtual/block/zram0/queue/read_ahead_kb" "32"
 
 ####################################
 # Network Tuning
@@ -251,7 +300,7 @@ if [ -d "/sys/kernel/mm/transparent_hugepage/" ]; then
     write "/sys/kernel/mm/transparent_hugepage/enabled" "never"
     write "/sys/kernel/mm/transparent_hugepage/defrag" "never"
     write "/sys/kernel/mm/transparent_hugepage/khugepaged/defrag" "0"
-    write "/sys/kernel/mm/transparent_hugepage/khugepaged/scan_sleep_millisecs" "1000000"
+    write "/sys/kernel/mm/transparent_hugepage/khugepaged/scan_sleep_millisecs" "6000000"
 fi
 
 ####################################
@@ -262,7 +311,6 @@ write "/proc/sys/kernel/randomize_va_space" "1"
 
 # 不可被驱逐的内存是一种无法从内存中移除的内存，例如被锁定的内存或内核数据结构等。
 write "/proc/sys/vm/compact_unevictable_allowed" "1"
-# /proc/sys/vm/compact_memory
 
 # never enable this unless you have special usage
 write "/proc/sys/kernel/sched_child_runs_first" "0"
@@ -277,10 +325,11 @@ write "/sys/module/workqueue/parameters/power_efficient" "Y"
 write "/sys/kernel/rcu_expedited" "0"
 write "/sys/kernel/rcu_normal" "1"
 
-# 0 balanced
-# 1 excessive swapping
-# 2avoid memory overcommitment and reduce swapping
-write "/proc/sys/vm/overcommit_memory" "2"
-
 # Energy Efficient
 write "/proc/sys/kernel/sched_energy_aware" "1"
+
+ # Disable hung task warnings
+write "/proc/sys/kernel/hung_task_timeout_secs" "0"
+
+# Disable Network Wakeups
+write "/proc/sys/net/core/netdev_max_backlog" "32"
