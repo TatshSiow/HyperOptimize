@@ -1,5 +1,5 @@
-開發者會講中文\
-有問題都可以在Issue或Telegram說
+[中文](https://github.com/TatshSiow/HyperOptimize/blob/main/README_CH.md)
+[English](https://github.com/TatshSiow/HyperOptimize/blob/main/README.md)
 
 > [!IMPORTANT]
 > Only download from releases\
