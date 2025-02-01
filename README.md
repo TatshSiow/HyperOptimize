@@ -38,8 +38,7 @@ Reduce Power and RAM consumption by optimizing system parameters, disabling Apps
 ### How to install?
 - Flash in Magisk
 > [!WARNING]  
-> - Created especially for magisk
-> - KSU and APatch, test yourself
+> - might not work on KSU and APatch
 
 ### My Magisk break after uninstalled, what should I do?
 - Force close and launch again
