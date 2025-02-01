@@ -1,4 +1,4 @@
-開發者會講中文
+開發者會講中文\
 有問題都可以在Issue或Telegram說
 
 > [!IMPORTANT]
