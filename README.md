@@ -1,3 +1,6 @@
+開發者會講中文
+有問題都可以在Issue或Telegram說
+
 > [!IMPORTANT]
 > Only download from releases\
 > Don't clone the source or expect things to break
