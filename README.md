@@ -16,8 +16,6 @@
 Reduce Power and RAM consumption by optimizing system parameters, disabling Apps & System Process
 
 ## What it does?
-- **Hides Detection : Zygisk Injected** ( with [ReZygisk](https://github.com/PerformanC/ReZygisk) )
-- **Hides Detection : Debugging Environment**
 - Debloat Apps
 - Debloat system process
 - Disable logging
