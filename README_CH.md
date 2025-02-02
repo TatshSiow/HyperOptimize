@@ -15,8 +15,6 @@
 通過禁用系統應用和進程、調整系統參數來達到降低功耗和節約內存的效果
 
 ## 他能做什麼?
-- **隱藏 Zygisk 已註入** ( 搭配 [ReZygisk](https://github.com/PerformanC/ReZygisk) )
-- **隱藏 調試環境已開啟**
 - 禁用預裝軟件
 - 禁用系統進程
 - 關閉 Logging
