@@ -18,7 +18,7 @@ persist.vendor.qfp=false
 # GPU profiling tools
 graphics.gpu.profiler.support=false
 
-###############上面是測試啦~幹你娘#################
+###############上面是測試#################
 
 # https://gist.github.com/Atavic/6d9a43736aac3371b0ca9cca4cd0f7af
 # HardwareRenderer
@@ -54,15 +54,9 @@ debug.sf.enable_transaction_tracing=false
 ro.debuggable=0
 ro.force.debuggable=0
 
-#启用了额外的模糊噪点效果，增强 UI 的视觉体验。
-persist.sys.add_blurnoise_supported=false
-
 #####################
 #	安卓系統相關		#
 #####################
-
-# 启用或切换MMS服务的某些功能。这个配置项可能涉及与MMS相关的后台服务、消息传输协议或数据管理。
-persist.sys.mmms.switch=false
 
 # 停用 Wi-Fi Round Trip Time
 config.disable_rtt=true
@@ -76,64 +70,12 @@ ro.vendor.radio.fastdormancy=true
 debug.sf.disable_backpressure=0
 debug.sf.enable_gl_backpressure=1
 
-#################
-#	智能相關		#
-#################
-
-# 启用智能电源拦截功能。这个功能可能用于在特定情况下自动调整设备的电源使用策略，以延长电池寿命。
-# （我開關體感沒有區別，所以有【智能】兩個字的一般都要額外耗費資源）
-persist.sys.smartpower.intercept.enable=true
-
-# 启用了智能功耗管理功能，特别针对显示屏功耗优化。
-# （我開關體感沒有區別，所以有【智能】兩個字的一般都要額外耗費資源）
-persist.sys.smartpower.display.enable=true
-
-# SmartOP
-# 看不到什麼文檔，但是根據酷安那裡的資料
-# 大概YSRE=YuanShenResolutionEnabler，我不知道哈哈哈
-persist.sys.smartop.support_ysre=false
-
-# SmartPower
-persist.sys.smartpower.fz.enable=false
-
 #####################
 #	小米策略相關		#
 #####################
 
-# 启用MIUI的性能优化服务“MiPerf”。这个配置通常用于提高系统的整体性能，通过优化调度或资源分配来提供更流畅的用户体验。
-persist.miui.miperf.enable=false
-
-# 启用MIUI的新的性能调节机制（SPTM）。这个设置可能与系统的资源调度和电池管理有关，以优化整体性能。
-persist.sys.miui_sptm_new.enable=true
-persist.sys.miui_sptm.enable=true
-
-# Disallow framepacing in favor of FAS algorithms
-# （FAS基本上可以算是遊戲專用了，其餘你沒機會用）
-# vendor.perf.framepacing.enable=0
-
 # 小米內存拓展開關（1:開，false:關）
 persist.miui.extm.enable=1
-
-#####################
-#	Preload 相關		#
-#####################
-
-# 启用启动响应优化，可能旨在缩短应用程序的启动时间，提高用户体验。
-#（也是屬於Preload）
-persist.sys.launch_response_optimization.enable=false
-
-# 启用预加载功能，以在系统启动时预先加载某些应用程序或资源。这可以提高应用启动速度和用户体验。
-persist.zygote.preload=false
-
-# Prefetchers
-persist.sys.prestart.proc=false
-persist.mm.enable.prefetch=false
-persist.sys.preload.enable=false
-persist.sys.prestart.feedback.enable=false
-persist.sys.dynamic_usap_enabled=false
-persist.sys.stability.iorapEnable=false
-persist.sys.precache.enable=false
-persist.sys.app_dexfile_preload.enable=false
 
 #########################
 # Logging and Debugging #
@@ -160,10 +102,11 @@ sys.lmk.reportkills=0
 # 启用`scout`相关的调试功能，通过socket接口进行数据转储。通常用于开发者在特定场景下进行数据采集和分析。
 persist.sys.scout_dumpbysocket=false
 
-# Disable Skia Atrace Debug
+# Disable  Tracing
 debug.hwui.skia_atrace_enabled=false
+debug.hwui.skia_tracing_enabled=false
+debug.hwui.skia_use_perfetto_track_events=false
 
-# Disable atrace flags
 debug.atrace.tags.enableflags=0
 
 # some logs
@@ -171,9 +114,7 @@ debug.mdpcomp.logs=0
 persist.vendor.radio.adb_log_on=0
 persist.traced.enable=0
 persist.vendor.camera.mawlog.main=0
-
-#启用内存恢复监控，特别关注`scout`进程在内存恢复时的行为，帮助开发人员调试内存管理问题。
-persist.sys.debug.enable_scout_memory_resume=false
+persist.vendor.camera.mawlog.aiasd=0
 
 # sensor event to onetrack
 persist.vendor.sensor.onetrack=false
@@ -212,6 +153,7 @@ persist.logd.size.radio=Off
 persist.logd.size.system=Off
 ro.logd.size=-1
 ro.logd.size.stats=-1
+persist.logd.diag.newlocation=0
 
 # Out Of Memory Watchdog
 persist.sys.oom_crash_on_watchdog=false
@@ -220,140 +162,19 @@ persist.sys.oom_crash_on_watchdog=false
 log.tag.stats_log=S
 persist.log.tag=S
 persist.log.tag.snet_event_log=S
+persist.log.tag.misight=S
 
 # 一些ROM可使用，藍牙logger
 vendor.bluetooth.startbtlogger=false
 # bluetooth.startbtlogger=false
 
-#######################################
-# 以下來自 Nakixii 的 r2p2 magisk 模塊 #
-#######################################
 
-# dex2oat Optimizations
-dalvik.vm.background-dex2oat-cpu-set=2,3,4,5,6,7
-dalvik.vm.bg-dex2oat-threads=6
-dalvik.vm.boot-dex2oat-cpu-set=2,3,4,5,6,7
-dalvik.vm.boot-dex2oat-threads=6
-dalvik.vm.default-dex2oat-cpu-set=2,3,4,5,6,7
-dalvik.vm.dex2oat-cpu-set=2,3,4,5,6,7
-dalvik.vm.dex2oat-threads=6
-dalvik.vm.image-dex2oat-cpu-set=2,3,4,5,6,7
-dalvik.vm.image-dex2oat-threads=6
-dalvik.vm.dex2oat-swap=true
-dalvik.vm.madvise.artfile.size=2147483647
-dalvik.vm.madvise.odexfile.size=2147483647
-dalvik.vm.madvise.vdexfile.size=2147483647
-dalvik.vm.systemservercompilerfilter=everything
-dalvik.vm.systemuicompilerfilter=everything
-
-# dex2oat Trigger
-pm.dexopt.ab-ota=verify
-pm.dexopt.bg-dexopt=everything
-pm.dexopt.boot-after-ota=verify
-pm.dexopt.boot-after-mainline-update=verify
-pm.dexopt.cmdline=everything
-pm.dexopt.downgrade_after_inactive_days=30
-pm.dexopt.first-boot=verify
-pm.dexopt.first-use=verify
-pm.dexopt.inactive=verify
-pm.dexopt.install=everything
-pm.dexopt.install-bulk=everything
-pm.dexopt.install-bulk-downgraded=everything
-pm.dexopt.install-bulk-secondary=everything
-pm.dexopt.install-bulk-secondary-downgraded=everything
-pm.dexopt.install-fast=verify
-pm.dexopt.post-boot=verify
-pm.dexopt.shared=everything
-
-# Use kryo785 as processor target for ART and Bionic
-dalvik.vm.isa.arm64.variant=kryo785
-ro.bionic.cpu_variant=kryo785
-dalvik.vm.isa.arm64.features=runtime
-
-# Misc ART optimizations
-dalvik.vm.foreground-heap-growth-multiplier=2.5
-dalvik.vm.heapgrowthlimit=512m
-dalvik.vm.heapmaxfree=32m
-dalvik.vm.heapminfree=512k
-dalvik.vm.heapsize=512m
-dalvik.vm.heapstartsize=2m
-dalvik.vm.heaptargetutilization=0.8
-dalvik.vm.dex2oat-minidebuginfo=false
-dalvik.vm.minidebuginfo=false
-persist.device_config.runtime_native.usap_pool_enabled=true
-dalvik.vm.usap_pool_enabled=true
-dalvik.vm.usap_pool_refill_delay_ms=3000
-dalvik.vm.usap_pool_size_max=3
-dalvik.vm.usap_pool_size_min=1
-dalvik.vm.usap_refill_threshold=1
-# ro.dalvik.vm.enable_uffd_gc=true
-# persist.device_config.runtime_native_boot.force_disable_uffd_gc=false
-# persist.device_config.runtime_native_boot.enable_generational_cc=
-# dalvik.vm.gctype=CMC
-# dalvik.vm.backgroundgctype=HSpaceCompact
+##################################
+# NAKIXII
+##################################
 
 # AppCompact
 persist.sys.use_boot_compact=false
-
-# Surfaceflinger performance/power optimizations
-debug.sf.cache_source_crop_only_moved=true
-debug.sf.disable_client_composition_cache=0
-debug.sf.enable_layer_command_batching=true
-debug.sf.fp16_client_target=true
-debug.sf.latch_unsignaled=1
-debug.sf.auto_latch_unsignaled=0
-debug.sf.multithreaded_present=true
-debug.sf.predict_hwc_composition_strategy=1
-debug.sf.screenshot_fence_preservation=true
-ro.surface_flinger.running_without_sync_framework=false
-ro.surface_flinger.start_graphics_allocator_service=true
-
-# Renderengine optimizations
-debug.egl.hw=1
-debug.renderengine.backend=skiaglthreaded
-debug.stagefright.renderengine.backend=threaded
-persist.sys.force_sw_gles=0
-
-# Faster game loading
-debug.game.video.support=true
-debug.game.video.speed=true
-
-# LTPO Optimize
-ro.vendor.mi_sf.support_automode_for_normalfps=true
-
-# Memory Management
-persist.sys.mms.bg_apps_limit=65535
-persist.sys.mms.compact_enable=false
-persist.sys.mms.single_compact_enable=false
-persist.sys.mms.enable=false
-persist.sys.spc.enabled=false
-persist.sys.spc.bindvisible.enabled=false
-persist.sys.spc.gamepay.protect.enabled=true
-persist.sys.spc.cpulimit.enabled=false
-persist.sys.spc.cpuexception.enabled=false
-persist.sys.spc.proc_restart_enable=false
-persist.sys.spc.process.tracker.enable=false
-persist.sys.spc.fast.launch=false
-persist.sys.spc.scale.backgorund.app.enable=false
-persist.sys.spc.resident.app.enable=false
-persist.sys.miui.resident.app.count=65535
-persist.sys.cross_process_jump_response_opt=false
-persist.sys.min.swap.free=false
-persist.sys.memory_standard.enable=false
-persist.sys.mfz.enable=false
-persist.miui.boot.mopt.enable=false
-persist.sys.mimd.reclaim.enable=false
-persist.sys.mthp.enabled=false
-persist.sys.miui.damon.enable=false
-persist.sys.stability.enable_process_exit_monitor=false
-persist.sys.stability.enable_rss_monitor=false
-persist.sys.stability.enable_sentinel_resource_monitor=false
-persist.sys.stability.enable_thread_monitor=false
-persist.sys.stability_memory_monitor.enable=false
-persist.sys.stability.swapEnable=false
-persist.sys.stability.enable_dmabuf_monitor=false
-persist.sys.stability.enable_fd_monitor=false
-persist.sys.debug.enable_scout_memory_monitor=false
 
 # Sched
 persist.sys.enable_perf_hint=false
@@ -364,32 +185,9 @@ persist.sys.miuibooster.launch.rtmode=false
 persist.sys.miuibooster.rtmode=false
 persist.sys.hyper_transition=false
 
-
 # Thermal
 persist.sys.enable_templimit=false
 ro.vendor.display.hwc_thermal_dimming=false
 ro.vendor.fps.switch.thermal=false
 ro.vendor.thermal.dimming.enable=false
 persist.sys.smartpower.display_thermal_temp_threshold=99
-
-# Debug
-persist.sys.debug.app.mtbf_test=false
-persist.sys.perfdebug.monitor.enable=false
-
-# Display
-ro.vendor.touch.touchscheduler.enable=false
-persist.sys.smartpower.display_camera_fps_enable=true
-
-# Network
-persist.sys.miuitcptracker.ctrl=false
-
-# Misc
-persist.sys.stability.f2fsTrackEnable=false
-persist.sys.stability.nativehang.enable=false
-persist.sys.stability.qcom_hang_task.enable=false
-persist.sys.stability.report_app_launch.enable=false
-persist.sys.stability.window_monitor.enabled=false
-persist.sys.textureview_optimization.enable=false
-persist.sys.touch.followup.enable=false
-persist.sys.trim_rendernode.enable=false
-persist.sys.stability.reboot_days=-1

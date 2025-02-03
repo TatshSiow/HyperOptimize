@@ -130,8 +130,21 @@ done
 write "/proc/sys/kernel/printk" "0 0 0 0"
 write "/proc/sys/kernel/printk_devkmsg" "off"
 write "/sys/module/printk/parameters/console_suspend" "Y"
-write "/sys/module/printk/parameters/ignore_loglevel" "Y" 
+write "/sys/module/printk/parameters/ignore_loglevel" "Y"
+write "/proc/sys/kernel/printk_ratelimit" "0"
+write "/proc/sys/kernel/printk_ratelimit_burst" "0"
 write "/sys/module/spurious/parameters/noirqdebug" "Y" 
+write "dmesg_restrict" "0"
+
+
+####################################
+# Hung Tasks
+####################################
+
+write "/proc/sys/kernel/hung_task_check_count" "0"
+write "/proc/sys/kernel/hung_task_panic" "0"
+write "/proc/sys/kernel/hung_task_warnings" "0"
+write "/proc/sys/kernel/hung_task_timeout_secs" "120"
 
 ####################################
 # Misc Optimization
@@ -140,7 +153,6 @@ write "/sys/module/spurious/parameters/noirqdebug" "Y"
 # Lower BT Performance but Lower Power Consumption
 write "/sys/module/bluetooth/parameters/disable_ertm" "Y"
 # Lower the latency but might affect buffering (audio glitches)
-write "/sys/module/bluetooth/parameters/disable_ertm" "Y"
 write "/sys/module/bluetooth/parameters/disable_esco" "Y"
 
 # Apple Peripherals You won't use it for 99.9% of time
@@ -168,7 +180,7 @@ done
 wps="/proc/sys/kernel/nmi_watchdog
 /proc/sys/kernel/soft_watchdog
 /proc/sys/kernel/watchdog
-/proc/sys/kernel/hung_task_panic
+/proc/sys/kernel/watchdog_thresh
 /proc/sys/kernel/max_rcu_stall_to_panic
 /proc/sys/kernel/panic
 /proc/sys/kernel/panic_on_oops
@@ -178,23 +190,24 @@ wps="/proc/sys/kernel/nmi_watchdog
 /proc/sys/kernel/softlockup_panic
 /proc/sys/vm/panic_on_oom
 /proc/sys/walt/panic_on_walt_bug
-/proc/sys/kernel/watchdog_cpumask"
+/proc/sys/kernel/watchdog_cpumask
+/proc/sys/kernel/print-fatal-signals"
 for wp in $wps;do
   write "$wp" "0"
 done
 
-# ULPS tuning
-for file in /sys/kernel/debug/*/*; do
-    if [[ -f "$file" ]]; then
-        if [[ "$file" == *dsi-phy-0_allow_phy_power_off* ]]; then
-            write "$file" "Y"
-        elif [[ "$file" == *ulps_feature_enable* ]]; then
-            write "$file" "Y"
-        elif [[ "$file" == *ulps_suspend_feature_enable* ]]; then
-            write "$file" "Y"
-        fi
-    fi
-done
+# # ULPS tuning
+# for file in /sys/kernel/debug/*/*; do
+#     if [[ -f "$file" ]]; then
+#         if [[ "$file" == *dsi-phy-0_allow_phy_power_off* ]]; then
+#             write "$file" "Y"
+#         elif [[ "$file" == *ulps_feature_enable* ]]; then
+#             write "$file" "Y"
+#         elif [[ "$file" == *ulps_suspend_feature_enable* ]]; then
+#             write "$file" "Y"
+#         fi
+#     fi
+# done
 
 write "/sys/module/cryptomgr/parameters/notests" "Y"
 write "/sys/module/hid/parameters/ignore_special_drivers" "1"
@@ -213,17 +226,19 @@ write "/sys/module/hid/parameters/ignore_special_drivers" "1"
 # 1. https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/8/html/monitoring_and_managing_system_status_and_performance/factors-affecting-i-o-and-file-system-performance_monitoring-and-managing-system-status-and-performance#generic-block-device-tuning-parameters_factors-affecting-i-o-and-file-system-performance
 # 2. https://brendangregg.com/blog/2015-03-03/performance-tuning-linux-instances-on-ec2.html
 # 3. https://blog.csdn.net/yiyeguzhou100/article/details/100068115
-# for file in /sys/devices/virtual/block/*/queue/read_ahead_kb ; do echo "$file $(cat $file)" ; done
+# 4. https://github.com/chbatey/tobert.github.io/blob/c98e69267d84aea557e8f6e9bdc62c0d305b7454/src/pages/cassandra_tuning_guide.md?plain=1#L1090
+# for file in /sys/block/zram0/queue/* ; do echo "$file $(cat $file)" ; done
 
 ####################################
 # I/O Improvements
 ####################################
 
-# Disable I/O stats, MB_Stats, No-Merge, Add-Random
+# Disable I/O stats, MB_Stats, Add-Random
 for io in /sys/block/*/queue/iostats /sys/devices/virtual/block/*/queue/iostats /sys/fs/ext4/*/mb_stats /sys/block/*/queue/add_random /sys/devices/virtual/block/*/queue/add_random; do
   write "$io" "0"
 done;
 
+# SSD:1, HDD:0
 for nomerge in /sys/block/*/queue/nomerges /sys/devices/virtual/block/*/queue/nomerges; do
     write "$nomerge" "2"
 done
@@ -231,9 +246,9 @@ done
 # RQ_AFFINITY
 # 0 : I/O completion requests can be processed by any CPU cores.
 # 1 : I/O completion requests are handled only by the same CPU core that initiated the request.
-# 2 : I/O completion requests are processed by any CPU core within the same NUMA node as the core that initiated the request.
-for rq in /sys/block/*/queue/rq_affinity $(find /sys/devices -name rq_affinity); do
-    write "$rq" "2"
+# 2 : I/O completion requests are processed by any CPU core within the same NUMA node as the core that initiated the request. (multi CPU socket platform)
+for rq in /sys/block/*/queue/rq_affinity $(find /sys/devices/ -name rq_affinity); do
+    write "$rq" "1"
 done;
 
 if [ -d /sys/block/sda ]; then
@@ -276,9 +291,9 @@ for i in /sys/block/ram*/queue/read_ahead_kb /sys/devices/virtual/block/ram*/que
 done
 
 # ZRAM
-write "/sys/block/zram0/queue/nr_requests" "16"
+write "/sys/block/zram0/queue/nr_requests" "8"
 write "/sys/block/zram0/queue/read_ahead_kb" "32"
-write "/sys/devices/virtual/block/zram0/queue/nr_requests" "16"
+write "/sys/devices/virtual/block/zram0/queue/nr_requests" "8"
 write "/sys/devices/virtual/block/zram0/queue/read_ahead_kb" "32"
 
 ####################################
@@ -289,6 +304,23 @@ write "/proc/sys/net/ipv4/tcp_timestamps" "0"
 write "/proc/sys/net/ipv4/tcp_dsack" "0"
 write "/proc/sys/net/ipv4/tcp_ecn" "0"
 write "/proc/sys/net/ipv4/tcp_slow_start_after_idle" "0"
+write "/proc/sys/net/ipv4/udp_early_demux" "0"
+write "/proc/sys/net/ipv4/ip_forward" "0"
+write "/proc/sys/net/ipv4/fwmark_reflect" "0"
+write "/proc/sys/net/ipv4/fib_notify_on_flag_change" "0"
+write "/proc/sys/net/ipv4/icmp_echo_enable_probe" "0"
+write "/proc/sys/net/ipv4/icmp_msgs_per_sec" "250"
+write "/proc/sys/net/ipv4/icmp_ratelimit" "250"
+write "/proc/sys/net/ipv4/tcp_tw_reuse" "1"
+write "/proc/sys/net/ipv4/tcp_mtu_probing" "0"
+
+# TCP congestion
+for CC in westwood reno bbr cubic; do
+    if grep -qw "$CC" /proc/sys/net/ipv4/tcp_available_congestion_control; then
+        write "/proc/sys/net/ipv4/tcp_congestion_control" "$CC"
+        break
+    fi
+done
 
 # Disable IPv6, saves battery and lower the exploit risk if not using
 write "/proc/sys/net/ipv6/conf/all/disable_ipv6" "1"
@@ -306,7 +338,7 @@ fi
 ####################################
 # Misc Tuning
 ####################################
-# 數字越高，安全等級越高，0等於完全不用 (Address Space Layout Randomization)
+# 0,1,2 數字越高，安全等級越高 (Address Space Layout Randomization)
 write "/proc/sys/kernel/randomize_va_space" "1"
 
 # 不可被驱逐的内存是一种无法从内存中移除的内存，例如被锁定的内存或内核数据结构等。
@@ -324,12 +356,6 @@ write "/sys/module/workqueue/parameters/power_efficient" "Y"
 # RCU Tuning
 write "/sys/kernel/rcu_expedited" "0"
 write "/sys/kernel/rcu_normal" "1"
-
-# Energy Efficient
-write "/proc/sys/kernel/sched_energy_aware" "1"
-
- # Disable hung task warnings
-write "/proc/sys/kernel/hung_task_timeout_secs" "0"
 
 # Disable Network Wakeups
 write "/proc/sys/net/core/netdev_max_backlog" "32"

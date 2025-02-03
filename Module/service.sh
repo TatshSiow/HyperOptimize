@@ -77,25 +77,6 @@ wait_until_login() {
 wait_until_login
 sleep 15
 
-####################################
-# Kill and Stop Services
-####################################
-
-sleep 3 
-process="
-charge_logger
-logcat
-traced
-traced_probes
-vendor.ipacm-diag
-mi_thermald
-vendor.modemManager
-vendor.qesdk-mgr
-statsd
-misight
-update_engine
-mqsasd"
-
 for name in $process; do
   su -c stop "$name" 2>/dev/null 
 done
@@ -108,6 +89,9 @@ su -c "resetprop -n persist.sys.lmk.reportkills false"
 # statsd
 su -c "resetprop -n persist.device_config.runtime_native.metrics.write-to-statsd false"
 su -c "resetprop -n persist.device_config.statsd_native_boot.enable_restricted_metrics false"
+
+#额外的模糊噪点效果，增强 UI 的视觉体验
+su -c "resetprop -n persist.sys.add_blurnoise_supported false"
 
 ####################################
 # Performance Tuning
@@ -125,21 +109,23 @@ if [ "$(getprop ro.hardware)" = "qcom" ]; then
     lock_val "0" /sys/class/kgsl/kgsl-3d0/force_rail_on
     lock_val "92" /sys/class/kgsl/kgsl-3d0/devfreq/mod_percent # 92 is bad for Geekbench AI
 
-    # if [ -d /proc/sys/walt/ ]; then
-    # # WALT disable boost
-    #     mask_val "0" /proc/sys/walt/sched_boost
-    #     mask_val_in_path "0" "/proc/sys/walt/input_boost" "*"
-    #     # 高：省電，但響應速降低
-    #     # WALT的conservative，省電
-    #     mask_val "1" /proc/sys/walt/sched_conservative_pl
-    #     # Colcation
-    #     mask_val "51" /proc/sys/walt/sched_min_task_util_for_boost
-    #     mask_val "35" /proc/sys/walt/sched_min_task_util_for_colocation
-    #     mask_val "20000000" /proc/sys/walt/sched_task_unfilter_period
-    # fi
+     if [ -d /proc/sys/walt/ ]; then
+     # WALT disable boost
+         mask_val "0" /proc/sys/walt/sched_boost
+         mask_val_in_path "0" "/proc/sys/walt/input_boost" "*"
+         # 高：省電，但響應速降低
+         # WALT的conservative，省電
+         mask_val "1" /proc/sys/walt/sched_conservative_pl
+         # Colcation
+         mask_val "51" /proc/sys/walt/sched_min_task_util_for_boost
+         mask_val "35" /proc/sys/walt/sched_min_task_util_for_colocation
+         mask_val "20000000" /proc/sys/walt/sched_task_unfilter_period
+     fi
     # Reduce PERF Monitoring overhead
     # Stock:25
-    # mask_val "25" /proc/sys/kernel/perf_cpu_time_max_percent
+    mask_val "5" /proc/sys/kernel/perf_cpu_time_max_percent
+    # Energy Efficient
+    mask_val "1" /proc/sys/kernel/sched_energy_aware
 
     # Restart PERF service
     start vendor.perfservice
@@ -155,8 +141,35 @@ lock_val "0-7" /dev/cpuset/top-app/cpus
 
 # Xiaomi Config
 stop mimd-service
+stop mimd-service2_0
 mask_val "0" /sys/module/migt/parameters/glk_freq_limit_walt
 mask_val "0" /sys/module/metis/parameters/cluaff_control
+
+####################################
+# Kill and Stop Services
+####################################
+
+sleep 3 
+process="
+charge_logger
+logcat
+traced
+traced_probes
+vendor.ipacm-diag
+mi_thermald
+vendor.modemManager
+vendor.qesdk-mgr
+statsd
+misight
+update_engine
+mqsasd
+vendor.perfservice
+vendor.miperf
+vendor.mlipay-1-1
+vendor.servicetracker-1-2
+tombstoned
+vendor.mi_misight
+"
 
 exit
 # /proc/sys/glk/freq_break_enable
