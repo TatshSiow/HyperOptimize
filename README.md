@@ -1,3 +1,6 @@
+[中文](https://github.com/TatshSiow/HyperOptimize/blob/main/README_CH.md)
+[English](https://github.com/TatshSiow/HyperOptimize/blob/main/README.md)
+
 > [!IMPORTANT]
 > Only download from releases\
 > Don't clone the source or expect things to break
@@ -13,8 +16,6 @@
 Reduce Power and RAM consumption by optimizing system parameters, disabling Apps & System Process
 
 ## What it does?
-- **Hides Detection : Zygisk Injected** ( with [ReZygisk](https://github.com/PerformanC/ReZygisk) )
-- **Hides Detection : Debugging Environment**
 - Debloat Apps
 - Debloat system process
 - Disable logging
@@ -38,8 +39,7 @@ Reduce Power and RAM consumption by optimizing system parameters, disabling Apps
 ### How to install?
 - Flash in Magisk
 > [!WARNING]  
-> - Created especially for magisk
-> - KSU and APatch, test yourself
+> - might not work on KSU and APatch
 
 ### My Magisk break after uninstalled, what should I do?
 - Force close and launch again
