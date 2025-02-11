@@ -34,7 +34,7 @@
 > [!CAUTION]  
 > - **救磚模塊** 請自備
 > - 和其他相同類型的模塊 **衝突** 
-
+> - 與nakixii的**潘多拉模塊**衝突
 ### 如何安裝?
 - Magisk刷入即可
 > [!WARNING]  
@@ -57,4 +57,3 @@
 
 ## 專案受 GPL 3.0 授權保護
 <a href="https://github.com/TatshSiow/HyperOptimize/blob/main/LICENSE" ><img height=100 src="https://upload.wikimedia.org/wikipedia/commons/9/93/GPLv3_Logo.svg"/></a>
-
