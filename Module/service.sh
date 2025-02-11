@@ -1,8 +1,25 @@
 ####################################
 # Functions
 ####################################
+wait_until_login() {
+  while [[ "$(getprop sys.boot_completed)" != "1" ]]; do
+    sleep 3
+  done
 
-mkdir -p /dev/mount_masks
+  test_file="/storage/emulated/0/Android/.PERMISSION_TEST"
+  true >"$test_file"
+  while [[ ! -f "$test_file" ]]; do
+    true >"$test_file"
+    sleep 1
+  done
+  rm -f "$test_file"
+}
+
+write() {
+    local file="$1"
+    shift
+    [ -f "$file" ] && echo "$@" > "$file" 2>/dev/null
+}
 
 # $1:value $2:path
 lock_val() {
@@ -14,47 +31,6 @@ lock_val() {
         chmod -w "$file"
     done
 }
-
-# $1:value $2:path $3:filename
-# $1:value $2:path $3:subdir $4:filename
-lock_val_in_path() {
-    if [ "$#" = "4" ]; then
-        find "$2/" -path "*$3*" -name "$4" -type f | while read -r file; do
-            lock_val "$1" "$file"
-        done
-    else
-        find "$2/" -name "$3" -type f | while read -r file; do
-            lock_val "$1" "$file"
-        done
-    fi
-}
-
-# $1:value $2:path
-mask_val() {
-    find "$2" -type f | while read -r file; do
-        lock_val "$1" "$file"
-
-        TIME="$(date "+%s%N")"
-        echo "$1" >"/dev/mount_masks/mount_mask_$TIME"
-        mount --bind "/dev/mount_masks/mount_mask_$TIME" "$file"
-        restorecon -R -F "$file" >/dev/null 2>&1
-    done
-}
-
-# $1:value $2:path $3:filename
-# $1:value $2:path $3:subdir $4:filename
-mask_val_in_path() {
-    if [ "$#" = "4" ]; then
-        find "$2/" -path "*$3*" -name "$4" -type f | while read -r file; do
-            mask_val "$1" "$file"
-        done
-    else
-        find "$2/" -name "$3" -type f | while read -r file; do
-            mask_val "$1" "$file"
-        done
-    fi
-}
-
 
 wait_until_login() {
   while [[ "$(getprop sys.boot_completed)" != "1" ]]; do
@@ -70,16 +46,13 @@ wait_until_login() {
   rm -f "$test_file"
 }
 
+
+
 ####################################
 # Script Start
 ####################################
-
 wait_until_login
 sleep 15
-
-for name in $process; do
-  su -c stop "$name" 2>/dev/null 
-done
 
 # 有些設定system.prop吃不到，我放這裡總可以了吧（？
 #Disable Power Monitor Tools
@@ -93,9 +66,141 @@ su -c "resetprop -n persist.device_config.statsd_native_boot.enable_restricted_m
 #额外的模糊噪点效果，增强 UI 的视觉体验
 su -c "resetprop -n persist.sys.add_blurnoise_supported false"
 
+debug_name="debug_mask
+*log_level*
+*debug_level*
+*debug_mode
+reglog_enable
+*log_ue*
+*log_ce*
+snapshot_crashdumper
+tracing_on
+*log_lvl
+klog_lvl
+ipc_log_lvl
+log_level_sel
+iostats
+stats_enabled
+debug_output
+enable*dump*
+reg_dump_option
+pm_suspend_clk_dump
+evtlog_dump
+reg_dump_blk_mask
+dump_mode
+backlight_log
+trace_printk
+start*dump*
+rcu_cpu_stall_ftrace_dump
+logging_level
+exception-trace
+bpf_stats_enabled
+ftrace_dump_on_oops
+sched_schedstats
+tracepoint_printk
+traceoff_on_warning
+oom_dump_tasks
+migt_sched_debug
+enable_pkg_monitor
+load_debug
+desc_option
+logging_option
+millet_debug
+*log*mask
+minidump_enable
+doublecyc_debug
+msm_vidc_fw_dump
+fboost_debug
+link_debug
+metis_debug
+tsched_debug
+flw_debug
+flw_enable
+game_link_debug
+migt_debug
+cpas_dump
+enable_bugon
+suid_dumpable
+nf_conntrack_log_invalid
+nf_log_all_netns
+*cpu_backtrace
+mb_stats"
+
+# Failed Lines (Permission denied)
+# "debug_quirks*"
+# "stats_timer"
+# "dump_oops"
+
+for i in $debug_name; do
+    for o in $(find /sys/ /proc/sys -type f -name "$i"); do
+        write "$o" "0"
+        echo "$o : $(cat $o)"
+    done
+done
+
+debug_list_1="/sys/kernel/debug/dri/0/debug/enable
+/sys/kernel/debug/kgsl/kgsl-3d0/profiling/enable
+/sys/kernel/debug/kprobes/enabled
+/sys/kernel/tracing/events/bpf_trace/bpf_trace_printk/enable
+/sys/kernel/debug/tracing/events/bpf_trace/bpf_trace_printk/enable"
+
+for debug_1 in "$debug_list_1"; do
+    write "$debug_1" "0"
+done
+
+debug_list_2="/sys/kernel/debug/debug_enabled
+/sys/kernel/debug/soc:qcom,pmic_glink_log/enable
+/sys/module/kernel/parameters/initcall_debug
+/sys/module/printk/parameters/always_kmsg_dump
+/sys/module/printk/parameters/time
+/sys/module/kiwi_v2/parameters/qdf_log_dump_at_kernel_enable
+/sys/module/msm_drm/parameters/reglog
+/sys/module/msm_drm/parameters/dumpstate
+/sys/module/blk_cgroup/parameters/blkcg_debug_stats
+/sys/kernel/debug/camera/smmu/cb_dump_enable
+/sys/kernel/debug/camera/ife/enable_req_dump
+/sys/kernel/debug/camera/smmu/map_profile_enable
+/sys/kernel/debug/camera/memmgr/alloc_profile_enable
+/sys/module/drm_kms_helper/parameters/poll
+/sys/module/rcutree/parameters/dump_tree
+/sys/kernel/debug/camera/cpas/full_state_dump
+/sys/kernel/debug/camera/ife/per_req_reg_dump
+/sys/kernel/debug/camera/cpas/smart_qos_dump
+/sys/kernel/debug/mi_display/debug_log
+/sys/module/ip6_tunnel/parameters/log_ecn_error"
+# /sys/kernel/debug/qcom,mdss_dsi_m3_38_0c_0a_dsc_cmd/dsi-ctrl-0/enable_cmd_dma_stats : N
+
+for debug_2 in "$debug_list_2"; do
+    write "$debug_2" "N"
+done
+
+####################################
+# Misc
+####################################
+#some other parameters
+write "/sys/kernel/debug/dri/0/debug/reglog_enable" "0"
+write "/sys/kernel/debug/msm_cvp/debug_level" "0"
+
+write "/proc/sys/kernel/core_pattern" ""
+
+# Event Tracing
+write "/sys/kernel/debug/tracing/set_event" ""
+write "/sys/kernel/debug/tracing/events/enable" "0"
+write "/sys/kernel/tracing/events/enable" "0"
+
+####################################
+# Printk
+####################################
+write "/proc/sys/kernel/printk" "0 0 0 0"
+write "/proc/sys/kernel/printk_devkmsg" "off"
+write "/sys/module/printk/parameters/console_suspend" "Y"
+write "/sys/module/printk/parameters/ignore_loglevel" "Y"
+write "/proc/sys/kernel/printk_ratelimit" "0"
+write "/proc/sys/kernel/printk_ratelimit_burst" "0"
 ####################################
 # Performance Tuning
 ####################################
+
 if [ "$(getprop ro.hardware)" = "qcom" ]; then 
     stop perf-hal-2-3
     stop vendor.perfservice
@@ -107,30 +212,12 @@ if [ "$(getprop ro.hardware)" = "qcom" ]; then
     lock_val "0" /sys/class/kgsl/kgsl-3d0/force_clk_on
     lock_val "0" /sys/class/kgsl/kgsl-3d0/force_no_nap
     lock_val "0" /sys/class/kgsl/kgsl-3d0/force_rail_on
+    lock_val "0" /sys/class/kgsl/kgsl-3d0/bus_split
+    lock_val "0" /sys/class/kgsl/kgsl-3d0/popp
     lock_val "92" /sys/class/kgsl/kgsl-3d0/devfreq/mod_percent # 92 is bad for Geekbench AI
-
-     if [ -d /proc/sys/walt/ ]; then
-     # WALT disable boost
-         mask_val "0" /proc/sys/walt/sched_boost
-         mask_val_in_path "0" "/proc/sys/walt/input_boost" "*"
-         # 高：省電，但響應速降低
-         # WALT的conservative，省電
-         mask_val "1" /proc/sys/walt/sched_conservative_pl
-         # Colcation
-         mask_val "51" /proc/sys/walt/sched_min_task_util_for_boost
-         mask_val "35" /proc/sys/walt/sched_min_task_util_for_colocation
-         mask_val "20000000" /proc/sys/walt/sched_task_unfilter_period
-     fi
-    # Reduce PERF Monitoring overhead
-    # Stock:25
-    mask_val "5" /proc/sys/kernel/perf_cpu_time_max_percent
-    # Energy Efficient
-    mask_val "1" /proc/sys/kernel/sched_energy_aware
-
     # Restart PERF service
     start vendor.perfservice
     start perf-hal-2-3
-
 fi
 
 # CPUset Adjustment
@@ -165,11 +252,15 @@ update_engine
 mqsasd
 vendor.perfservice
 vendor.miperf
-vendor.mlipay-1-1
 vendor.servicetracker-1-2
 tombstoned
 vendor.mi_misight
 "
+
+stop $process
+for name in $process; do
+  su -c stop "$name" 2>/dev/null 
+done
 
 exit
 # /proc/sys/glk/freq_break_enable
@@ -179,3 +270,5 @@ exit
 # /proc/sys/glk/glk_disable
 # 1 : reduce GPU-related overhead
 # 0 : Graphics Lock or synchronization features are active
+
+exit
