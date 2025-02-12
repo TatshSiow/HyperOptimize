@@ -32,22 +32,6 @@ lock_val() {
     done
 }
 
-wait_until_login() {
-  while [[ "$(getprop sys.boot_completed)" != "1" ]]; do
-    sleep 3
-  done
-
-  test_file="/storage/emulated/0/Android/.PERMISSION_TEST"
-  true >"$test_file"
-  while [[ ! -f "$test_file" ]]; do
-    true >"$test_file"
-    sleep 1
-  done
-  rm -f "$test_file"
-}
-
-
-
 ####################################
 # Script Start
 ####################################
@@ -65,6 +49,12 @@ su -c "resetprop -n persist.device_config.statsd_native_boot.enable_restricted_m
 
 #额外的模糊噪点效果，增强 UI 的视觉体验
 su -c "resetprop -n persist.sys.add_blurnoise_supported false"
+
+#logd newlocation
+su -c "resetprop -n persist.logd.diag.newlocation 0"
+
+# TraceOPT
+su -c "resetprop -n persist.sys.traceopt 0"
 
 debug_name="debug_mask
 *log_level*
@@ -134,11 +124,11 @@ mb_stats"
 for i in $debug_name; do
     for o in $(find /sys/ /proc/sys -type f -name "$i"); do
         write "$o" "0"
-        echo "$o : $(cat $o)"
     done
 done
 
 debug_list_1="/sys/kernel/debug/dri/0/debug/enable
+/kernel/debug/sde_rotator0/evtlog/enable
 /sys/kernel/debug/kgsl/kgsl-3d0/profiling/enable
 /sys/kernel/debug/kprobes/enabled
 /sys/kernel/tracing/events/bpf_trace/bpf_trace_printk/enable
@@ -151,8 +141,6 @@ done
 debug_list_2="/sys/kernel/debug/debug_enabled
 /sys/kernel/debug/soc:qcom,pmic_glink_log/enable
 /sys/module/kernel/parameters/initcall_debug
-/sys/module/printk/parameters/always_kmsg_dump
-/sys/module/printk/parameters/time
 /sys/module/kiwi_v2/parameters/qdf_log_dump_at_kernel_enable
 /sys/module/msm_drm/parameters/reglog
 /sys/module/msm_drm/parameters/dumpstate
@@ -181,6 +169,7 @@ done
 write "/sys/kernel/debug/dri/0/debug/reglog_enable" "0"
 write "/sys/kernel/debug/msm_cvp/debug_level" "0"
 
+#core
 write "/proc/sys/kernel/core_pattern" ""
 
 # Event Tracing
@@ -188,23 +177,30 @@ write "/sys/kernel/debug/tracing/set_event" ""
 write "/sys/kernel/debug/tracing/events/enable" "0"
 write "/sys/kernel/tracing/events/enable" "0"
 
+for coredump in /sys/kernel/debug/remoteproc/remoteproc*/coredump; do
+    write "$coredump" "disabled"
+done
+
 ####################################
 # Printk
 ####################################
 write "/proc/sys/kernel/printk" "0 0 0 0"
+write "/proc/sys/kernel/printk_delay" "0"
 write "/proc/sys/kernel/printk_devkmsg" "off"
-write "/sys/module/printk/parameters/console_suspend" "Y"
-write "/sys/module/printk/parameters/ignore_loglevel" "Y"
 write "/proc/sys/kernel/printk_ratelimit" "0"
 write "/proc/sys/kernel/printk_ratelimit_burst" "0"
+write "/proc/sys/kernel/tracepoint_printk" "0"
+write "/sys/module/printk/parameters/always_kmsg_dump" "N"
+write "/sys/module/printk/parameters/console_no_auto_verbose" "N"
+write "/sys/module/printk/parameters/time" "0"
+write "/sys/module/printk/parameters/console_suspend" "1"
+write "/sys/module/printk/parameters/ignore_loglevel" "1"
+
 ####################################
 # Performance Tuning
 ####################################
 
 if [ "$(getprop ro.hardware)" = "qcom" ]; then 
-    stop perf-hal-2-3
-    stop vendor.perfservice
-
     # KGSL Tuning (GPU)
     lock_val "2147483647" /sys/class/devfreq/*kgsl-3d0/max_freq
     lock_val "0" /sys/class/devfreq/*kgsl-3d0/min_freq
@@ -214,10 +210,7 @@ if [ "$(getprop ro.hardware)" = "qcom" ]; then
     lock_val "0" /sys/class/kgsl/kgsl-3d0/force_rail_on
     lock_val "0" /sys/class/kgsl/kgsl-3d0/bus_split
     lock_val "0" /sys/class/kgsl/kgsl-3d0/popp
-    lock_val "92" /sys/class/kgsl/kgsl-3d0/devfreq/mod_percent # 92 is bad for Geekbench AI
-    # Restart PERF service
-    start vendor.perfservice
-    start perf-hal-2-3
+    lock_val "85" /sys/class/kgsl/kgsl-3d0/devfreq/mod_percent
 fi
 
 # CPUset Adjustment
@@ -232,43 +225,42 @@ stop mimd-service2_0
 mask_val "0" /sys/module/migt/parameters/glk_freq_limit_walt
 mask_val "0" /sys/module/metis/parameters/cluaff_control
 
+# Reduce PERF Monitoring overhead
+# Stock:25
+write "/proc/sys/kernel/perf_cpu_time_max_percent" "1"
+
+# # VM Tunable
+# write "/proc/sys/vm/stat_interval" "30"
+# write "/proc/sys/vm/vfs_cache_pressure" "50"
+# write "/proc/sys/vm/page-cluster" "3"
+# write "/proc/sys/vm/dirty_ratio" "50"
+
 ####################################
 # Kill and Stop Services
 ####################################
 
 sleep 3 
-process="
-charge_logger
+process="charge_logger
 logcat
 traced
 traced_probes
 vendor.ipacm-diag
-mi_thermald
 vendor.modemManager
 vendor.qesdk-mgr
 statsd
 misight
 update_engine
 mqsasd
-vendor.perfservice
-vendor.miperf
 vendor.servicetracker-1-2
 tombstoned
 vendor.mi_misight
-"
+mi_thermald
+vendor.perfservice
+vendor.miperf
+miuibooster"
 
-stop $process
 for name in $process; do
   su -c stop "$name" 2>/dev/null 
 done
-
-exit
-# /proc/sys/glk/freq_break_enable
-# 1 : aggresive scaling GPU frequency
-# 0 : avoid frequent GPU performance jumps
-
-# /proc/sys/glk/glk_disable
-# 1 : reduce GPU-related overhead
-# 0 : Graphics Lock or synchronization features are active
 
 exit

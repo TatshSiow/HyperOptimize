@@ -1,28 +1,113 @@
-# wpa_supplicant logging
-# 找不到文檔
-persist.wpa_supplicant.debug=false
+# BUILD PROPS
 
-#Enable stm events
-persist.debug.coresight.config=
+# Renderengine optimizations
+debug.egl.hw=1
+debug.renderengine.backend=skiaglthreaded
+# debug.renderengine.graphite=true
+# debug.renderengine.vulkan=true
+debug.stagefright.renderengine.backend=threaded
+debug.sf.multithreaded_present=true
+persist.sys.force_sw_gles=0
 
-# Disable blur on app launch
-ro.launcher.blur.appLaunch=0
+#FROM ORIGINAL PROPS (XIAOMI 13)
+debug.egl.hw=1
+ro.miui.shell_anim_enable_fcb=false
+ro.vendor.display.ai_disp.enable=false
 
-# Qualcomm System Daemon
-persist.vendor.qcomsysd.enabled=0
+# https://android-review.googlesource.com/c/platform/frameworks/base/+/2819917
+ro.hwui.use_vulkan=true
 
-# QFP (Qualcomm Feature Profiles)
-# Allows toggling of specific Qualcomm-related features, which might include debugging, logging, or runtime configurations related to hardware or software.
-persist.vendor.qfp=false
+# Surfaceflinger performance/power optimizations
+# https://android.googlesource.com/platform//frameworks/native/+/4a466641791cb573f2d029f283ce8a2b25974bd5/services/surfaceflinger/common/FlagManager.cpp
+# https://android.googlesource.com/platform//frameworks/native/+/94ae13178781a14867071636fded56c907a9db8b/services/surfaceflinger/SurfaceFlinger.cpp
+debug.sf.enable_adpf_cpu_hint=true
+debug.sf.multithreaded_present=true
+debug.sf.cache_source_crop_only_moved=true
+debug.sf.fp16_client_target=true
+debug.sf.enable_layer_command_batching=true
+debug.sf.disable_client_composition_cache=0
+debug.sf.predict_hwc_composition_strategy=1
+ro.surface_flinger.running_without_sync_framework=false
+ro.surface_flinger.start_graphics_allocator_service=true
 
-# GPU profiling tools
-graphics.gpu.profiler.support=false
+# 避免冗餘的frame rendering
+debug.sf.disable_backpressure=0
+debug.sf.enable_gl_backpressure=1
+
+# Prefetchers
+# persist.mm.enable.prefetch=false
+# persist.sys.preload.enable=false
+# persist.sys.prestart.proc=false
+# persist.sys.prestart.feedback.enable=false
+# persist.sys.dynamic_usap_enabled=false
+# persist.sys.stability.iorapEnable=false
+
+# dex2oat Optimizations
+dalvik.vm.background-dex2oat-cpu-set=2,3,4,5,6,7
+dalvik.vm.bg-dex2oat-threads=6
+dalvik.vm.boot-dex2oat-cpu-set=2,3,4,5,6,7
+dalvik.vm.boot-dex2oat-threads=6
+dalvik.vm.default-dex2oat-cpu-set=2,3,4,5,6,7
+dalvik.vm.dex2oat-cpu-set=2,3,4,5,6,7
+dalvik.vm.dex2oat-threads=6
+dalvik.vm.image-dex2oat-cpu-set=2,3,4,5,6,7
+dalvik.vm.image-dex2oat-threads=6
+dalvik.vm.dex2oat-swap=true
+dalvik.vm.madvise.artfile.size=2147483647
+dalvik.vm.madvise.odexfile.size=2147483647
+dalvik.vm.madvise.vdexfile.size=2147483647
+dalvik.vm.systemservercompilerfilter=everything
+dalvik.vm.systemuicompilerfilter=everything
+
+# dex2oat Trigger
+pm.dexopt.ab-ota=verify
+pm.dexopt.bg-dexopt=everything
+pm.dexopt.boot-after-ota=verify
+pm.dexopt.boot-after-mainline-update=verify
+pm.dexopt.cmdline=everything
+pm.dexopt.downgrade_after_inactive_days=30
+pm.dexopt.first-boot=verify
+pm.dexopt.first-use=verify
+pm.dexopt.inactive=verify
+pm.dexopt.install=everything
+pm.dexopt.install-bulk=everything
+pm.dexopt.install-bulk-downgraded=everything
+pm.dexopt.install-bulk-secondary=everything
+pm.dexopt.install-bulk-secondary-downgraded=everything
+pm.dexopt.install-fast=verify
+pm.dexopt.post-boot=verify
+pm.dexopt.shared=everything
+
+# Use kryo785 as processor target for ART and Bionic
+dalvik.vm.isa.arm64.variant=kryo785
+ro.bionic.cpu_variant=kryo785
+dalvik.vm.isa.arm64.features=runtime
+
+# Misc ART optimizations
+dalvik.vm.foreground-heap-growth-multiplier=2.5
+dalvik.vm.heapgrowthlimit=512m
+dalvik.vm.heapmaxfree=32m
+dalvik.vm.heapminfree=512k
+dalvik.vm.heapsize=512m
+dalvik.vm.heapstartsize=2m
+dalvik.vm.heaptargetutilization=0.8
+persist.device_config.runtime_native.usap_pool_enabled=true
+dalvik.vm.usap_pool_enabled=true
+dalvik.vm.usap_pool_refill_delay_ms=3000
+dalvik.vm.usap_pool_size_max=3
+dalvik.vm.usap_pool_size_min=1
+dalvik.vm.usap_refill_threshold=1
+# ro.dalvik.vm.enable_uffd_gc=true
+# persist.device_config.runtime_native_boot.force_disable_uffd_gc=false
+# persist.device_config.runtime_native_boot.enable_generational_cc=
+# dalvik.vm.gctype=CMC
+# dalvik.vm.backgroundgctype=HSpaceCompact
 
 ###############上面是測試#################
 
 # https://gist.github.com/Atavic/6d9a43736aac3371b0ca9cca4cd0f7af
 # HardwareRenderer
-debug.hwui.disable_vsync=true
+debug.hwui.disable_vsync=false
 debug.hwui.profile=false
 debug.hwui.render_dirty_regions=false
 debug.hwui.show_dirty_regions=false
@@ -40,13 +125,6 @@ debug.sqlite.wal.poolsize=8
 #property to enable user to access Google WFD settings
 persist.debug.wfd.enable=0
 
-# 解除所有 TurboSched
-persist.sys.turbosched.enable=false
-persist.sys.turbosched.enable.coreApp.optimizer=false
-persist.sys.turbosched.enable_v2=false
-persist.sys.turbosched.enabletop20app=false
-persist.sys.turbosched.gaea.enable=false
-
 # 禁用 sf 事務跟蹤
 debug.sf.enable_transaction_tracing=false
 
@@ -58,17 +136,25 @@ ro.force.debuggable=0
 #	安卓系統相關		#
 #####################
 
-# 停用 Wi-Fi Round Trip Time
+# Wi-Fi Round Trip Time
 config.disable_rtt=true
 
 # https://dumps.tadiphone.dev/dumps/xiaomi/shennong/-/blob/2afdbcea73b73ae4bd0aaacd432647cc9ca7dabe/product/etc/build.prop
 # 启用快速休眠功能，有助于节省电池寿命并提高网络响应速度。
 ro.vendor.radio.fastdormancy=true
 
-# https://android.googlesource.com/platform//frameworks/native/+/94ae13178781a14867071636fded56c907a9db8b/services/surfaceflinger/SurfaceFlinger.cpp
-# 避免冗餘的frame rendering
-debug.sf.disable_backpressure=0
-debug.sf.enable_gl_backpressure=1
+# GPU profiling tools
+graphics.gpu.profiler.support=false
+
+# Qualcomm System Daemon
+persist.vendor.qcomsysd.enabled=0
+
+# QFP (Qualcomm Feature Profiles)
+# Allows toggling of specific Qualcomm-related features, which might include debugging, logging, or runtime configurations related to hardware or software.
+persist.vendor.qfp=false
+
+# Disable blur on app launch
+ro.launcher.blur.appLaunch=0
 
 #####################
 #	小米策略相關		#
@@ -76,6 +162,12 @@ debug.sf.enable_gl_backpressure=1
 
 # 小米內存拓展開關（1:開，false:關）
 persist.miui.extm.enable=1
+
+# 內存調試
+persist.sys.debug.enable_scout_memory_resume=false
+
+# DM映射，ZRAM 1:1
+persist.miui.extm.dm_opt.enable=true
 
 #########################
 # Logging and Debugging #
@@ -106,7 +198,6 @@ persist.sys.scout_dumpbysocket=false
 debug.hwui.skia_atrace_enabled=false
 debug.hwui.skia_tracing_enabled=false
 debug.hwui.skia_use_perfetto_track_events=false
-
 debug.atrace.tags.enableflags=0
 
 # some logs
@@ -168,13 +259,71 @@ persist.log.tag.misight=S
 vendor.bluetooth.startbtlogger=false
 # bluetooth.startbtlogger=false
 
+# wpa_supplicant logging
+# 找不到文檔
+persist.wpa_supplicant.debug=false
+
+rw.logger=0
+persist.vendor.sensors.hal.log=e
+persist.sys.log_max_line=0
+persist.sys.log_time_gap_sec=-1
+sys.trace.traced_started=0
 
 ##################################
 # NAKIXII
 ##################################
 
+# Misc ART optimizations
+dalvik.vm.dex2oat-minidebuginfo=false
+dalvik.vm.minidebuginfo=false
+
+# LMKD
+ro.lmk.swap_util_max=100
+ro.lmk.swap_free_low_percentage=0
+
 # AppCompact
 persist.sys.use_boot_compact=false
+
+# Faster game loading
+debug.game.video.support=true
+debug.game.video.speed=true
+
+# LTPO Optimize
+ro.vendor.mi_sf.support_automode_for_normalfps=true
+
+# Memory Management
+persist.sys.mms.bg_apps_limit=65535
+persist.sys.mms.compact_enable=false
+persist.sys.mms.single_compact_enable=false
+persist.sys.mms.enable=false
+persist.sys.spc.enabled=false
+persist.sys.spc.bindvisible.enabled=false
+persist.sys.spc.gamepay.protect.enabled=true
+persist.sys.spc.cpulimit.enabled=false
+persist.sys.spc.cpuexception.enabled=false
+persist.sys.spc.proc_restart_enable=false
+persist.sys.spc.process.tracker.enable=false
+persist.sys.spc.fast.launch=false
+persist.sys.spc.scale.backgorund.app.enable=false
+persist.sys.spc.resident.app.enable=false
+persist.sys.miui.resident.app.count=65535
+persist.sys.cross_process_jump_response_opt=false
+persist.sys.min.swap.free=false
+persist.sys.memory_standard.enable=false
+persist.sys.mfz.enable=false
+persist.miui.boot.mopt.enable=false
+persist.sys.mimd.reclaim.enable=false
+persist.sys.mthp.enabled=false
+persist.sys.miui.damon.enable=false
+persist.sys.stability.enable_process_exit_monitor=false
+persist.sys.stability.enable_rss_monitor=false
+persist.sys.stability.enable_sentinel_resource_monitor=false
+persist.sys.stability.enable_thread_monitor=false
+persist.sys.stability_memory_monitor.enable=false
+persist.sys.stability.swapEnable=false
+persist.sys.stability.enable_dmabuf_monitor=false
+persist.sys.stability.enable_fd_monitor=false
+persist.sys.debug.enable_scout_memory_monitor=false
 
 # Sched
 persist.sys.enable_perf_hint=false
@@ -185,9 +334,42 @@ persist.sys.miuibooster.launch.rtmode=false
 persist.sys.miuibooster.rtmode=false
 persist.sys.hyper_transition=false
 
+persist.sys.miui_animator_sched.sched_threads=0
+persist.miui.miperf.enable=false
+persist.sys.precache.enable=false
+persist.sys.miui_sptm.enable=false
+persist.sys.miui_sptm_new.enable=false
+persist.sys.miui_sptm.ignore_cloud_enable=false
+
+
 # Thermal
 persist.sys.enable_templimit=false
 ro.vendor.display.hwc_thermal_dimming=false
 ro.vendor.fps.switch.thermal=false
 ro.vendor.thermal.dimming.enable=false
 persist.sys.smartpower.display_thermal_temp_threshold=99
+
+# Debug
+persist.sys.debug.app.mtbf_test=false
+persist.sys.perfdebug.monitor.enable=false
+
+# Display
+ro.vendor.touch.touchscheduler.enable=false
+
+# Network
+persist.sys.miuitcptracker.ctrl=false
+
+# Misc
+persist.sys.stability.f2fsTrackEnable=false
+persist.sys.stability.nativehang.enable=false
+persist.sys.stability.qcom_hang_task.enable=false
+persist.sys.stability.report_app_launch.enable=false
+persist.sys.stability.window_monitor.enabled=false
+persist.sys.textureview_optimization.enable=false
+persist.sys.touch.followup.enable=false
+persist.sys.trim_rendernode.enable=false
+persist.sys.stability.lz4asm=off
+persist.sys.stability.reboot_days=-1
+persist.sys.stability.smartfocusio=off
+persist.sys.stability.fbo_hal_stop=false
+persist.sys.fboservice.ctrl=true
