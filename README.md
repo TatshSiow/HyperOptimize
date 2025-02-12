@@ -35,6 +35,7 @@ Reduce Power and RAM consumption by optimizing system parameters, disabling Apps
 > [!CAUTION]  
 > - **Bootloop Rescue Module** is always recommended
 > - **CONFLICT** with module with same purpose
+> - Conflict with **Nakixii Pandora Kernel**
 
 ### How to install?
 - Flash in Magisk
