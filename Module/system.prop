@@ -35,12 +35,12 @@ debug.sf.disable_backpressure=0
 debug.sf.enable_gl_backpressure=1
 
 # Prefetchers
-# persist.mm.enable.prefetch=false
-# persist.sys.preload.enable=false
-# persist.sys.prestart.proc=false
-# persist.sys.prestart.feedback.enable=false
-# persist.sys.dynamic_usap_enabled=false
-# persist.sys.stability.iorapEnable=false
+persist.mm.enable.prefetch=false
+persist.sys.preload.enable=false
+persist.sys.prestart.proc=false
+persist.sys.prestart.feedback.enable=false
+persist.sys.dynamic_usap_enabled=false
+persist.sys.stability.iorapEnable=false
 
 # dex2oat Optimizations
 dalvik.vm.background-dex2oat-cpu-set=2,3,4,5,6,7
