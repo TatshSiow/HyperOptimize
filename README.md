@@ -13,8 +13,7 @@
 </div>
 
 # What is this?
-This is a module optimizing System and Kernel parameters to improve battery endurance time
-This Module aims to reduce power consumption, not to provide exceptional performance
+A module to optimize System and Kernel parameters to reduce power consumption, not to provide exceptional performance
 
 ## What it does?
 - Debloat Apps
