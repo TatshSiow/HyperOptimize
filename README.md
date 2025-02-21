@@ -13,7 +13,8 @@
 </div>
 
 # What is this?
-Reduce Power and RAM consumption by optimizing system parameters, disabling Apps & System Process
+This is a module optimizing System and Kernel parameters to improve battery endurance time
+This Module aims to reduce power consumption, not to provide exceptional performance
 
 ## What it does?
 - Debloat Apps
