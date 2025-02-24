@@ -16,17 +16,16 @@
 A module to optimize System and Kernel parameters to reduce power consumption, not to provide exceptional performance
 
 ## What it does?
-- Debloat Apps
-- Debloat system process
-- Disable logging
-- Disable Wakelocks
+- Adjust Logging
+- Adjust Wakelocks
 - CPU Optimization
 - GPU Optimization
 - I/O Optimization
 - Surface Flinger Tweaks
-- Memory Management Tweaks
+- Rendering Tweaks
 - System parameters Optimization
 - HyperOS System Optimization
+- etc.
 > [!TIP]  
 > - [Freezer](https://github.com/Freezer-Team/Freezer) to obtain better battery life
 > - [FCMFix](https://github.com/kooritea/fcmfix) fix notification problem while using tombstone(eg. Freezer, NoActive)
