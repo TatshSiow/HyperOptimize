@@ -15,17 +15,17 @@
 一個通過禁調整系統和內核參數來達到降低功耗的模塊（不為追求性能）
 
 ## 他能做什麼?
-- 禁用預裝軟件
-- 禁用系統進程
-- 關閉 Logging
-- 關閉 Wakelocks
+- 調整 Logging
+- 調整 Wakelocks
 - CPU 優化
 - GPU 優化
 - I/O 優化
 - Surface Flinger 調整
+- 渲染 (Render) 調整
 - 內存管理調整
 - Linux 系統參數優化
 - HyperOS 系統優化
+- 其他優化……
 > [!TIP]  
 > - [Freezer](https://github.com/Freezer-Team/Freezer) 搭配省電
 > - [FCMFix](https://github.com/kooritea/fcmfix) 解決使用 **墓碑** 不通知或延遲通知問題 (eg. Freezer, NoActive)
