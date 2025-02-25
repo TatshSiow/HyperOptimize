@@ -25,9 +25,9 @@ for io in  /sys/block/*/queue/add_random /sys/devices/virtual/block/*/queue/add_
     write "$io" "0"
 done
 
-#nomerges
+# nomerges
 for nomerge in /sys/block/*/queue/nomerges /sys/devices/virtual/block/*/queue/nomerges; do
-    write "$nomerge" "0"
+    write "$nomerge" "2"
 done
 
 # RQ_AFFINITY
@@ -36,8 +36,51 @@ done
 # 2 : I/O completion requests are processed by any CPU core within the same NUMA node as the core that initiated the request. (multi CPU socket platform)
 for rq in /sys/block/*/queue/rq_affinity $(find /sys/devices/ -name rq_affinity); do
     # echo "$(cat $rq)"
-    write "$rq" "1"
+    write "$rq" "0"
 done
+
+if [ -d /sys/block/sda ]; then
+    # UFS
+    for i in /sys/block/sd*/queue/nr_requests; do 
+        write "$i" "16"
+    done
+
+    for i in /sys/block/sd*/queue/read_ahead_kb; do 
+        write "$i" "64"
+    done
+else
+    # eMMC
+    for i in /sys/block/mmcblk*/queue/nr_requests; do 
+        write "$i" "16"
+    done
+    for i in /sys/block/mmcblk*/queue/read_ahead_kb; do 
+        write "$i" "32"
+    done
+fi
+
+# DM
+for i in /sys/block/dm-*/queue/nr_requests /sys/devices/virtual/block/dm-*/queue/nr_requests; do 
+    write "$i" "16"
+done
+
+for i in /sys/block/dm-*/queue/read_ahead_kb /sys/devices/virtual/block/dm-*/queue/read_ahead_kb; do 
+    write "$i" "64"
+done
+
+# RAM
+for i in /sys/block/ram*/queue/nr_requests /sys/devices/virtual/block/ram*/queue/nr_requests; do 
+    write "$i" "8" 
+done
+
+for i in /sys/block/ram*/queue/read_ahead_kb /sys/devices/virtual/block/ram*/queue/read_ahead_kb; do 
+    write "$i" "16" 
+done
+
+# ZRAM
+write "/sys/block/zram0/queue/nr_requests" "8"
+write "/sys/block/zram0/queue/read_ahead_kb" "32"
+write "/sys/devices/virtual/block/zram0/queue/nr_requests" "8"
+write "/sys/devices/virtual/block/zram0/queue/read_ahead_kb" "32"
 
 ####################################
 # Misc Logs
@@ -49,18 +92,18 @@ write "/sys/module/spurious/parameters/noirqdebug" "Y"
 write "/sys/module/lsm_audit/parameters/disable_audit_log" "1"
 
 # va-minidump
-for minidump in /sys/kernel/va-minidump/*/enable;do
+for minidump in /sys/kernel/va-minidump/*/enable; do
     write "$minidump" "0"
 done
 
 ####################################
 # Network Tuning
 ####################################
-# Network tweaks for saving battery
+# Network tweaks to reduce power
 write "/proc/sys/net/ipv4/tcp_timestamps" "0"
 write "/proc/sys/net/ipv4/tcp_dsack" "1"
 write "/proc/sys/net/ipv4/tcp_sack" "1"
-write "/proc/sys/net/ipv4/tcp_ecn" "0"
+write "/proc/sys/net/ipv4/tcp_ecn" "1"
 write "/proc/sys/net/ipv4/tcp_slow_start_after_idle" "1"
 write "/proc/sys/net/ipv4/udp_early_demux" "1"
 write "/proc/sys/net/ipv4/fwmark_reflect" "1"
@@ -75,27 +118,26 @@ write "/proc/sys/net/ipv4/tcp_no_metrics_save" "1"
 write "/proc/sys/net/ipv4/tcp_no_ssthresh_metrics_save" "1"
 write "/proc/sys/net/ipv4/tcp_moderate_rcvbuf" "1"
 
-# Unless your system is acting as a router, this should be set to 0
+# Unless your system is acting as a router (IP forwarding device) , this should be set to 0
 write "/proc/sys/net/ipv4/ip_forward" "0"
 
 # TCP congestion
-for CC in westwood bbr cubic reno; do
+for CC in bbr westwood cubic reno; do
     if grep -qw "$CC" /proc/sys/net/ipv4/tcp_available_congestion_control; then
         write "/proc/sys/net/ipv4/tcp_congestion_control" "$CC"
         break
     fi
 done
 
-# # Disable IPv6, saves battery and lower the exploit risk if not using
-write "/proc/sys/net/ipv6/conf/all/disable_ipv6" "1"
-
 ####################################
 # Transparent Hugepage
+# https://blog.csdn.net/hbuxiaofei/article/details/128402495
 ####################################
 write "/sys/kernel/mm/transparent_hugepage/enabled" "never"
 
 ####################################
 # Misc Tuning
+# https://sysctl-explorer.net/vm/compact_unevictable_allowed/
 ####################################
 # 不可被驱逐的内存是一种无法从内存中移除的内存，例如被锁定的内存或内核数据结构等。
 write "/proc/sys/vm/compact_unevictable_allowed" "1"
@@ -136,10 +178,14 @@ write "/sys/module/workqueue/parameters/power_efficient" "Y"
 write "/proc/sys/kernel/sched_child_runs_first" "0"
 
 # timers on the OS CPUs can be migrated to one of the application CPUs
-write "/proc/sys/kernel/timer_migration" "0"
+write "/proc/sys/kernel/timer_migration" "1"
 
 # Energy Efficient
 write "/proc/sys/kernel/sched_energy_aware" "1"
+
+# Reduce PERF Monitoring overhead
+# Stock:25
+write "/proc/sys/kernel/perf_cpu_time_max_percent" "5"
 
 #Boeffla Wakelock
 if [ -f /sys/devices/virtual/misc/boeffla_wakelock_blocker/wakelock_blocker ]; then
@@ -157,6 +203,7 @@ if [ "$(getprop ro.hardware)" = "qcom" ]; then
     #Qualcomm stm events
     resetprop -n persist.debug.coresight.config ""
     # RCU Tuning
+    # https://www.kernel.org/doc/Documentation/RCU/Design/Expedited-Grace-Periods/Expedited-Grace-Periods.html
     write "/sys/kernel/rcu_expedited" "0"
     write "/sys/kernel/rcu_normal" "1"
     # WALT
@@ -169,10 +216,9 @@ if [ "$(getprop ro.hardware)" = "qcom" ]; then
         # 高：省電，但響應速降低
         # WALT的conservative，省電
         write "/proc/sys/walt/sched_conservative_pl" "1"
-        # Colcation
+        # task
         write "/proc/sys/walt/sched_min_task_util_for_boost"  "51"
         write "/proc/sys/walt/sched_min_task_util_for_colocation"  "35"
-        # write "/proc/sys/walt/sched_min_task_util_for_colocation"  "0"
         write "/proc/sys/walt/sched_task_unfilter_period" "20000000"
     fi
 else
@@ -184,86 +230,6 @@ else
     resetprop -n persist.vendor.duraeverything.lowmemory.enable 0
 fi
 
-# Enables ZRAM 1:1 if device is Hyper OS 2.0
-if [ "$(getprop ro.mi.os.version.name)" = "OS2.0" ]; then
-    resetprop -n persist.miui.extm.dm_opt.enable true
-fi
-
-# # disables watchdogs and panics (don't apply if your device frequently crashes)
-# wps="/proc/sys/kernel/nmi_watchdog
-# /proc/sys/kernel/soft_watchdog
-# /proc/sys/kernel/watchdog
-# /proc/sys/kernel/watchdog_thresh
-# /proc/sys/kernel/max_rcu_stall_to_panic
-# /proc/sys/kernel/panic
-# /proc/sys/kernel/panic_on_oops
-# /proc/sys/kernel/panic_on_rcu_stall
-# /proc/sys/kernel/panic_on_warn
-# /proc/sys/kernel/panic_print
-# /proc/sys/kernel/softlockup_panic
-# /proc/sys/vm/panic_on_oom
-# /proc/sys/walt/panic_on_walt_bug
-# /proc/sys/kernel/print-fatal-signals
-# /sys/module/kernel/parameters/panic
-# /sys/module/kernel/parameters/panic_on_warn
-# /sys/module/kernel/parameters/panic_print
-# /sys/module/kernel/parameters/panic_on_oops
-# /sys/module/cryptomgr/parameters/panic_on_fail"
-# for wp in $wps;do
-#    write "$wp" "0"
-# done
-
-# ####################################
-# # Hung Tasks
-# ####################################
-# write "/proc/sys/kernel/hung_task_check_count" "0"
-# write "/proc/sys/kernel/hung_task_panic" "0"
-# write "/proc/sys/kernel/hung_task_warnings" "0"
-# write "/proc/sys/kernel/hung_task_timeout_secs" "15"
-
-# watchdog_cpumask : Watchdog will only use the CPU written
-write "/proc/sys/kernel/watchdog_cpumask" ""
-
-###### IO TUNING ########
-# if [ -d /sys/block/sda ]; then
-#     # UFS
-#     for i in /sys/block/sd*/queue/nr_requests; do 
-#         write "$i" "16"
-#     done
-
-#     for i in /sys/block/sd*/queue/read_ahead_kb; do 
-#         write "$i" "64"
-#     done
-# else
-#     # eMMC
-#     for i in /sys/block/mmcblk*/queue/nr_requests; do 
-#         write "$i" "8"
-#     done
-#     for i in /sys/block/mmcblk*/queue/read_ahead_kb; do 
-#         write "$i" "32"
-#     done
-# fi
-
-# # DM
-# for i in /sys/block/dm-*/queue/nr_requests /sys/devices/virtual/block/dm-*/queue/nr_requests; do 
-#     write "$i" "16"
-# done
-
-# for i in /sys/block/dm-*/queue/read_ahead_kb /sys/devices/virtual/block/dm-*/queue/read_ahead_kb; do 
-#     write "$i" "64"
-# done
-
-# # RAM
-# for i in /sys/block/ram*/queue/nr_requests /sys/devices/virtual/block/ram*/queue/nr_requests; do 
-#     write "$i" "8" 
-# done
-
-# for i in /sys/block/ram*/queue/read_ahead_kb /sys/devices/virtual/block/ram*/queue/read_ahead_kb; do 
-#     write "$i" "16" 
-# done
-
-# # ZRAM
-# write "/sys/block/zram0/queue/nr_requests" "8"
-# write "/sys/block/zram0/queue/read_ahead_kb" "32"
-# write "/sys/devices/virtual/block/zram0/queue/nr_requests" "8"
-# write "/sys/devices/virtual/block/zram0/queue/read_ahead_kb" "32"
+# Enable APTX Adaptive 2.2 Support (Only for 8gen1+)
+# Credit : The Voyager
+resetprop -n persist.vendor.qcom.bluetooth.aptxadaptiver2_2_support true

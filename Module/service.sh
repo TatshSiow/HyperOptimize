@@ -38,24 +38,6 @@ lock_val() {
 wait_until_login
 sleep 15
 
-# 有些設定system.prop吃不到，我放這裡總可以了吧（？
-#Disable Power Monitor Tools
-su -c "resetprop -n debug.power.monitor_tools false"
-# LMK
-su -c "resetprop -n persist.sys.lmk.reportkills false"
-# statsd
-su -c "resetprop -n persist.device_config.runtime_native.metrics.write-to-statsd false"
-su -c "resetprop -n persist.device_config.statsd_native_boot.enable_restricted_metrics false"
-
-#额外的模糊噪点效果，增强 UI 的视觉体验
-su -c "resetprop -n persist.sys.add_blurnoise_supported false"
-
-#logd newlocation
-su -c "resetprop -n persist.logd.diag.newlocation 0"
-
-# TraceOPT
-su -c "resetprop -n persist.sys.traceopt 0"
-
 debug_name="debug_mask
 *log_level*
 *debug_level*
@@ -132,7 +114,8 @@ debug_list_1="/sys/kernel/debug/dri/0/debug/enable
 /sys/kernel/debug/kgsl/kgsl-3d0/profiling/enable
 /sys/kernel/debug/kprobes/enabled
 /sys/kernel/tracing/events/bpf_trace/bpf_trace_printk/enable
-/sys/kernel/debug/tracing/events/bpf_trace/bpf_trace_printk/enable"
+/sys/kernel/debug/tracing/events/bpf_trace/bpf_trace_printk/enable
+/proc/sys/kernel/print-fatal-signals"
 
 for debug_1 in "$debug_list_1"; do
     write "$debug_1" "0"
@@ -149,13 +132,14 @@ debug_list_2="/sys/kernel/debug/debug_enabled
 /sys/kernel/debug/camera/ife/enable_req_dump
 /sys/kernel/debug/camera/smmu/map_profile_enable
 /sys/kernel/debug/camera/memmgr/alloc_profile_enable
-/sys/module/drm_kms_helper/parameters/poll
 /sys/module/rcutree/parameters/dump_tree
 /sys/kernel/debug/camera/cpas/full_state_dump
 /sys/kernel/debug/camera/ife/per_req_reg_dump
 /sys/kernel/debug/camera/cpas/smart_qos_dump
 /sys/kernel/debug/mi_display/debug_log
 /sys/module/ip6_tunnel/parameters/log_ecn_error"
+
+# /sys/module/drm_kms_helper/parameters/poll
 # /sys/kernel/debug/qcom,mdss_dsi_m3_38_0c_0a_dsc_cmd/dsi-ctrl-0/enable_cmd_dma_stats : N
 
 for debug_2 in "$debug_list_2"; do
@@ -210,31 +194,34 @@ if [ "$(getprop ro.hardware)" = "qcom" ]; then
     lock_val "0" /sys/class/kgsl/kgsl-3d0/force_rail_on
     lock_val "0" /sys/class/kgsl/kgsl-3d0/bus_split
     lock_val "0" /sys/class/kgsl/kgsl-3d0/popp
-    lock_val "85" /sys/class/kgsl/kgsl-3d0/devfreq/mod_percent
+    lock_val "65" /sys/class/kgsl/kgsl-3d0/devfreq/mod_percent
 fi
 
 # CPUset Adjustment
-lock_val "0-2" /dev/cpuset/background/cpus
-lock_val "0-2" /dev/cpuset/system-background/cpus
-lock_val "0-6" /dev/cpuset/foreground/cpus
-lock_val "0-7" /dev/cpuset/top-app/cpus
+# lock_val "0-2" /dev/cpuset/background/cpus
+# lock_val "0-2" /dev/cpuset/system-background/cpus
+# lock_val "0-6" /dev/cpuset/foreground/cpus
+# lock_val "0-7" /dev/cpuset/top-app/cpus
 
 # Xiaomi Config
-stop mimd-service
-stop mimd-service2_0
-mask_val "0" /sys/module/migt/parameters/glk_freq_limit_walt
-mask_val "0" /sys/module/metis/parameters/cluaff_control
+# stop mimd-service
+# stop mimd-service2_0
+write "/sys/module/migt/parameters/enable_pkg_monitor" "0"
+write "/proc/sys/migt/enable_pkg_monitor" "0"
+write "/sys/module/migt/parameters/glk_freq_limit_walt" "0"
+write "/sys/module/metis/parameters/cluaff_control" "0"
 
-# Reduce PERF Monitoring overhead
-# Stock:25
-write "/proc/sys/kernel/perf_cpu_time_max_percent" "1"
+# VM Tunable
+write "/proc/sys/vm/stat_interval" "30"
+write "/proc/sys/vm/vfs_cache_pressure" "60"
+write "/proc/sys/vm/page-cluster" "3"
+write "/proc/sys/vm/dirty_ratio" "15"
+write "proc/sys/vm/dirty_background_ratio" "5"
 
-# # VM Tunable
-# write "/proc/sys/vm/stat_interval" "30"
-# write "/proc/sys/vm/vfs_cache_pressure" "50"
-# write "/proc/sys/vm/page-cluster" "3"
-# write "/proc/sys/vm/dirty_ratio" "50"
-
+# if [ -d /sys/kernel/mm/lru_gen/ ]; then
+#     lock_val "Y" /sys/kernel/mm/lru_gen/enabled
+#     lock_val "5000" /sys/kernel/mm/lru_gen/min_ttl_ms
+# fi
 ####################################
 # Kill and Stop Services
 ####################################
