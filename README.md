@@ -2,7 +2,7 @@
 [English](https://github.com/TatshSiow/HyperOptimize/blob/main/README.md)
 
 > [!IMPORTANT]
-> You can join our Telegram for test/pilot builds!
+> You can join our Telegram for **Test/Pilot** Builds!
 <div align="center">
   
   ![](https://github.com/user-attachments/assets/5cf75f24-5993-4e64-b3b2-328f30d4ff31)
