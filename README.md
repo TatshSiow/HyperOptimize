@@ -2,8 +2,7 @@
 [English](https://github.com/TatshSiow/HyperOptimize/blob/main/README.md)
 
 > [!IMPORTANT]
-> Only download from releases\
-> Don't clone the source or expect things to break
+> You can join our Telegram for test/pilot builds!
 <div align="center">
   
   ![](https://github.com/user-attachments/assets/5cf75f24-5993-4e64-b3b2-328f30d4ff31)
