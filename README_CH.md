@@ -1,8 +1,7 @@
 [中文](https://github.com/TatshSiow/HyperOptimize/blob/main/README_CH.md)
 [English](https://github.com/TatshSiow/HyperOptimize/blob/main/README.md)
 > [!IMPORTANT]
-> 只下載 releases 的版本 \
-> 不要Clone源代碼，不然手機壞了我不理你哦 :P
+> 可以加入我們的 Telegram（紙飛機）群組，那裡可以下載 **測試版** 哦！
 <div align="center">
   
   ![](https://github.com/user-attachments/assets/5cf75f24-5993-4e64-b3b2-328f30d4ff31)
