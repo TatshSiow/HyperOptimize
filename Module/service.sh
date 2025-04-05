@@ -165,6 +165,28 @@ for coredump in /sys/kernel/debug/remoteproc/remoteproc*/coredump; do
     write "$coredump" "disabled"
 done
 
+#Kernel Panic & Watchdogs
+panic="hung_task_panic
+max_rcu_stall_to_panic
+panic
+panic_on_oops
+panic_on_rcu_stall
+panic_on_warn
+panic_print
+softlockup_panic
+nmi_watchdog
+soft_watchdog
+watchdog
+watchdog_cpumask
+watchdog_thresh"
+for i in $panic; do
+    for o in $(find /proc/sys/kernel/ -type f -name "$i"); do
+        write "$o" "0"
+    done
+done
+
+#Watchdogs
+
 ####################################
 # Printk
 ####################################

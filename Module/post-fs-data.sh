@@ -26,61 +26,23 @@ for io in  /sys/block/*/queue/add_random /sys/devices/virtual/block/*/queue/add_
 done
 
 # nomerges
+# This enables the user to disable the lookup logic involved with IO merging requests in the block layer. 
+# By default (0) all merges are enabled. When set to 1 only simple one-hit merges will be tried. 
+# When set to 2 no merge algorithms will be tried (including one-hit or more complex tree/hash lookups).
+# https://github.com/torvalds/linux/commit/488991e28e55b4fbca8067edf0259f69d1a6f92c
 for nomerge in /sys/block/*/queue/nomerges /sys/devices/virtual/block/*/queue/nomerges; do
     write "$nomerge" "2"
 done
 
 # RQ_AFFINITY
-# 0 : I/O completion requests can be processed by any CPU cores.
-# 1 : I/O completion requests are handled only by the same CPU core that initiated the request.
-# 2 : I/O completion requests are processed by any CPU core within the same NUMA node as the core that initiated the request. (multi CPU socket platform)
+# value : 0-2 Higher means more aggresive
+# Try to have scheduler requests complete on the CPU core they were made from
+# https://zhuanlan.zhihu.com/p/346966856
 for rq in /sys/block/*/queue/rq_affinity $(find /sys/devices/ -name rq_affinity); do
     # echo "$(cat $rq)"
-    write "$rq" "0"
+    write "$rq" "1"
 done
 
-if [ -d /sys/block/sda ]; then
-    # UFS
-    for i in /sys/block/sd*/queue/nr_requests; do 
-        write "$i" "16"
-    done
-
-    for i in /sys/block/sd*/queue/read_ahead_kb; do 
-        write "$i" "64"
-    done
-else
-    # eMMC
-    for i in /sys/block/mmcblk*/queue/nr_requests; do 
-        write "$i" "16"
-    done
-    for i in /sys/block/mmcblk*/queue/read_ahead_kb; do 
-        write "$i" "32"
-    done
-fi
-
-# DM
-for i in /sys/block/dm-*/queue/nr_requests /sys/devices/virtual/block/dm-*/queue/nr_requests; do 
-    write "$i" "16"
-done
-
-for i in /sys/block/dm-*/queue/read_ahead_kb /sys/devices/virtual/block/dm-*/queue/read_ahead_kb; do 
-    write "$i" "64"
-done
-
-# RAM
-for i in /sys/block/ram*/queue/nr_requests /sys/devices/virtual/block/ram*/queue/nr_requests; do 
-    write "$i" "8" 
-done
-
-for i in /sys/block/ram*/queue/read_ahead_kb /sys/devices/virtual/block/ram*/queue/read_ahead_kb; do 
-    write "$i" "16" 
-done
-
-# ZRAM
-write "/sys/block/zram0/queue/nr_requests" "8"
-write "/sys/block/zram0/queue/read_ahead_kb" "32"
-write "/sys/devices/virtual/block/zram0/queue/nr_requests" "8"
-write "/sys/devices/virtual/block/zram0/queue/read_ahead_kb" "32"
 
 ####################################
 # Misc Logs
@@ -104,19 +66,29 @@ write "/proc/sys/net/ipv4/tcp_timestamps" "0"
 write "/proc/sys/net/ipv4/tcp_dsack" "1"
 write "/proc/sys/net/ipv4/tcp_sack" "1"
 write "/proc/sys/net/ipv4/tcp_ecn" "1"
-write "/proc/sys/net/ipv4/tcp_slow_start_after_idle" "1"
+write "/proc/sys/net/ipv4/tcp_slow_start_after_idle" "0"
 write "/proc/sys/net/ipv4/udp_early_demux" "1"
 write "/proc/sys/net/ipv4/fwmark_reflect" "1"
 write "/proc/sys/net/ipv4/fib_notify_on_flag_change" "0"
 write "/proc/sys/net/ipv4/icmp_echo_enable_probe" "0"
 write "/proc/sys/net/ipv4/icmp_msgs_per_sec" "100"
 write "/proc/sys/net/ipv4/icmp_ratelimit" "100"
-write "/proc/sys/net/ipv4/tcp_tw_reuse" "2"
+write "/proc/sys/net/ipv4/tcp_tw_reuse" "1"
 write "/proc/sys/net/ipv4/tcp_mtu_probing" "1"
 write "/proc/sys/net/ipv4/tcp_low_latency" "0"
 write "/proc/sys/net/ipv4/tcp_no_metrics_save" "1"
 write "/proc/sys/net/ipv4/tcp_no_ssthresh_metrics_save" "1"
 write "/proc/sys/net/ipv4/tcp_moderate_rcvbuf" "1"
+write "/proc/sys/net/core/netdev_tstamp_prequeue" "0"
+write "/proc/sys/net/ipv4/ipfrag_time" "25"
+write "/proc/sys/net/ipv4/tcp_fastopen" "3"
+write "/proc/sys/net/core/netdev_max_backlog" "128"
+write "/proc/sys/net/ipv4/tcp_fack" "1"
+write "/proc/sys/net/ipv4/tcp_fwmark_accept" "0"
+write "/proc/sys/net/ipv4/tcp_keepalive_intvl" "180"
+write "/proc/sys/net/ipv4/tcp_keepalive_time" "21600"
+write "/proc/sys/net/ipv6/ip6frag_time" "48"
+write "/sys/module/tcp_cubic/parameters/hystart_detect" "2"
 
 # Unless your system is acting as a router (IP forwarding device) , this should be set to 0
 write "/proc/sys/net/ipv4/ip_forward" "0"
@@ -141,10 +113,6 @@ write "/sys/kernel/mm/transparent_hugepage/enabled" "never"
 ####################################
 # 不可被驱逐的内存是一种无法从内存中移除的内存，例如被锁定的内存或内核数据结构等。
 write "/proc/sys/vm/compact_unevictable_allowed" "1"
-
-# Halved backlog
-backlog=$(( $(cat /proc/sys/net/core/netdev_max_backlog) / 2 ))
-write "/proc/sys/net/core/netdev_max_backlog" "$backlog"
 
 # BT
 # Lower BT Performance but Lower Power Consumption
@@ -183,16 +151,20 @@ write "/proc/sys/kernel/timer_migration" "1"
 # Energy Efficient
 write "/proc/sys/kernel/sched_energy_aware" "1"
 
-# Reduce PERF Monitoring overhead
+# PERF Monitoring
 # Stock:25
-write "/proc/sys/kernel/perf_cpu_time_max_percent" "5"
+write "/proc/sys/kernel/perf_cpu_time_max_percent" "0"
 
 #Boeffla Wakelock
 if [ -f /sys/devices/virtual/misc/boeffla_wakelock_blocker/wakelock_blocker ]; then
-    echo "wlan_pno_wl;wlan_ipa;wcnss_filter_lock;hal_bluetooth_lock;IPA_WS;sensor_ind;wlan;netmgr_wl;qcom_rx_wakelock;wlan_wow_wl;wlan_extscan_wl;NETLINK;bam_dmux_wakelock;IPA_RM12" > /sys/devices/virtual/misc/boeffla_wakelock_blocker/wakelock_blocker 
+    echo "wlan_pno_wl;wlan_ipa;wcnss_filter_lock;hal_bluetooth_lock;IPA_WS;sensor_ind;wlan;netmgr_wl;qcom_rx_wakelock;wlan_wow_wl;wlan_extscan_wl;NETLINK;bam_dmux_wakelock;IPA_RM12;[timerfd];wlan;SensorService_wakelock;tftp_server_wakelock" > /sys/devices/virtual/misc/boeffla_wakelock_blocker/wakelock_blocker 
 elif [ -f /sys/class/misc/boeffla_wakelock_blocker/wakelock_blocker ]; then
-    echo "wlan_pno_wl;wlan_ipa;wcnss_filter_lock;hal_bluetooth_lock;IPA_WS;sensor_ind;wlan;netmgr_wl;qcom_rx_wakelock;wlan_wow_wl;wlan_extscan_wl;NETLINK;bam_dmux_wakelock;IPA_RM12" > /sys/class/misc/boeffla_wakelock_blocker/wakelock_blocker
+    echo "wlan_pno_wl;wlan_ipa;wcnss_filter_lock;hal_bluetooth_lock;IPA_WS;sensor_ind;wlan;netmgr_wl;qcom_rx_wakelock;wlan_wow_wl;wlan_extscan_wl;NETLINK;bam_dmux_wakelock;IPA_RM12;[timerfd];wlan;SensorService_wakelock;tftp_server_wakelock" > /sys/class/misc/boeffla_wakelock_blocker/wakelock_blocker
 fi
+
+
+# Disable CPU watchdog
+write "/proc/sys/kernel/watchdog_cpumask" ""
 
 ####################################
 # Additional Props Config

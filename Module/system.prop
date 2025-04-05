@@ -39,6 +39,10 @@ ro.vendor.touch.touchscheduler.enable=false
 # Network
 persist.sys.miuitcptracker.ctrl=false
 
+# FBO 煥新存儲
+persist.sys.stability.miui_fbo_enable=true
+persist.sys.fboservice.ctrl=true
+
 ######################## 以上是測試階段 #########################
 
 # https://gist.github.com/Atavic/6d9a43736aac3371b0ca9cca4cd0f7af
