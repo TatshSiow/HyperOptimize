@@ -27,7 +27,7 @@ A module to optimize System and Kernel parameters to reduce power consumption, n
 - etc.
 > [!TIP]  
 > - [Freezer](https://github.com/Freezer-Team/Freezer) to obtain better battery life
-> - [FCMFix](https://github.com/kooritea/fcmfix) fix notification problem while using tombstone(eg. Freezer, NoActive)
+> - [FCMFix](https://github.com/kooritea/fcmfix) fix notification push delay/dead while using tombstone(eg. Freezer, NoActive)
 
 ## FAQ
 > [!CAUTION]  
