@@ -31,7 +31,7 @@ done
 # When set to 2 no merge algorithms will be tried (including one-hit or more complex tree/hash lookups).
 # https://github.com/torvalds/linux/commit/488991e28e55b4fbca8067edf0259f69d1a6f92c
 for nomerge in /sys/block/*/queue/nomerges /sys/devices/virtual/block/*/queue/nomerges; do
-    write "$nomerge" "2"
+    write "$nomerge" "1"
 done
 
 # RQ_AFFINITY
@@ -41,6 +41,24 @@ done
 for rq in /sys/block/*/queue/rq_affinity $(find /sys/devices/ -name rq_affinity); do
     # echo "$(cat $rq)"
     write "$rq" "1"
+done
+
+# Disable heuristic read-ahead in exchange for I/O latency on ram
+for queue in /sys/block/ram*/queue/read_ahead_kb
+do
+    write $queue "0"
+done
+
+# Disable heuristic read-ahead in exchange for I/O latency on zram
+for queue in /sys/block/zram*/queue/read_ahead_kb
+do
+    write $queue "0"
+done
+
+# Disable heuristic read-ahead in exchange for I/O latency on loop
+for queue in /sys/block/loop*/queue/read_ahead_kb
+do
+    write $queue "0"
 done
 
 
@@ -152,8 +170,13 @@ write "/proc/sys/kernel/timer_migration" "1"
 write "/proc/sys/kernel/sched_energy_aware" "1"
 
 # PERF Monitoring
-# Stock:25
 write "/proc/sys/kernel/perf_cpu_time_max_percent" "0"
+
+# Round Robin Timeslice
+write "/proc/sys/kernel/sched_rr_timeslice_ms" "200"
+
+# PELT Multiplier
+write "/proc/sys/kernel/sched_pelt_multiplier" "8"
 
 #Boeffla Wakelock
 if [ -f /sys/devices/virtual/misc/boeffla_wakelock_blocker/wakelock_blocker ]; then
@@ -189,9 +212,17 @@ if [ "$(getprop ro.hardware)" = "qcom" ]; then
         # WALT的conservative，省電
         write "/proc/sys/walt/sched_conservative_pl" "1"
         # task
-        write "/proc/sys/walt/sched_min_task_util_for_boost"  "51"
-        write "/proc/sys/walt/sched_min_task_util_for_colocation"  "35"
+        write "/proc/sys/walt/sched_min_task_util_for_boost"  "60"
+        write "/proc/sys/walt/sched_min_task_util_for_colocation"  "40"
         write "/proc/sys/walt/sched_task_unfilter_period" "20000000"
+
+    # Tune for All Cores
+        echo "0" > /sys/devices/system/cpu/cpu*/cpufreq/walt/boost
+    fi
+    if [ -d /proc/sys/schedutil/ ]; then
+    # Schedutil config based in this patch: https://patchwork.kernel.org/project/linux-pm/patch/c6248ec9475117a1d6c9ff9aafa8894f6574a82f.1479359903.git.viresh.kumar@linaro.org/
+        echo "10000" > /sys/devices/system/cpu/cpu*/cpufreq/schedutil/up_rate_limit_us
+        echo "40000" > /sys/devices/system/cpu/cpu*/cpufreq/schedutil/down_rate_limit_us
     fi
 else
     #MediaTeK

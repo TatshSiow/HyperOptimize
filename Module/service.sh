@@ -45,6 +45,7 @@ debug_name="debug_mask
 reglog_enable
 *log_ue*
 *log_ce*
+enable_event_log
 snapshot_crashdumper
 tracing_on
 *log_lvl
@@ -219,31 +220,33 @@ if [ "$(getprop ro.hardware)" = "qcom" ]; then
     lock_val "65" /sys/class/kgsl/kgsl-3d0/devfreq/mod_percent
 fi
 
-# CPUset Adjustment
-# lock_val "0-2" /dev/cpuset/background/cpus
-# lock_val "0-2" /dev/cpuset/system-background/cpus
-# lock_val "0-6" /dev/cpuset/foreground/cpus
-# lock_val "0-7" /dev/cpuset/top-app/cpus
 
 # Xiaomi Config
 # stop mimd-service
 # stop mimd-service2_0
-write "/sys/module/migt/parameters/enable_pkg_monitor" "0"
-write "/proc/sys/migt/enable_pkg_monitor" "0"
-write "/sys/module/migt/parameters/glk_freq_limit_walt" "0"
-write "/sys/module/metis/parameters/cluaff_control" "0"
+# write "/sys/module/migt/parameters/enable_pkg_monitor" "0"
+# write "/proc/sys/migt/enable_pkg_monitor" "0"
+# write "/sys/module/migt/parameters/glk_freq_limit_walt" "0"
+# write "/sys/module/metis/parameters/cluaff_control" "0"
 
 # VM Tunable
-write "/proc/sys/vm/stat_interval" "30"
-write "/proc/sys/vm/vfs_cache_pressure" "60"
-write "/proc/sys/vm/page-cluster" "3"
+write "/proc/sys/vm/stat_interval" "20"
+write "/proc/sys/vm/vfs_cache_pressure" "120"
+write "/proc/sys/vm/page-cluster" "0"
 write "/proc/sys/vm/dirty_ratio" "15"
-write "proc/sys/vm/dirty_background_ratio" "5"
+write "proc/sys/vm/dirty_background_ratio" "3"
+
+# Require dirty memory to stay in memory for longer
+write "proc/sys/vm/dirty_expire_centisecs 3000"
+
+# Run the dirty memory flusher threads less often
+write "proc/sys/vm/dirty_writeback_centisecs 3000"
 
 # if [ -d /sys/kernel/mm/lru_gen/ ]; then
 #     lock_val "Y" /sys/kernel/mm/lru_gen/enabled
 #     lock_val "5000" /sys/kernel/mm/lru_gen/min_ttl_ms
 # fi
+
 ####################################
 # Kill and Stop Services
 ####################################
@@ -251,22 +254,23 @@ write "proc/sys/vm/dirty_background_ratio" "5"
 sleep 3 
 process="charge_logger
 logcat
+statsd
 traced
 traced_probes
 vendor.ipacm-diag
 vendor.modemManager
 vendor.qesdk-mgr
-statsd
-misight
 update_engine
-mqsasd
-vendor.servicetracker-1-2
-tombstoned
-vendor.mi_misight
-mi_thermald
-vendor.perfservice
-vendor.miperf
-miuibooster"
+tombstoned"
+
+#mqsasd
+#vendor.mi_misight
+#vendor.perfservice
+#vendor.miperf
+#misight
+#miuibooster
+#mi_thermald
+#vendor.servicetracker-1-2
 
 for name in $process; do
   su -c stop "$name" 2>/dev/null 
