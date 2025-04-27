@@ -224,10 +224,19 @@ fi
 # Xiaomi Config
 # stop mimd-service
 # stop mimd-service2_0
-# write "/sys/module/migt/parameters/enable_pkg_monitor" "0"
-# write "/proc/sys/migt/enable_pkg_monitor" "0"
-# write "/sys/module/migt/parameters/glk_freq_limit_walt" "0"
-# write "/sys/module/metis/parameters/cluaff_control" "0"
+write "/sys/module/migt/parameters/enable_pkg_monitor" "0"
+write "/proc/sys/migt/enable_pkg_monitor" "0"
+write "/sys/module/migt/parameters/glk_freq_limit_walt" "0"
+write "/sys/module/metis/parameters/cluaff_control" "0"
+write "/proc/sys/walt/sched_ed_boost" "0"
+write "/proc/sys/walt/input_boost/powerkey_input_boost_ms" "0"
+write "/proc/sys/walt/input_boost/input_boost_ms" "0"
+
+# PELT Multiplier
+write "/proc/sys/kernel/sched_pelt_multiplier" "8"
+
+# PERF Monitoring
+write "/proc/sys/kernel/perf_cpu_time_max_percent" "0"
 
 # VM Tunable
 write "/proc/sys/vm/stat_interval" "20"
@@ -242,10 +251,10 @@ write "proc/sys/vm/dirty_expire_centisecs 3000"
 # Run the dirty memory flusher threads less often
 write "proc/sys/vm/dirty_writeback_centisecs 3000"
 
-# if [ -d /sys/kernel/mm/lru_gen/ ]; then
-#     lock_val "Y" /sys/kernel/mm/lru_gen/enabled
-#     lock_val "5000" /sys/kernel/mm/lru_gen/min_ttl_ms
-# fi
+if [ -d /sys/kernel/mm/lru_gen/ ]; then
+    lock_val "Y" /sys/kernel/mm/lru_gen/enabled
+    lock_val "5000" /sys/kernel/mm/lru_gen/min_ttl_ms
+fi
 
 ####################################
 # Kill and Stop Services
@@ -261,16 +270,17 @@ vendor.ipacm-diag
 vendor.modemManager
 vendor.qesdk-mgr
 update_engine
-tombstoned"
+tombstoned
+vendor.mi_misight
+vendor.perfservice
+vendor.miperf
+misight
+miuibooster
+vendor.servicetracker-1-2"
 
 #mqsasd
-#vendor.mi_misight
-#vendor.perfservice
-#vendor.miperf
-#misight
-#miuibooster
 #mi_thermald
-#vendor.servicetracker-1-2
+
 
 for name in $process; do
   su -c stop "$name" 2>/dev/null 

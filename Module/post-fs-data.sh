@@ -79,7 +79,6 @@ done
 ####################################
 # Network Tuning
 ####################################
-# Network tweaks to reduce power
 write "/proc/sys/net/ipv4/tcp_timestamps" "0"
 write "/proc/sys/net/ipv4/tcp_dsack" "1"
 write "/proc/sys/net/ipv4/tcp_sack" "1"
@@ -169,20 +168,15 @@ write "/proc/sys/kernel/timer_migration" "1"
 # Energy Efficient
 write "/proc/sys/kernel/sched_energy_aware" "1"
 
-# PERF Monitoring
-write "/proc/sys/kernel/perf_cpu_time_max_percent" "0"
-
 # Round Robin Timeslice
 write "/proc/sys/kernel/sched_rr_timeslice_ms" "200"
 
-# PELT Multiplier
-write "/proc/sys/kernel/sched_pelt_multiplier" "8"
 
 #Boeffla Wakelock
 if [ -f /sys/devices/virtual/misc/boeffla_wakelock_blocker/wakelock_blocker ]; then
-    echo "wlan_pno_wl;wlan_ipa;wcnss_filter_lock;hal_bluetooth_lock;IPA_WS;sensor_ind;wlan;netmgr_wl;qcom_rx_wakelock;wlan_wow_wl;wlan_extscan_wl;NETLINK;bam_dmux_wakelock;IPA_RM12;[timerfd];wlan;SensorService_wakelock;tftp_server_wakelock" > /sys/devices/virtual/misc/boeffla_wakelock_blocker/wakelock_blocker 
+    echo "wlan_pno_wl;wlan_ipa;wcnss_filter_lock;hal_bluetooth_lock;IPA_WS;sensor_ind;wlan;netmgr_wl;qcom_rx_wakelock;wlan_wow_wl;wlan_extscan_wl;NETLINK;bam_dmux_wakelock;IPA_RM12;[timerfd];wlan;SensorService_wakelock;tftp_server_wakelock" > /sys/devices/virtual/misc/boeffla_wakelock_blocker/wakelock_blocker 2>/dev/null
 elif [ -f /sys/class/misc/boeffla_wakelock_blocker/wakelock_blocker ]; then
-    echo "wlan_pno_wl;wlan_ipa;wcnss_filter_lock;hal_bluetooth_lock;IPA_WS;sensor_ind;wlan;netmgr_wl;qcom_rx_wakelock;wlan_wow_wl;wlan_extscan_wl;NETLINK;bam_dmux_wakelock;IPA_RM12;[timerfd];wlan;SensorService_wakelock;tftp_server_wakelock" > /sys/class/misc/boeffla_wakelock_blocker/wakelock_blocker
+    echo "wlan_pno_wl;wlan_ipa;wcnss_filter_lock;hal_bluetooth_lock;IPA_WS;sensor_ind;wlan;netmgr_wl;qcom_rx_wakelock;wlan_wow_wl;wlan_extscan_wl;NETLINK;bam_dmux_wakelock;IPA_RM12;[timerfd];wlan;SensorService_wakelock;tftp_server_wakelock" > /sys/class/misc/boeffla_wakelock_blocker/wakelock_blocker 2>/dev/null
 fi
 
 
@@ -212,17 +206,13 @@ if [ "$(getprop ro.hardware)" = "qcom" ]; then
         # WALT的conservative，省電
         write "/proc/sys/walt/sched_conservative_pl" "1"
         # task
-        write "/proc/sys/walt/sched_min_task_util_for_boost"  "60"
-        write "/proc/sys/walt/sched_min_task_util_for_colocation"  "40"
+        write "/proc/sys/walt/sched_min_task_util_for_boost"  "51"
+        write "/proc/sys/walt/sched_min_task_util_for_colocation"  "35"
         write "/proc/sys/walt/sched_task_unfilter_period" "20000000"
-
     # Tune for All Cores
-        echo "0" > /sys/devices/system/cpu/cpu*/cpufreq/walt/boost
-    fi
-    if [ -d /proc/sys/schedutil/ ]; then
-    # Schedutil config based in this patch: https://patchwork.kernel.org/project/linux-pm/patch/c6248ec9475117a1d6c9ff9aafa8894f6574a82f.1479359903.git.viresh.kumar@linaro.org/
-        echo "10000" > /sys/devices/system/cpu/cpu*/cpufreq/schedutil/up_rate_limit_us
-        echo "40000" > /sys/devices/system/cpu/cpu*/cpufreq/schedutil/down_rate_limit_us
+        for i in /sys/devices/system/cpu/cpu*/cpufreq/walt/boost ; do
+            write "$i" "0" 
+        done
     fi
 else
     #MediaTeK
@@ -231,6 +221,16 @@ else
     resetprop -n persist.vendor.duraspeed.lowmemory.enable 0
     resetprop -n persist.vendor.duraeverything.support 0
     resetprop -n persist.vendor.duraeverything.lowmemory.enable 0
+fi
+
+if [ -d /proc/sys/schedutil/ ]; then
+# Schedutil config based in this patch: https://patchwork.kernel.org/project/linux-pm/patch/c6248ec9475117a1d6c9ff9aafa8894f6574a82f.1479359903.git.viresh.kumar@linaro.org/
+    for i in /sys/devices/system/cpu/cpu*/cpufreq/schedutil/up_rate_limit_us ; do
+        write $i "10000"
+    done
+    for i in /sys/devices/system/cpu/cpu*/cpufreq/schedutil/down_rate_limit_us ; do
+        write $i "10000"
+    done
 fi
 
 # Enable APTX Adaptive 2.2 Support (Only for 8gen1+)
