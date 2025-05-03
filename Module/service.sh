@@ -194,8 +194,8 @@ done
 write "/proc/sys/kernel/printk" "0 0 0 0"
 write "/proc/sys/kernel/printk_delay" "0"
 write "/proc/sys/kernel/printk_devkmsg" "off"
-write "/proc/sys/kernel/printk_ratelimit" "0"
-write "/proc/sys/kernel/printk_ratelimit_burst" "0"
+write "/proc/sys/kernel/printk_ratelimit" "1"
+write "/proc/sys/kernel/printk_ratelimit_burst" "1"
 write "/proc/sys/kernel/tracepoint_printk" "0"
 write "/sys/module/printk/parameters/always_kmsg_dump" "N"
 write "/sys/module/printk/parameters/console_no_auto_verbose" "N"
@@ -243,13 +243,13 @@ write "/proc/sys/vm/stat_interval" "20"
 write "/proc/sys/vm/vfs_cache_pressure" "120"
 write "/proc/sys/vm/page-cluster" "0"
 write "/proc/sys/vm/dirty_ratio" "15"
-write "proc/sys/vm/dirty_background_ratio" "3"
+write "/proc/sys/vm/dirty_background_ratio" "3"
 
 # Require dirty memory to stay in memory for longer
-write "proc/sys/vm/dirty_expire_centisecs 3000"
+write "/proc/sys/vm/dirty_expire_centisecs 3000"
 
 # Run the dirty memory flusher threads less often
-write "proc/sys/vm/dirty_writeback_centisecs 3000"
+write "/proc/sys/vm/dirty_writeback_centisecs 3000"
 
 if [ -d /sys/kernel/mm/lru_gen/ ]; then
     lock_val "Y" /sys/kernel/mm/lru_gen/enabled
@@ -278,8 +278,7 @@ misight
 miuibooster
 vendor.servicetracker-1-2"
 
-#mqsasd
-#mi_thermald
+#killing "mi_thermald" will cause fast-charging to malfunctioned
 
 
 for name in $process; do

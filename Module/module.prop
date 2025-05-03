@@ -1,7 +1,7 @@
 id=HyperOptimize_Tatsh
 name=Hyper Optimize
 author=Tatsh
-description=Optimizes System and Kernel parameters to reduce power consumption
-version=v5.0.7 Beta
-versionCode=999999
+description=Tune HyperOS System and Kernel parameters to reduce power consumption
+version=v6.0
+versionCode=250504
 updateJson=https://raw.githubusercontent.com/TatshSiow/HyperOptimize/main/update.json

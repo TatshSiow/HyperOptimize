@@ -46,19 +46,19 @@ done
 # Disable heuristic read-ahead in exchange for I/O latency on ram
 for queue in /sys/block/ram*/queue/read_ahead_kb
 do
-    write $queue "0"
+    write $queue "8"
 done
 
 # Disable heuristic read-ahead in exchange for I/O latency on zram
 for queue in /sys/block/zram*/queue/read_ahead_kb
 do
-    write $queue "0"
+    write $queue "8"
 done
 
 # Disable heuristic read-ahead in exchange for I/O latency on loop
 for queue in /sys/block/loop*/queue/read_ahead_kb
 do
-    write $queue "0"
+    write $queue "8"
 done
 
 
@@ -92,7 +92,7 @@ write "/proc/sys/net/ipv4/icmp_msgs_per_sec" "100"
 write "/proc/sys/net/ipv4/icmp_ratelimit" "100"
 write "/proc/sys/net/ipv4/tcp_tw_reuse" "1"
 write "/proc/sys/net/ipv4/tcp_mtu_probing" "1"
-write "/proc/sys/net/ipv4/tcp_low_latency" "0"
+write "/proc/sys/net/ipv4/tcp_low_latency" "1"
 write "/proc/sys/net/ipv4/tcp_no_metrics_save" "1"
 write "/proc/sys/net/ipv4/tcp_no_ssthresh_metrics_save" "1"
 write "/proc/sys/net/ipv4/tcp_moderate_rcvbuf" "1"
@@ -109,14 +109,6 @@ write "/sys/module/tcp_cubic/parameters/hystart_detect" "2"
 
 # Unless your system is acting as a router (IP forwarding device) , this should be set to 0
 write "/proc/sys/net/ipv4/ip_forward" "0"
-
-# TCP congestion
-for CC in bbr westwood cubic reno; do
-    if grep -qw "$CC" /proc/sys/net/ipv4/tcp_available_congestion_control; then
-        write "/proc/sys/net/ipv4/tcp_congestion_control" "$CC"
-        break
-    fi
-done
 
 ####################################
 # Transparent Hugepage
@@ -180,8 +172,8 @@ elif [ -f /sys/class/misc/boeffla_wakelock_blocker/wakelock_blocker ]; then
 fi
 
 
-# Disable CPU watchdog
-write "/proc/sys/kernel/watchdog_cpumask" ""
+# # Disable CPU watchdog
+# write "/proc/sys/kernel/watchdog_cpumask" ""
 
 ####################################
 # Additional Props Config
