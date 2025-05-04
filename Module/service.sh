@@ -2,17 +2,16 @@
 # Functions
 ####################################
 wait_until_login() {
-  while [[ "$(getprop sys.boot_completed)" != "1" ]]; do
-    sleep 3
-  done
-
-  test_file="/storage/emulated/0/Android/.PERMISSION_TEST"
-  true >"$test_file"
-  while [[ ! -f "$test_file" ]]; do
+    while [[ "$(getprop sys.boot_completed)" != "1" ]]; do
+        sleep 3
+    done
+    test_file="/storage/emulated/0/Android/.PERMISSION_TEST"
     true >"$test_file"
-    sleep 1
-  done
-  rm -f "$test_file"
+    while [[ ! -f "$test_file" ]]; do
+        true >"$test_file"
+        sleep 1
+    done
+    rm -f "$test_file"
 }
 
 write() {
@@ -282,7 +281,7 @@ vendor.servicetracker-1-2"
 
 
 for name in $process; do
-  su -c stop "$name" 2>/dev/null 
+    su -c stop "$name" 2>/dev/null 
 done
 
 exit

@@ -13,6 +13,8 @@ PERSISTDIR="/sbin/.magisk/mirror/persist"
 # Echo before loading util_functions
 ui_print() { echo "$@"; }
 
+load_vksel() { source "$MODPATH/addon/Volume-Key-Selector/install.sh"; }
+
 rm_exist() { [[ -e "$1" ]] && rm -rf "$1" 2>/dev/null; }
 
 rm_exist "$TMPDIR"
@@ -26,6 +28,9 @@ OUTFD="$2"
 ZIPFILE="$3"
 
 mount /data 2>/dev/null
+
+# Load utility functions
+source "/data/adb/magisk/util_functions.sh"
 
 # Preperation for flashable zips
 setup_flashable
