@@ -2,7 +2,7 @@
 [English](https://github.com/TatshSiow/HyperOptimize/blob/main/README.md)
 
 > [!IMPORTANT]
-> You can join our Telegram for **Test/Pilot** Builds!
+> You can join our Telegram for **Test** Builds!
 <div align="center">
   
   ![](https://github.com/user-attachments/assets/5cf75f24-5993-4e64-b3b2-328f30d4ff31)
@@ -31,14 +31,14 @@ A module to optimize System and Kernel parameters to reduce power consumption, n
 
 ## FAQ
 > [!CAUTION]  
-> - **Bootloop Rescue Module** is always recommended
+> - **Anti Bootloop Module** is always recommended
 > - **CONFLICT** with module with same purpose
 > - Conflict with **Nakixii Pandora Kernel** Module
 
 ### How to install?
 - Flash in Magisk
 > [!WARNING]  
-> - might not work on KSU and APatch
+> - not tested on KSU and APatch
 
 ### My Magisk break after uninstalled, what should I do?
 - Force close and launch again
