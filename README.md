@@ -5,7 +5,7 @@ Language : [中文](https://github.com/TatshSiow/HyperOptimize/blob/main/README_
 > You can join our Telegram for **Test** Builds!
 <div align="center">
   
-  ![](https://github.com/user-attachments/assets/5cf75f24-5993-4e64-b3b2-328f30d4ff31)
+  ![](https://github.com/TatshSiow/HyperOptimize/blob/main/Banner.png)
   
   <a href="https://t.me/TatshSecretCave" ><img height="50" src="https://www.vectorlogo.zone/logos/telegram/telegram-tile.svg"/></a>\
   <a href="https://t.me/TatshSecretCave" >Telegram</a>
