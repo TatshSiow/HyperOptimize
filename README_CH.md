@@ -1,4 +1,4 @@
-語言 : [中文](https://github.com/TatshSiow/HyperOptimize/blob/main/README_CH.md) | [English](https://github.com/TatshSiow/HyperOptimize/blob/main/README.md) | [Italia](https://github.com/TatshSiow/HyperOptimize/blob/main/README_IT.md)
+語言 : [中文](https://github.com/TatshSiow/HyperOptimize/blob/main/README_CH.md) | [English](https://github.com/TatshSiow/HyperOptimize/blob/main/README.md) | [Italiano](https://github.com/TatshSiow/HyperOptimize/blob/main/README_IT.md)
 
 > [!IMPORTANT]
 > 可以加入我們的 Telegram（紙飛機）群組，那裡可以下載 **測試版** 哦！
