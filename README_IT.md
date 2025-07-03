@@ -1,4 +1,4 @@
-Lingue: [中文](https://github.com/TatshSiow/HyperOptimize/blob/main/README_CH.md) | [English](https://github.com/TatshSiow/HyperOptimize/blob/main/README.md) | [Italia](https://github.com/TatshSiow/HyperOptimize/blob/main/README_IT.md)
+Lingue: [中文](https://github.com/TatshSiow/HyperOptimize/blob/main/README_CH.md) | [English](https://github.com/TatshSiow/HyperOptimize/blob/main/README.md) | [Italiano](https://github.com/TatshSiow/HyperOptimize/blob/main/README_IT.md)
 > [!IMPORTANT]
 > Puoi unirti al nostro gruppo
 > Telegram [HyperOptimize](https://t.me/TatshSecretCave) per le Build di Test!<div align="center">
