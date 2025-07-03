@@ -2,13 +2,12 @@ Language : [中文](https://github.com/TatshSiow/HyperOptimize/blob/main/README_
 
 
 > [!IMPORTANT]
-> You can join our Telegram for **Test** Builds!
+> You can join our <a href="https://t.me/TatshSecretCave"> Telegram</a> for **Test** Builds!
 <div align="center">
   
 ![](https://github.com/TatshSiow/HyperOptimize/blob/main/Banner.png)
   
-  <a href="https://t.me/TatshSecretCave" ><img height="50" src="https://www.vectorlogo.zone/logos/telegram/telegram-tile.svg"/></a>\
-  <a href="https://t.me/TatshSecretCave" >Telegram</a>
+  <a href="https://t.me/TatshSecretCave" ><img height="50" src="https://www.vectorlogo.zone/logos/telegram/telegram-tile.svg"/></a>
 </div>
 
 # What is this?
