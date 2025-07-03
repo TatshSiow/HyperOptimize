@@ -1,9 +1,9 @@
 Lingue: [中文](https://github.com/TatshSiow/HyperOptimize/blob/main/README_CH.md) | [English](https://github.com/TatshSiow/HyperOptimize/blob/main/README.md) | [Italiano](https://github.com/TatshSiow/HyperOptimize/blob/main/README_IT.md)
 > [!IMPORTANT]
 > Puoi unirti al nostro gruppo
-> Telegram [HyperOptimize](https://t.me/TatshSecretCave) per le Build di Test!<div align="center">
+> Telegram [HyperOptimize](https://t.me/TatshSecretCave) per le Build di Test!<div align="center"></div>
 
-![](https://github.com/user-attachments/assets/5cf75f24-5993-4e64-b3b2-328f30d4ff31)</div>
+![](https://github.com/TatshSiow/HyperOptimize/blob/main/Banner.png)
 
 # Cos'è questo?
 Un modulo per ottimizzare i parametri di Sistema e Kernel per ridurre il consumo energetico, non per offrire prestazioni eccezionali.
