@@ -7,7 +7,7 @@ Language : [中文](https://github.com/TatshSiow/HyperOptimize/blob/main/README_
   
 ![](https://github.com/TatshSiow/HyperOptimize/blob/main/Banner.png)
   
-  <a href="https://t.me/TatshSecretCave" ><img height="50" src="https://www.vectorlogo.zone/logos/telegram/telegram-tile.svg"/></a>
+
 </div>
 
 # What is this?
