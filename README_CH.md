@@ -1,13 +1,11 @@
 語言 : [中文](https://github.com/TatshSiow/HyperOptimize/blob/main/README_CH.md) | [English](https://github.com/TatshSiow/HyperOptimize/blob/main/README.md) | [Italiano](https://github.com/TatshSiow/HyperOptimize/blob/main/README_IT.md)
 
 > [!IMPORTANT]
-> 可以加入我們的 Telegram（紙飛機）群組，那裡可以下載 **測試版** 哦！
+> 可以加入我們的   <a href="https://t.me/TatshSecretCave" >Telegram (紙飛機)</a> 群組，那裡可以下載 **測試版** 哦！
 <div align="center">
   
 ![](https://github.com/TatshSiow/HyperOptimize/blob/main/Banner.png)
-  
-  <a href="https://t.me/TatshSecretCave" ><img height="50" src="https://www.vectorlogo.zone/logos/telegram/telegram-tile.svg"/></a>\
-  <a href="https://t.me/TatshSecretCave" >Telegram</a>
+
 </div>
 
 # 這是什麼?
