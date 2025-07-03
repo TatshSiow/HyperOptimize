@@ -1,5 +1,5 @@
-[中文](https://github.com/TatshSiow/HyperOptimize/blob/main/README_CH.md)
-[English](https://github.com/TatshSiow/HyperOptimize/blob/main/README.md)
+Language : [中文](https://github.com/TatshSiow/HyperOptimize/blob/main/README_CH.md) | [English](https://github.com/TatshSiow/HyperOptimize/blob/main/README.md) | [Italia](https://github.com/TatshSiow/HyperOptimize/blob/main/README_IT.md)
+
 
 > [!IMPORTANT]
 > You can join our Telegram for **Test** Builds!
