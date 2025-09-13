@@ -348,8 +348,10 @@ persist.sys.turbosched.thermal_break.enable=false
 # Mi Perf
 persist.miui.miperf.enable=false
 
-# Aceelerates app first frame on launch
-persist.sys.first.frame.accelerates=true
+# Accelerates app first frame on launch
+# some phones do not work with this prop
+# if you'd like to test your luck, be my guest
+# persist.sys.first.frame.accelerates=true
 
 # Performance Hinting
 # persist.sys.enable_perf_hint=false
