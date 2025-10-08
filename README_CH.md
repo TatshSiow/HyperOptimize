@@ -54,3 +54,7 @@
 
 ## 專案受 GPL 3.0 授權保護
 <a href="https://github.com/TatshSiow/HyperOptimize/blob/main/LICENSE" ><img height=100 src="https://upload.wikimedia.org/wikipedia/commons/9/93/GPLv3_Logo.svg"/></a>
+
+## 歷史星星圖
+
+[![Star History Chart](https://api.star-history.com/svg?repos=TatshSiow/HyperOptimize&type=Date)](https://www.star-history.com/#TatshSiow/HyperOptimize&Date)
