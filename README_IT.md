@@ -54,3 +54,7 @@ Un modulo per ottimizzare i parametri di Sistema e Kernel per ridurre il consumo
 
 # Questo progetto è protetto sotto la Licenza GPL 3.0
 <a href="https://github.com/TatshSiow/HyperOptimize/blob/main/LICENSE" ><img height=100 src="https://upload.wikimedia.org/wikipedia/commons/9/93/GPLv3_Logo.svg"/></a>
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=TatshSiow/HyperOptimize&type=Date)](https://www.star-history.com/#TatshSiow/HyperOptimize&Date)
