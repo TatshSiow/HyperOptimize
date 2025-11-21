@@ -288,6 +288,7 @@ if [ "$(getprop ro.hardware)" = "qcom" ]; then
     lock_val "0" /sys/class/kgsl/kgsl-3d0/bcl
     # lock_val "100" /sys/class/kgsl/kgsl-3d0/devfreq/mod_percent
     lock_val "0" /sys/class/kgsl/kgsl-3d0/preemption # might give slight overhead
+    lock_val "30" /sys/class/kgsl/kgsl-3d0/idle_timer
 
     lock_val "2147483647" /sys/kernel/gpu/gpu_max_clock
     lock_val "0" /sys/kernel/gpu/gpu_min_clock
@@ -297,7 +298,7 @@ if [ "$(getprop ro.hardware)" = "qcom" ]; then
     write "/sys/kernel/rcu_expedited" "0"
 
     # PELT Multiplier
-    lock_val "4" "/proc/sys/kernel/sched_pelt_multiplier"
+    # lock_val "4" "/proc/sys/kernel/sched_pelt_multiplier"
 
     # Enable LPM for all CPUs
     for disable in $(find /sys/devices/system/cpu/qcom_lpm -type f -name '*disable*'); do
@@ -312,12 +313,20 @@ if [ "$(getprop ro.hardware)" = "qcom" ]; then
     lock_val_in_path "0" "$BUS_DCVS" "min_freq"
     lock_val_in_path "0" "$BUS_DCVS" "boost_freq"
     lock_val "1" "$BUS_DCVS/DDRQOS/boost_freq"
+
+
+    lock_val_in_path "0" "/sys/devices/system/cpu/cpufreq" "hispeed_freq"
+    lock_val_in_path "0" "/sys/devices/system/cpu/cpufreq" "rtg_boost_freq"
+    lock_val_in_path "1000" "/sys/devices/system/cpu/cpufreq" "up_rate_limit_us"
+    lock_val_in_path "1000" "/sys/devices/system/cpu/cpufreq" "down_rate_limit_us"
+
 else 
 #Mediatek Tuning
     write  "/sys/kernel/ged/hal/custom_upbound_gpu_freq" "0"
     write  "/sys/module/ged/parameters/is_GED_KPI_enabled" "1"
     write  "/sys/module/mtk_core_ctl/parameters/policy_enable" "0"
     lock_val "0" "/sys/kernel/ged/hal/dcs_mode"
+    write "/proc/mtk_lpm/cpuidle/enable" "0"
 fi
 
 # WALT
@@ -332,8 +341,6 @@ if [ -d /proc/sys/walt/ ]; then
         write "$i" "0" 
     done
 
-    write "/proc/sys/walt/input_boost/powerkey_input_boost_ms" "0"
-    write "/proc/sys/walt/input_boost/input_boost_ms" "0"
     write "/proc/sys/walt/sched_boost" "0"
     write "/proc/sys/walt/sched_ed_boost" "0"
     write "/proc/sys/walt/sched_asymcap_boost" "0"
@@ -357,20 +364,22 @@ if [ -d /proc/sys/walt/ ]; then
 
     # Reduce the time to consider an idle
     write "/proc/sys/walt/sched_idle_enough" "10"
+
+    write /proc/sys/walt/sched_pipeline_special "0"
 else
 
 # Schedutil config based in this patch: 
 # https://patchwork.kernel.org/project/linux-pm/patch/c6248ec9475117a1d6c9ff9aafa8894f6574a82f.1479359903.git.viresh.kumar@linaro.org/
     for i in /sys/devices/system/cpu/cpu*/cpufreq/schedutil/up_rate_limit_us ; do
-        write $i "10000"
+        write $i "1000"
     done
     for i in /sys/devices/system/cpu/cpu*/cpufreq/schedutil/down_rate_limit_us ; do
-        write $i "10000"
+        write $i "1000"
     done
 fi
 
 # Round Robin Timeslice
-write "/proc/sys/kernel/sched_rr_timeslice_ms" "4"
+# write "/proc/sys/kernel/sched_rr_timeslice_ms" "4"
 
 # Boost and up down rate limits
 write "/sys/devices/system/cpu/cpufreq/boost" "0"
@@ -407,6 +416,9 @@ lock_val "$ALL_LIST" "/dev/cpuset/top-app/cpus"
 lock_val "$LITTLE_LIST" /proc/irq/default_smp_affinity
 lock_val_in_path "$LITTLE_LIST" "/proc/irq" "smp_affinity_list"
 
+
+# /sys/devices/system/cpu/cpu*/cpuidle/state*/disable to 0
+# /sys/module/lpm_levels/parameters/sleep_disabled
 
 ####################################
 # Xiaomi Tuning
@@ -455,13 +467,13 @@ write "/sys/module/metis/parameters/sched_doctor_enable" "0"
 # 4. https://github.com/chbatey/tobert.github.io/blob/c98e69267d84aea557e8f6e9bdc62c0d305b7454/src/pages/cassandra_tuning_guide.md?plain=1#L1090
 # 5. https://github.com/torvalds/linux/commit/488991e28e55b4fbca8067edf0259f69d1a6f92c
 # 6. https://zhuanlan.zhihu.com/p/346966856
-for io in /sys/block/* /sys/devices/virtual/block/*; do
+for io in /sys/block/* ; do
     # nomerges
     # Why not disable? Disabling merging (nomerges=1 or 2) might seem like it removes kernel overhead
     # but it typically floods the UFS controller with numerous tiny requests. 
     # This can lead to increased CPU usage from more frequent interrupts and command processing
     # ultimately increasing overall overhead and potentially degrading performance and battery life for general use.
-    write "$io/queue/nomerges" "0"
+    write "$io/queue/nomerges" "2"
 
     # lock_val "none" "$sd/queue/scheduler" # (use xiaomi cpq, which introduce in smartfocusio in props)
 
@@ -486,7 +498,7 @@ for io in /sys/block/* /sys/devices/virtual/block/*; do
     # Setting it to 1 is a good balance for most workloads, as it allows some flexibility while still maintaining a degree of CPU affinity.
     # Setting it to 0 can lead to better CPU utilization in scenarios where tasks are distributed across multiple cores.
     # However, it can also increase the likelihood of context switching, which can reduce performance and battery life.
-    write "$io/rq_affinity" "1"
+    write "$io/queue/rq_affinity" "1"
 done
 
 
@@ -500,23 +512,25 @@ write "/proc/sys/vm/stat_interval" "60"
 
 # Swappiness
 # Higher means more aggressive swapping, lower means less aggressive swapping.
-write "/proc/sys/vm/swappiness" "60"
+write "/proc/sys/vm/swappiness" "5"
 
 # Page-Cluster
 # This parameter controls the number of pages that are reclaimed in a single operation.
 # Lower value : More aggressive swapping
 # Higher value : Less aggressive swapping
 # value is in 2^n pages, so 0 means 1 page, 1 means 2 pages, 2 means 4 pages, etc.
-write "/proc/sys/vm/page-cluster" "3"
+write "/proc/sys/vm/page-cluster" "2"
 
 # Vfs Cache Pressure
+# Which is max usable ram usage
 write "/proc/sys/vm/vfs_cache_pressure" "80"
 
 # Dirty Settings
 write "/proc/sys/vm/dirty_ratio" "5"
-write "/proc/sys/vm/dirty_background_ratio" "3"
-write "/proc/sys/vm/dirty_expire_centisecs" "3000"
-write "/proc/sys/vm/dirty_writeback_centisecs" "3000"
+write "/proc/sys/vm/dirty_background_ratio" "2"
+write "/proc/sys/vm/dirty_expire_centisecs" "6000"
+write "/proc/sys/vm/dirty_writeback_centisecs" "6000"
+write "/proc/sys/vm/dirtytime_expire_seconds"  "60"
 
 lock_val "Y" "/sys/kernel/mm/lru_gen/enabled"
 lock_val "1000" "/sys/kernel/mm/lru_gen/min_ttl_ms"
@@ -576,7 +590,6 @@ traced
 traced_probes
 tombstoned
 update_engine
-vendor.cnss_diag
 vendor.tcpdump
 miuibooster
 perfservice
@@ -597,11 +610,11 @@ for name in $process; do
 done
 
 #vendor.xiaomi.aidl.miwill
-
+#vendor.cnss_diag
 ####################################
 # SHUT UP !!! LOGTAGS !!!
 ####################################
-
+resetprop -n persist.log.tag.misight S
 resetprop -n log.tag.AF::MmapTrack S
 resetprop -n log.tag.AF::OutputTrack S
 resetprop -n log.tag.AF::PatchRecord S
@@ -666,6 +679,17 @@ resetprop -n persist.sys.traceopt 0
 # WiFi Tracing
 resetprop sys.wifitracing.started 0
 
-exit
+setprop wifi.supplicant_scan_interval 300
+
+# Network Tuning
+write "/proc/sys/net/ipv4/tcp_autocorking" "0"
+write "/proc/sys/net/ipv4/tcp_tw_reuse" "1"
+write "/proc/sys/net/ipv4/tcp_fin_timeout" "5"
+write "/proc/sys/net/ipv4/tcp_shrink_window" "1"
+write "/proc/sys/net/ipv4/tcp_reordering" "10"
+write "/proc/sys/net/ipv4/tcp_max_reordering" "1000"
+write "/proc/sys/net/ipv4/tcp_thin_linear_timeouts" "1"
+
+exit 0
 
 #killing "mi_thermald" will cause fast-charging malfunctioned

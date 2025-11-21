@@ -4,25 +4,71 @@
 
 #TEST TEST TEST
 
+# Scroll & Fling Optimization
+ro.vendor.perf.scroll_opt=0
+persist.sys.flingpromotion.enable=0
+
+
+# Disable haptic onetrack
+sys.haptic.onetrack=false
+
+# CHEATING
+persist.miui.gpu.partition.enable=false
+ro.vendor.display.benchmark_app=false
+
+#Performance Tuning
+persist.sys.aries.power_profile=low
+
+persist.sys.activity_helper.enable=false
+persist.sys.enable_miui_booster=0
+persist.sys.enable_rtmode=false
+
+persist.resleak.enable.all=false
+persist.resleak.enable.fd=false
+persist.resleak.enable.nativeheap=false
+
+persist.bluetooth.enablepagescan=false
+#control page scan behaviour when persist.bluetooth.enablepagescan is true
+persist.bluetooth.support_page_scan_change=true
+
+persist.sys.gc_booster.cloud=0
+persist.sys.gc_booster.enable=false
+
+persist.sys.perfdebug.monitor.enable=0
+# persist.sys.power.default.powermode=0
+
+persist.sys.reduce_died_count_delay=5000
+
+persist.sys.smartop.support_dynamic_performance=true
+
+#Skip ANR
+# persist.sys.skip_broadcast_anr=1
+# persist.sys.skip_content_provider_anr=1
+# persist.sys.skip_foreground_service_anr=1
+# persist.sys.skip_job_anr=1
+
 # LMKD
-persist.device_config.aconfig_flags.lmkd_native.use_minfree_levels=false
-persist.device_config.lmkd_native.use_minfree_levels=false
-ro.lmk.psi_complete_stall_ms=900
-ro.lmk.psi_partial_stall_ms=300
-ro.lmk.swap_compression_ratio=5
-ro.lmk.swap_free_low_percentage=0
-ro.lmk.swap_util_max=100
-ro.lmk.use_new_strategy=1
-ro.lmk.use_psi=1
+# persist.device_config.aconfig_flags.lmkd_native.use_minfree_levels=false
+# persist.device_config.lmkd_native.use_minfree_levels=false
+# ro.lmk.psi_complete_stall_ms=700
+# ro.lmk.psi_partial_stall_ms=100
+# ro.lmk.swap_compression_ratio=3
+# ro.lmk.swap_free_low_percentage=5
+# ro.lmk.swap_util_max=100
+# ro.lmk.use_new_strategy=1
+# ro.lmk.use_psi=1
+# ro.lmk.thrashing_limit=30
+# ro.lmk.thrashing_limit_decay=60
+# ro.lmk.kill_heaviest_task=false
 
 
 persist.sys.cachebuffer.enable=true
-persist.sys.dynamicbuffer.max_adjust_num=1
-persist.sys.disable_bganimate=false
-persist.sys.mi.prerender=true
+persist.sys.dynamicbuffer.max_adjust_num=3
+persist.sys.disable_bganimate=true
+persist.sys.mi.prerender=false
 persist.sf.force_setaffinity.bigcore=0
-persist.sys.enable_sched_touchdown=false
-persist.sys.enable_sched_gesture=false
+# persist.sys.enable_sched_touchdown=false
+# persist.sys.enable_sched_gesture=false
 debug.renderengine.blur_algorithm=kawase2
 
 # Default enable MGLRU
@@ -30,7 +76,7 @@ persist.device_config.mglru_native.lru_gen_config=all
 
 
 # AppCompact
-persist.sys.use_boot_compact=false
+persist.sys.use_boot_compact=true
 
 #TEST TEST TEST
 
@@ -38,9 +84,8 @@ persist.sys.use_boot_compact=false
 # mount debugfs debugfs /sys/kernel/debug
 # ro.debuggable=1
 
-persist.vendor.cnss_diag.enable=disable
+# persist.vendor.cnss_diag.enable=disable
 vendor.hardware.wlan.runtcpdump=stop
-# persist.sys.enable_rtmode=false
 
 # Region Sampling
 # persist.sys.raise_region_sampling_prio=true
@@ -62,13 +107,13 @@ persist.debug.sensors.hal=S
 persist.vendor.wifienhancelog=0
 
 # if > 0, the default refresh rate will be used when a user touches the screen for the configured timeout.
-ro.surface_flinger.set_touch_timer_ms=0
+# ro.surface_flinger.set_touch_timer_ms=0
 
 # if > 0, min refresh rate will be used when there are no screen updates for the configured timeout.
-ro.surface_flinger.set_idle_timer_ms=0
+# ro.surface_flinger.set_idle_timer_ms=0
 
 # if > 0, the default refresh rate will be used when turning on the display (or when going out of AOD) for the configured timeout.
-ro.surface_flinger.set_display_power_timer_ms=0
+# ro.surface_flinger.set_display_power_timer_ms=0
 
 # Qualcomm System Daemon Monitoring
 persist.vendor.qcomsysd.enabled=0
@@ -82,24 +127,24 @@ persist.sys.gnss_back.opt=true
 # 	ART | VM 	# DONE
 #################
 # dalvik.vm.backgroundgctype=HSpaceCompact
-dalvik.vm.foreground-heap-growth-multiplier=2.5
+# dalvik.vm.foreground-heap-growth-multiplier=2.5
 # dalvik.vm.gctype=CMC
-dalvik.vm.heapgrowthlimit=512m
-dalvik.vm.heapmaxfree=32m
-dalvik.vm.heapminfree=512k
-dalvik.vm.heapsize=512m
-dalvik.vm.heapstartsize=2m
-dalvik.vm.heaptargetutilization=0.8
-dalvik.vm.usap_pool_enabled=true
-dalvik.vm.usap_pool_refill_delay_ms=3000
-dalvik.vm.usap_pool_size_max=3
-dalvik.vm.usap_pool_size_min=1
-dalvik.vm.usap_refill_threshold=1
-persist.device_config.aconfig_flags.runtime_native_boot.disable_lock_profiling=true
+# dalvik.vm.heapgrowthlimit=512m
+# dalvik.vm.heapmaxfree=32m
+# dalvik.vm.heapminfree=512k
+# dalvik.vm.heapsize=512m
+# dalvik.vm.heapstartsize=2m
+# dalvik.vm.heaptargetutilization=0.8
+# dalvik.vm.usap_pool_enabled=true
+# dalvik.vm.usap_pool_refill_delay_ms=3000
+# dalvik.vm.usap_pool_size_max=3
+# dalvik.vm.usap_pool_size_min=1
+# dalvik.vm.usap_refill_threshold=1
+# persist.device_config.aconfig_flags.runtime_native_boot.disable_lock_profiling=true
 # persist.device_config.runtime_native_boot.enable_generational_cc=true
-persist.device_config.runtime_native_boot.disable_lock_profiling=true
+# persist.device_config.runtime_native_boot.disable_lock_profiling=true
 # persist.device_config.runtime_native_boot.force_disable_uffd_gc=false
-persist.device_config.runtime_native.usap_pool_enabled=true
+# persist.device_config.runtime_native.usap_pool_enabled=true
 # ro.dalvik.vm.enable_uffd_gc=true
 
 #########################
@@ -117,12 +162,12 @@ debug.sf.enable_gl_backpressure=1
 # debug.sf.enable_layer_command_batching=true
 # debug.sf.fp16_client_target=true
 debug.sf.hw=1
-debug.sf.latch_unsignaled=0
-debug.sf.auto_latch_unsignaled=1
+# debug.sf.latch_unsignaled=0
+# debug.sf.auto_latch_unsignaled=1
 # debug.sf.screenshot_fence_preservation=true
 # ro.surface_flinger.running_without_sync_framework=false
 # ro.surface_flinger.start_graphics_allocator_service=true
-ro.surface_flinger.use_content_detection_for_refresh_rate=false
+# ro.surface_flinger.use_content_detection_for_refresh_rate=false
 debug.sf.enable_advanced_sf_phase_offset=1
 vendor.debug.sf.dynamic_duration.switch=1
 # debug.sf.use_phase_offsets_as_durations=1
@@ -131,7 +176,7 @@ vendor.debug.sf.dynamic_duration.switch=1
 ro.vendor.mi_sf.enable_tp_idle_automode=true
 
 # Disable SF managed dynamic refresh rate
-debug.sf.set_idle_timer_ms=0
+# debug.sf.set_idle_timer_ms=0
 ro.surface_flinger.enable_frame_rate_override=false
 
 # SF cores allocation
@@ -148,40 +193,40 @@ ro.surface_flinger.enable_frame_rate_override=false
 #############################
 #	 Memory Management		#
 #############################
-persist.miui.boot.mopt.enable=false
+# persist.miui.boot.mopt.enable=false
 # persist.sys.cross_process_jump_response_opt=false
-persist.sys.memory_standard.enable=false
-persist.sys.mfz.enable=false
-persist.sys.min.swap.free=false
-persist.sys.miui.resident.app.count=65535
-persist.sys.mms.bg_apps_limit=65535
-persist.sys.mms.compact_enable=false
-persist.sys.mms.enable=false
-persist.sys.mms.single_compact_enable=false
-persist.sys.spc.enabled=false
-persist.sys.spc.bindvisible.enabled=false
-persist.sys.spc.fast.launch=false
-persist.sys.spc.gamepay.protect.enabled=true
+# persist.sys.memory_standard.enable=false
+# persist.sys.mfz.enable=false
+# persist.sys.min.swap.free=false
+# persist.sys.miui.resident.app.count=65535
+# persist.sys.mms.bg_apps_limit=65535
+# persist.sys.mms.compact_enable=false
+# persist.sys.mms.enable=false
+# persist.sys.mms.single_compact_enable=false
+# persist.sys.spc.enabled=false
+# persist.sys.spc.bindvisible.enabled=false
+# persist.sys.spc.fast.launch=false
+# persist.sys.spc.gamepay.protect.enabled=true
 persist.sys.spc.proc_restart_enable=false
-persist.sys.spc.process.tracker.enable=false
-persist.sys.spc.resident.app.enable=false
-persist.sys.spc.scale.backgorund.app.enable=false
-persist.sys.mimd.reclaim.enable=false
-persist.sys.miui.damon.enable=false
-persist.sys.mthp.enabled=false
-persist.sys.stability.enable_fd_monitor=false
-persist.sys.stability.enable_rss_monitor=false
-persist.sys.stability_memory_monitor.enable=false
+# persist.sys.spc.process.tracker.enable=false
+# persist.sys.spc.resident.app.enable=false
+# persist.sys.spc.scale.backgorund.app.enable=false
+# persist.sys.mimd.reclaim.enable=false
+# persist.sys.miui.damon.enable=false
+# persist.sys.mthp.enabled=false
+# persist.sys.stability.enable_fd_monitor=false
+# persist.sys.stability.enable_rss_monitor=false
+# persist.sys.stability_memory_monitor.enable=false
 persist.sys.stability.swapEnable=false
-persist.sys.thrall.process.freezer_enable=true
-persist.sys.smartpower.inactive.dur=7200
-persist.sys.smartpower.inactive.sptm.dur=7200
-persist.sys.smartpower.idle.dur=86400
-persist.sys.smartpower.maintenance.dur=86400
-persist.sys.smartpower.lastinteractive.dur=3600
-persist.sys.smartpower.memthreshold.app.lvl1=2147483645
-persist.sys.smartpower.memthreshold.app.lvl2=2147483646
-persist.sys.smartpower.memthreshold.app.lvl3=2147483647
+# persist.sys.thrall.process.freezer_enable=true
+# persist.sys.smartpower.inactive.dur=7200
+# persist.sys.smartpower.inactive.sptm.dur=7200
+# persist.sys.smartpower.idle.dur=86400
+# persist.sys.smartpower.maintenance.dur=86400
+# persist.sys.smartpower.lastinteractive.dur=3600
+# persist.sys.smartpower.memthreshold.app.lvl1=2147483645
+# persist.sys.smartpower.memthreshold.app.lvl2=2147483646
+# persist.sys.smartpower.memthreshold.app.lvl3=2147483647
 # persist.sys.gc_booster.cloud=0
 
 # SYSTEM GC (Don't touch this, is for home app consistently stays in background)
@@ -192,13 +237,13 @@ persist.sys.smartpower.memthreshold.app.lvl3=2147483647
 #########################
 #	 Thermal Control 	# DONE
 #########################
-persist.sys.enable_templimit=false
-persist.sys.smartpower.display_thermal_temp_threshold=99
-ro.vendor.display.hwc_thermal_dimming=false
-ro.vendor.fps.switch.thermal=false
-ro.vendor.thermal.dimming.enable=false
-ro.thermal.iec.enable=false
-ro.vendor.mi_sf.pq_thermal=false
+# persist.sys.enable_templimit=false
+# persist.sys.smartpower.display_thermal_temp_threshold=99
+# ro.vendor.display.hwc_thermal_dimming=false
+# ro.vendor.fps.switch.thermal=false
+# ro.vendor.thermal.dimming.enable=false
+# ro.thermal.iec.enable=false
+# ro.vendor.mi_sf.pq_thermal=false
 
 #########################
 #		 Preload 		# DONE
@@ -207,13 +252,13 @@ persist.sys.prestart.proc=false
 persist.sys.preload.enable=false
 persist.mm.enable.prefetch=false
 persist.sys.ai_preload_cloud=0
-persist.sys.precache.enable=false
+# persist.sys.precache.enable=false
 persist.sys.smartcache.enable=false
 persist.sys.stability.iorapEnable=false
 persist.sys.prestart.feedback.enable=false
 persist.sys.app_dexfile_preload.enable=false
-persist.sys.usap_pool_enabled=false
-persist.sys.dynamic_usap_enabled=false 
+# persist.sys.usap_pool_enabled=true
+persist.sys.dynamic_usap_enabled=false
 persist.sys.launch_response_optimization.enable=false
 persist.vendor.sys.activity_resumption_boost=false
 persist.sys.gpu.early_app_start=false
@@ -245,7 +290,7 @@ persist.sys.add_blurnoise_supported=false
 # ro.surface_flinger.supports_background_blur=0
 
 # Adaptive HDR Support
-persist.sys.adaptive_hdr_supported=false
+# persist.sys.adaptive_hdr_supported=false
 
 # ro.miui.shell_anim_enable_fcb=false
 
@@ -258,7 +303,7 @@ vendor.display.enable_perf_hint_large_comp_cycle=0
 ro.vendor.display.ai_disp.enable=false
 
 # Fingerprint On Display (FOD) Refresh Rate
-ro.vendor.display.fod_monitor_default_fps=30
+# ro.vendor.display.fod_monitor_default_fps=120
 
 # Animator Threads
 persist.sys.miui_animator_sched.sched_threads=0
@@ -268,7 +313,7 @@ persist.sys.miui_animator_sched.sched_threads=0
 #################################
 # Smart I/O Optimization (ON = CPQ or MQ-DEADLINE | OFF=Device declared scheduler)
 # Declared in init.qti.kernel.rc
-# persist.sys.stability.smartfocusio=on
+persist.sys.stability.smartfocusio=on
 
 # ASM-optimized LZ4 compression
 persist.sys.stability.lz4asm=on
@@ -286,7 +331,7 @@ persist.sys.spc.powerkill.newpolicy.enable=true
 # 		Smart Power 		# DONE
 #############################
 # (default:false) PROP_INTERCEPT_ENABLE
-# persist.sys.smartpower.intercept.enable=false
+persist.sys.smartpower.intercept.enable=false
 
 # (default:false) PROP_FROZEN_ENABLE
 # persist.sys.smartpower.fz.enable=false
@@ -295,7 +340,7 @@ persist.sys.spc.powerkill.newpolicy.enable=true
 persist.sys.smartpower.display_camera_fps_enable=false
 
 # (default:false) DISPLAY_POLICY_PROP
-# persist.sys.smartpower.display.enable=false
+persist.sys.smartpower.display.enable=false
 
 # (default:true ) WINDOW_POLICY_PROP
 persist.sys.smartpower.window.enable=false
@@ -308,17 +353,17 @@ persist.sys.smartpower.appstate.enable=false
 ##############################
 
 # FramePacing
-vendor.perf.framepacing.enable=0
+# vendor.perf.framepacing.enable=0
 
 # Faster game loading | 开启进游戏三倍速
-debug.game.video.speed=true
-debug.game.video.support=true
+# debug.game.video.speed=true
+# debug.game.video.support=true
 
 # Touch input follow-up event optimization
 persist.sys.touch.followup.enable=false
 
 # Touch Scheduler
-ro.vendor.touch.touchscheduler.enable=false
+# ro.vendor.touch.touchscheduler.enable=false
 
 # System Process Controller CPU Limiting
 persist.sys.spc.cpulimit.enabled=false
@@ -360,8 +405,8 @@ persist.miui.miperf.enable=false
 # 			System			 # DONE
 ##############################
 # Xiaomi Net Control
-vendor.minetd.enabled=0
-vendor.miwild.enabled=0
+# vendor.minetd.enabled=0
+# vendor.miwild.enabled=0
 
 # P2P (Wi-Fi Direct) 160 MHz
 vendor.miui.wifi.p2p.enable160m=true
@@ -392,9 +437,9 @@ persist.sys.stability.fbo_hal_stop=false
 persist.sys.stability.reboot_days=-1
 
 # Use kryo785 as processor target for ART and Bionic
-dalvik.vm.isa.arm64.variant=kryo785
-ro.bionic.cpu_variant=kryo785
-dalvik.vm.isa.arm64.features=runtime
+# dalvik.vm.isa.arm64.variant=kryo785
+# ro.bionic.cpu_variant=kryo785
+# dalvik.vm.isa.arm64.features=runtime
 
 # USB Display Port (which most Xiaomi doesn't have it)
 persist.vendor.usb.displayport.enabled=0
@@ -413,7 +458,7 @@ persist.sys.stability.nativehang.enable=false
 persist.sys.miuitcptracker.ctrl=false
 
 # App Launch reporter
-# persist.sys.stability.report_app_launch.enable=false
+persist.sys.stability.report_app_launch.enable=false
 
 # Process exit monitor
 # persist.sys.stability.enable_process_exit_monitor=false
@@ -443,7 +488,7 @@ persist.sys.stability.qcom_hang_task.enable=false
 # persist.sys.stability.enable_dmabuf_monitor=false
 
 # GPU profiling tools
-graphics.gpu.profiler.support=false
+# graphics.gpu.profiler.support=false
 
 # 禁用 sf 事務跟蹤
 debug.sf.enable_transaction_tracing=false
@@ -537,7 +582,7 @@ logd.ready=false
 log.tag.stats_log=
 persist.log.tag=S
 persist.log.tag.snet_event_log=S
-persist.log.tag.misight=S
+
 
 # misc
 persist.sys.log_max_line=1
@@ -549,10 +594,10 @@ dalvik.vm.dex2oat-minidebuginfo=false
 dalvik.vm.minidebuginfo=false
 
 # SQLiteGlobal
-debug.sqlite.journalmode=OFF
-debug.sqlite.wal.syncmode=off
-debug.sqlite.syncmode=off
-debug.sqlite.wal.poolsize=8
+# debug.sqlite.journalmode=OFF
+# debug.sqlite.wal.syncmode=off
+# debug.sqlite.syncmode=off
+# debug.sqlite.wal.poolsize=8
 
 # WindowOrientationListener
 debug.orientation.log=false

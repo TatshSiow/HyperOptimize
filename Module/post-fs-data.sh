@@ -34,7 +34,7 @@ fi
 
 # Vulkan Enabler
 if [ -f "/system/vendor/etc/permissions/android.hardware.vulkan.version-1_3.xml" ] && [[ $(getprop ro.build.version.sdk) -ge 33 ]]; then
-    resetprop debug.hwui.renderer skiavk
+    resetprop debug.hwui.renderer skiavkthreaded
     resetprop ro.hwui.use_vulkan true
     resetprop ro.hardware.vulkan adreno
     # resetprop debug.renderengine.graphite true
