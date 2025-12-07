@@ -34,7 +34,6 @@ persist.bluetooth.support_page_scan_change=true
 persist.sys.gc_booster.cloud=0
 persist.sys.gc_booster.enable=false
 
-persist.sys.perfdebug.monitor.enable=0
 # persist.sys.power.default.powermode=0
 
 persist.sys.reduce_died_count_delay=5000
@@ -72,7 +71,7 @@ persist.sf.force_setaffinity.bigcore=0
 debug.renderengine.blur_algorithm=kawase2
 
 # Default enable MGLRU
-persist.device_config.mglru_native.lru_gen_config=all
+# persist.device_config.mglru_native.lru_gen_config=all
 
 
 # AppCompact
@@ -473,7 +472,7 @@ persist.sys.spc.cpuexception.enabled=false
 persist.sys.miui_scout_enable=false
 
 # performance debugging monitor
-persist.sys.perfdebug.monitor.enable=false
+# persist.sys.perfdebug.monitor.enable=false
 
 # Tracks F2FS filesystem usage and stats
 persist.sys.stability.f2fsTrackEnable=false

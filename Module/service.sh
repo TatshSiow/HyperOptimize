@@ -277,7 +277,7 @@ write "/sys/module/printk/parameters/ignore_loglevel" "1"
 # Qualcomm Tuning
 if [ "$(getprop ro.hardware)" = "qcom" ]; then 
     # KGSL Tuning & GPU Tuning(GPU)
-    lock_val "2147483647" /sys/class/devfreq/*kgsl-3d0/max_freq
+    # lock_val "2147483647" /sys/class/devfreq/*kgsl-3d0/max_freq
     lock_val "0" /sys/class/devfreq/*kgsl-3d0/min_freq
     lock_val "0" /sys/class/kgsl/kgsl-3d0/force_bus_on
     lock_val "0" /sys/class/kgsl/kgsl-3d0/force_clk_on
@@ -290,7 +290,7 @@ if [ "$(getprop ro.hardware)" = "qcom" ]; then
     lock_val "0" /sys/class/kgsl/kgsl-3d0/preemption # might give slight overhead
     lock_val "30" /sys/class/kgsl/kgsl-3d0/idle_timer
 
-    lock_val "2147483647" /sys/kernel/gpu/gpu_max_clock
+    # lock_val "2147483647" /sys/kernel/gpu/gpu_max_clock
     lock_val "0" /sys/kernel/gpu/gpu_min_clock
 
     # RCU Tuning
@@ -306,13 +306,13 @@ if [ "$(getprop ro.hardware)" = "qcom" ]; then
     done
 
     # BUS Performance Control 
-    BUS_DCVS="/sys/devices/system/cpu/bus_dcvs"
-    lock_val_in_path "2147483647" "$BUS_DCVS/DDR" "max_freq"
-    lock_val_in_path "2147483647" "$BUS_DCVS/L3" "max_freq"
-    lock_val_in_path "2147483647" "$BUS_DCVS/DDRQOS" "max_freq"
-    lock_val_in_path "0" "$BUS_DCVS" "min_freq"
-    lock_val_in_path "0" "$BUS_DCVS" "boost_freq"
-    lock_val "1" "$BUS_DCVS/DDRQOS/boost_freq"
+    # BUS_DCVS="/sys/devices/system/cpu/bus_dcvs"
+    # lock_val_in_path "2147483647" "$BUS_DCVS/DDR" "max_freq"
+    # lock_val_in_path "2147483647" "$BUS_DCVS/L3" "max_freq"
+    # lock_val_in_path "2147483647" "$BUS_DCVS/DDRQOS" "max_freq"
+    # lock_val_in_path "0" "$BUS_DCVS" "min_freq"
+    # lock_val_in_path "0" "$BUS_DCVS" "boost_freq"
+    # lock_val "1" "$BUS_DCVS/DDRQOS/boost_freq"
 
 
     lock_val_in_path "0" "/sys/devices/system/cpu/cpufreq" "hispeed_freq"
@@ -326,7 +326,7 @@ else
     write  "/sys/module/ged/parameters/is_GED_KPI_enabled" "1"
     write  "/sys/module/mtk_core_ctl/parameters/policy_enable" "0"
     lock_val "0" "/sys/kernel/ged/hal/dcs_mode"
-    write "/proc/mtk_lpm/cpuidle/enable" "0"
+    write "/proc/mtk_lpm/cpuidle/enable" "1"
 fi
 
 # WALT
@@ -473,7 +473,7 @@ for io in /sys/block/* ; do
     # but it typically floods the UFS controller with numerous tiny requests. 
     # This can lead to increased CPU usage from more frequent interrupts and command processing
     # ultimately increasing overall overhead and potentially degrading performance and battery life for general use.
-    write "$io/queue/nomerges" "2"
+    write "$io/queue/nomerges" "0"
 
     # lock_val "none" "$sd/queue/scheduler" # (use xiaomi cpq, which introduce in smartfocusio in props)
 
@@ -482,8 +482,16 @@ for io in /sys/block/* ; do
     write "$io/queue/iostats" "0"
 
 
-    # NAND Flash don't need scheduler, use none for better battery life
-    write "$io/queue/scheduler" "none"
+    # Theoretically NAND Flash don't need scheduler, use none for better battery life
+    # Pick scheduler: prefer "none", else "noop", otherwise leave as-is
+    if [ -f "$io/queue/scheduler" ]; then
+        sched_list="$(cat "$io/queue/scheduler" 2>/dev/null)"
+        if echo "$sched_list" | grep -q '\[none\]'; then
+            write "$io/queue/scheduler" "none"
+        elif echo "$sched_list" | grep -q '\[noop\]'; then
+            write "$io/queue/scheduler" "noop"
+        fi
+    fi
 
     # write "$io/queue/read_ahead_kb" "128"
     # write "$io/bdi/read_ahead_kb" "128"
@@ -512,28 +520,27 @@ write "/proc/sys/vm/stat_interval" "60"
 
 # Swappiness
 # Higher means more aggressive swapping, lower means less aggressive swapping.
-write "/proc/sys/vm/swappiness" "5"
+write "/proc/sys/vm/swappiness" "40"
 
 # Page-Cluster
 # This parameter controls the number of pages that are reclaimed in a single operation.
 # Lower value : More aggressive swapping
 # Higher value : Less aggressive swapping
 # value is in 2^n pages, so 0 means 1 page, 1 means 2 pages, 2 means 4 pages, etc.
-write "/proc/sys/vm/page-cluster" "2"
+write "/proc/sys/vm/page-cluster" "3"
 
 # Vfs Cache Pressure
-# Which is max usable ram usage
 write "/proc/sys/vm/vfs_cache_pressure" "80"
 
 # Dirty Settings
-write "/proc/sys/vm/dirty_ratio" "5"
-write "/proc/sys/vm/dirty_background_ratio" "2"
-write "/proc/sys/vm/dirty_expire_centisecs" "6000"
-write "/proc/sys/vm/dirty_writeback_centisecs" "6000"
-write "/proc/sys/vm/dirtytime_expire_seconds"  "60"
+write "/proc/sys/vm/dirty_ratio" "14"
+write "/proc/sys/vm/dirty_background_ratio" "6"
+write "/proc/sys/vm/dirty_expire_centisecs" "2000"
+write "/proc/sys/vm/dirty_writeback_centisecs" "3000"
+write "/proc/sys/vm/dirtytime_expire_seconds"  "43200"
 
-lock_val "Y" "/sys/kernel/mm/lru_gen/enabled"
-lock_val "1000" "/sys/kernel/mm/lru_gen/min_ttl_ms"
+lock_val "7" "/sys/kernel/mm/lru_gen/enabled"
+# lock_val "1000" "/sys/kernel/mm/lru_gen/min_ttl_ms"
 
 
 
@@ -574,7 +581,7 @@ write "/proc/sys/net/ipv4/tcp_slow_start_after_idle" "0"
 write "/proc/sys/net/ipv4/tcp_tw_reuse" "1"
 write "/proc/sys/net/ipv4/tcp_no_metrics_save" "1"
 
-# Enable this unless you want to get vulnerable to attacks (especially the ones without networking knowledge)
+# Enable this if you want to get vulnerable to attacks (especially the ones without networking knowledge)
 write "/proc/sys/net/ipv4/ip_forward" "0"
 
 ####################################
