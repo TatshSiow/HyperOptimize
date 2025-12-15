@@ -23,9 +23,6 @@
 - Linux 系統參數優化
 - HyperOS 系統優化
 - 其他優化……
-> [!TIP]  
-> - [Freezer](https://github.com/Freezer-Team/Freezer) 搭配省電
-> - [FCMFix](https://github.com/kooritea/fcmfix) 解決使用 **墓碑** 不通知或延遲通知問題 (eg. Freezer, NoActive)
 
 ## 常見問題
 > [!CAUTION]  
