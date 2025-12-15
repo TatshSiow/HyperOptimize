@@ -25,10 +25,6 @@ A module to optimize System and Kernel parameters to reduce power consumption, n
 - HyperOS System Optimization
 - etc.
 
-> [!TIP]  
-> - [Freezer](https://github.com/Freezer-Team/Freezer) to obtain better battery life
-> - [FCMFix](https://github.com/kooritea/fcmfix) fix notification push delay/dead while using tombstone(eg. Freezer, NoActive)
-
 # FAQ
 > [!CAUTION]  
 > - **Anti Bootloop Module** is always recommended
