@@ -161,8 +161,8 @@ debug.sf.enable_gl_backpressure=1
 # debug.sf.enable_layer_command_batching=true
 # debug.sf.fp16_client_target=true
 debug.sf.hw=1
-# debug.sf.latch_unsignaled=0
-# debug.sf.auto_latch_unsignaled=1
+debug.sf.latch_unsignaled=0
+debug.sf.auto_latch_unsignaled=1
 # debug.sf.screenshot_fence_preservation=true
 # ro.surface_flinger.running_without_sync_framework=false
 # ro.surface_flinger.start_graphics_allocator_service=true
@@ -325,27 +325,6 @@ persist.miui.extm.enable=one
 
 # SPC (System Process Controller)
 persist.sys.spc.powerkill.newpolicy.enable=true
-
-#############################
-# 		Smart Power 		# DONE
-#############################
-# (default:false) PROP_INTERCEPT_ENABLE
-persist.sys.smartpower.intercept.enable=false
-
-# (default:false) PROP_FROZEN_ENABLE
-# persist.sys.smartpower.fz.enable=false
-
-# (default:false) PROP_CAMERA_REFRESH_RATE_ENABLE
-persist.sys.smartpower.display_camera_fps_enable=false
-
-# (default:false) DISPLAY_POLICY_PROP
-persist.sys.smartpower.display.enable=false
-
-# (default:true ) WINDOW_POLICY_PROP
-persist.sys.smartpower.window.enable=false
-
-# (default:true ) APP_STATE_ENABLE
-persist.sys.smartpower.appstate.enable=false
 
 ##############################
 # 		Perf Control		 # DONE

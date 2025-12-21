@@ -1,17 +1,17 @@
 #!/sbin/sh
 SKIPMOUNT=false
-PROPFILE=false
+PROPFILE=true
 POSTFSDATA=true
 LATESTARTSERVICE=true
 
 info_print() {
   ui_print " "
-  ui_print "═══════════════════════════════"
-  ui_print "        Hyper Optimize         "
-  ui_print "       Created by: Tatsh       "
-  ui_print "═══════════════════════════════"
-  ui_print "Uninstall this if stuck at boot"
-  ui_print "═══════════════════════════════"
+  ui_print "═════════════════════════════════"
+  ui_print "         Hyper Optimize          "
+  ui_print "        Created by: Tatsh        "
+  ui_print "═════════════════════════════════"
+  ui_print "Uninstall this if stucked at boot"
+  ui_print "═════════════════════════════════"
   ui_print " "
   # ROM Info
   ui_print "Device Model      : $(getprop ro.product.odm.marketname)"
@@ -31,7 +31,7 @@ info_print() {
   ui_print "Build Date        : $(getprop ro.build.date)"
   ui_print " "
   ui_print "Kernel version    : $(uname -r)"
-  ui_print "═══════════════════════════════"
+  ui_print "═════════════════════════════════"
 }
 
 init_main(){
