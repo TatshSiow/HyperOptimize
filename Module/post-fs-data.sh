@@ -17,7 +17,16 @@ if [ "$(getprop ro.hardware)" = "qcom" ]; then
     # Enable APTX Adaptive 2.2 Support (only for 8gen1 or higher)
     # Credit : The Voyager
     resetprop persist.vendor.qcom.bluetooth.aptxadaptiver2_2_support true
-    
+
+    # Qualcomm System Daemon Monitoring
+    resetprop persist.vendor.qcomsysd.enabled 0
+
+    # Qualcomm process hangs (ANR tracing)
+    resetprop persist.sys.stability.qcom_hang_task.enable false
+
+    # Qualcomm Sensor Subsystem (SNS)
+    resetprop debug.qualcomm.sns.daemon 0
+    resetprop debug.qualcomm.sns.libsensor1 0
 else
     #MediaTeK
     resetprop ro.vendor.mtk_prefer_64bit_proc 1
