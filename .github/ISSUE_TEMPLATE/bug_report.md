@@ -19,9 +19,9 @@ If applicable, add screenshots to help explain your problem.
 **Smartphone (please complete the following information):**
  - Device: [e.g. Xiaomi 12 Pro]
  - OS: [e.g. HyperOS 2.0]
- - Android Version [e.g. 12L, 13, 14,15]
+ - Android Version [e.g. 12L, 13, 14, 15]
  - Kernel: [e.g. 4.19, 5.15]
-
+ - Last working module version: [e.g v7.0, v8.0]
 
 **Additional context**
 Add any other context about the problem here.
