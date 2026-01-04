@@ -17,16 +17,7 @@ if [ "$(getprop ro.hardware)" = "qcom" ]; then
     # Enable APTX Adaptive 2.2 Support (only for 8gen1 or higher)
     # Credit : The Voyager
     resetprop persist.vendor.qcom.bluetooth.aptxadaptiver2_2_support true
-
-    # Qualcomm System Daemon Monitoring
-    resetprop persist.vendor.qcomsysd.enabled 0
-
-    # Qualcomm process hangs (ANR tracing)
-    resetprop persist.sys.stability.qcom_hang_task.enable false
-
-    # Qualcomm Sensor Subsystem (SNS)
-    resetprop debug.qualcomm.sns.daemon 0
-    resetprop debug.qualcomm.sns.libsensor1 0
+    
 else
     #MediaTeK
     resetprop ro.vendor.mtk_prefer_64bit_proc 1
@@ -43,19 +34,19 @@ fi
 
 # Vulkan Enabler
 if [ -f "/system/vendor/etc/permissions/android.hardware.vulkan.version-1_3.xml" ] && [[ $(getprop ro.build.version.sdk) -ge 33 ]]; then
-    resetprop debug.hwui.renderer skiavkthreaded
+    resetprop debug.hwui.renderer skiavk
     resetprop ro.hwui.use_vulkan true
-    resetprop ro.hardware.vulkan adreno
+    # resetprop ro.hardware.vulkan adreno
     # resetprop debug.renderengine.graphite true
-    resetprop debug.renderengine.vulkan true
-    resetprop debug.renderengine.backend skiavkthreaded
+    # resetprop debug.renderengine.vulkan true
+    resetprop debug.renderengine.backend skiavk
     # Below is MTK Vulkan, skiavkthreaded doesn't make a huge difference and i felt the phone being more unstable, so i took it out 
 elif [ -f "/system/vendor/etc/permissions/android.hardware.vulkan.version-1_3.prebuilt.xml" ] && [[ $(getprop ro.build.version.sdk) -ge 33 ]]; then
     resetprop debug.hwui.renderer skiavk
     resetprop ro.hwui.use_vulkan true
     resetprop debug.renderengine.backend skiavk
 else
-    resetprop debug.renderengine.backend skiaglthreaded
-fi;
+    resetprop debug.renderengine.backend skiagl
+fi
 
 exit

@@ -30,7 +30,7 @@ persist.sys.aries.power_profile=low
 
 persist.sys.activity_helper.enable=false
 persist.sys.enable_miui_booster=0
-persist.sys.enable_rtmode=false
+# persist.sys.enable_rtmode=false
 
 persist.resleak.enable.all=false
 persist.resleak.enable.fd=false
@@ -50,19 +50,19 @@ persist.sys.reduce_died_count_delay=5000
 persist.sys.smartop.support_dynamic_performance=true
 
 persist.sys.cachebuffer.enable=true
-persist.sys.dynamicbuffer.max_adjust_num=3
+# persist.sys.dynamicbuffer.max_adjust_num=3
 persist.sys.disable_bganimate=true
-persist.sys.mi.prerender=false
+# persist.sys.mi.prerender=false
 persist.sf.force_setaffinity.bigcore=0
 # persist.sys.enable_sched_touchdown=false
 # persist.sys.enable_sched_gesture=false
-debug.renderengine.blur_algorithm=kawase2
+# debug.renderengine.blur_algorithm=kawase2
 
 # Default enable MGLRU
 # persist.device_config.mglru_native.lru_gen_config=all
 
 # AppCompact
-persist.sys.use_boot_compact=true
+# persist.sys.use_boot_compact=true
 
 # persist.vendor.cnss_diag.enable=disable
 vendor.hardware.wlan.runtcpdump=stop
