@@ -589,8 +589,7 @@ write "/proc/sys/net/ipv4/ip_forward" "0"
 ####################################
 
 sleep 3 
-process="charge_logger
-logcat
+process="logcat
 logd
 statsd
 traced
@@ -598,8 +597,6 @@ traced_probes
 tombstoned
 update_engine
 vendor.tcpdump
-miuibooster
-perfservice
 mimd-service2_0
 vendor.xiaomi.aidl.minet
 minetd
