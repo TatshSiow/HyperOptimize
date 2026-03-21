@@ -309,10 +309,10 @@ if [ "$(getprop ro.hardware)" = "qcom" ]; then
     # BUS_DCVS="/sys/devices/system/cpu/bus_dcvs"
     # lock_val_in_path "2147483647" "$BUS_DCVS/DDR" "max_freq"
     # lock_val_in_path "2147483647" "$BUS_DCVS/L3" "max_freq"
-    # lock_val_in_path "2147483647" "$BUS_DCVS/DDRQOS" "max_freq"
-    # lock_val_in_path "0" "$BUS_DCVS" "min_freq"
-    # lock_val_in_path "0" "$BUS_DCVS" "boost_freq"
-    # lock_val "1" "$BUS_DCVS/DDRQOS/boost_freq"
+    lock_val_in_path "1" "$BUS_DCVS/DDRQOS" "max_freq"
+    lock_val_in_path "1" "$BUS_DIR/DDRQOS" "min_freq"
+    lock_val "1" "$BUS_DIR/DDRQOS/boost_freq"
+    lock_val "1" "$BUS_DCVS/DDRQOS/boost_freq"
 
 
     lock_val_in_path "0" "/sys/devices/system/cpu/cpufreq" "hispeed_freq"
@@ -508,6 +508,9 @@ for io in /sys/block/* ; do
     # However, it can also increase the likelihood of context switching, which can reduce performance and battery life.
     write "$io/queue/rq_affinity" "1"
 done
+
+# Set Lowest UFS frequency
+write /sys/class/devfreq/*ufs*/min_freq "1"
 
 
 ####################################

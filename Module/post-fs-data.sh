@@ -17,6 +17,22 @@ if [ "$(getprop ro.hardware)" = "qcom" ]; then
     # Enable APTX Adaptive 2.2 Support (only for 8gen1 or higher)
     # Credit : The Voyager
     resetprop persist.vendor.qcom.bluetooth.aptxadaptiver2_2_support true
+
+    resetprop persist.debug.trace 0
+    resetprop persist.logd.diag.tcpdump false
+    resetprop persist.logd.diag.bootup false
+    resetprop persist.logd.diag.networklog false
+    resetprop persist.logd.diag.mobilelog false
+    resetprop persist.sys.qlogd 0
+    resetprop vendor.bluetooth.startbtlogger false
+    resetprop persist.vendor.sys.rawdump_copy 0
+    resetprop persist.sys.qseelogd=false
+    resetprop persist.sys.ssr.enable_debug 0
+    resetprop persist.vendor.ssr.enable_ramdumps 0
+
+    # trims or optimizes of render nodes (overhead)
+    resetprop persist.sys.trim_rendernode.enable true
+
     
 else
     #MediaTeK

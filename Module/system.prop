@@ -1,10 +1,37 @@
 # BUILD PROPS
 
+persist.sys.smartpower.window.enable=false
+persist.sys.mirim.enable=false
+persist.sys.enable_ignorecloud_rtmode=true
+persist.sys.unionpower.enable=false
+ro.miui.shell_anim_enable_fcb=false
+persist.sys.miui_slow_startup_mode.enable=false
+
+# Memory and Performance Optimization
+# https://github.com/raghavt20/miui-services/tree/d9e4df4bed682f316f555858588e2130611ad768/sources/com/miui/server/sptm
+persist.sys.miui_sptm_new.enable=false
+persist.sys.miui_sptm.enable=false
+persist.sys.miui_sptm.ignore_cloud_enable=true
+persist.sys.miui_sptm_animation.enable=false
+
+# Performance Hinting
+persist.sys.enable_perf_hint=false
+
+# leash reuse
+persist.miui.home_reuse_leash=true
+persist.sys.stability.SmartCacheEnable=false
+persist.sys.stability.MultiCacheEnable=false
+
+
+persist.sys.stability.swapEnable=false
+persist.device_config.netd_native.happy_eyeballs_enable=0
+debug.stagefright.renderengine.backend=threaded
+
 # Smart Power/Process Control (SPC)
-persist.sys.spc.enabled=false
-persist.sys.spc.process.tracker.enable=false
-persist.sys.spc.cpuexception.enabled=false
-persist.sys.spc.utils.enable=false
+# persist.sys.spc.enabled=false
+# persist.sys.spc.process.tracker.enable=false
+# persist.sys.spc.cpuexception.enabled=false
+# persist.sys.spc.utils.enable=false
 
 
 
@@ -16,8 +43,8 @@ persist.sys.spc.utils.enable=false
 # https://android.googlesource.com/platform/frameworks/native/+/master/services/surfaceflinger/sysprop/SurfaceFlingerProperties.sysprop
 
 # Scroll & Fling Optimization
-ro.vendor.perf.scroll_opt=0
-persist.sys.flingpromotion.enable=0
+# ro.vendor.perf.scroll_opt=0
+# persist.sys.flingpromotion.enable=0
 
 
 
@@ -30,7 +57,7 @@ persist.sys.aries.power_profile=low
 
 persist.sys.activity_helper.enable=false
 persist.sys.enable_miui_booster=0
-# persist.sys.enable_rtmode=false
+persist.sys.enable_rtmode=false
 
 persist.resleak.enable.all=false
 persist.resleak.enable.fd=false
@@ -52,17 +79,17 @@ persist.sys.smartop.support_dynamic_performance=true
 persist.sys.cachebuffer.enable=true
 # persist.sys.dynamicbuffer.max_adjust_num=3
 persist.sys.disable_bganimate=true
-# persist.sys.mi.prerender=false
+persist.sys.mi.prerender=false
 persist.sf.force_setaffinity.bigcore=0
-# persist.sys.enable_sched_touchdown=false
-# persist.sys.enable_sched_gesture=false
-# debug.renderengine.blur_algorithm=kawase2
+persist.sys.enable_sched_touchdown=false
+persist.sys.enable_sched_gesture=false
+debug.renderengine.blur_algorithm=kawase
 
 # Default enable MGLRU
 # persist.device_config.mglru_native.lru_gen_config=all
 
 # AppCompact
-# persist.sys.use_boot_compact=true
+persist.sys.use_boot_compact=true
 
 # persist.vendor.cnss_diag.enable=disable
 vendor.hardware.wlan.runtcpdump=stop
@@ -97,8 +124,8 @@ debug.sf.enable_gl_backpressure=1
 # debug.sf.enable_layer_command_batching=true
 # debug.sf.fp16_client_target=true
 debug.sf.hw=1
-debug.sf.latch_unsignaled=0
-debug.sf.auto_latch_unsignaled=1
+# debug.sf.latch_unsignaled=0
+# debug.sf.auto_latch_unsignaled=1
 # debug.sf.screenshot_fence_preservation=true
 # ro.surface_flinger.running_without_sync_framework=false
 # ro.surface_flinger.start_graphics_allocator_service=true
@@ -121,7 +148,7 @@ persist.sys.prestart.proc=false
 persist.sys.preload.enable=false
 persist.mm.enable.prefetch=false
 persist.sys.ai_preload_cloud=0
-# persist.sys.precache.enable=false
+persist.sys.precache.enable=false
 persist.sys.smartcache.enable=false
 persist.sys.stability.iorapEnable=false
 persist.sys.prestart.feedback.enable=false
@@ -140,8 +167,7 @@ persist.sys.miui_startup_mode.enable=false
 # TextureView Optimization
 persist.sys.textureview_optimization.enable=false
 
-# trims or optimizes of render nodes (overhead)
-persist.sys.trim_rendernode.enable=true
+
 
 # Renderengine optimizations
 debug.egl.hw=1
@@ -161,10 +187,9 @@ persist.sys.add_blurnoise_supported=false
 # Adaptive HDR Support
 # persist.sys.adaptive_hdr_supported=false
 
-# ro.miui.shell_anim_enable_fcb=false
 
-# leash reuse
-# persist.miui.home_reuse_leash=true
+
+
 
 vendor.display.enable_perf_hint_large_comp_cycle=0
 
@@ -210,7 +235,7 @@ persist.sys.spc.powerkill.newpolicy.enable=true
 persist.sys.touch.followup.enable=false
 
 # Touch Scheduler
-# ro.vendor.touch.touchscheduler.enable=false
+ro.vendor.touch.touchscheduler.enable=false
 
 # System Process Controller CPU Limiting
 persist.sys.spc.cpulimit.enabled=false
@@ -220,22 +245,31 @@ persist.sys.miuibooster.rtmode=false
 persist.sys.miuibooster.launch.rtmode=false
 
 # Turbosched Control
-persist.sys.turbosched.receive.cloud.data=false
+persist.sys.turbosched.thermal_break.enable=false
 persist.sys.turbosched.enable=false
+persist.sys.turbosched.local.enable=false
+persist.sys.turbosched.enable.coreApp.optimizer=false
+persist.sys.turbosched.local.coreApp.enable=false
 persist.sys.turbosched.enable_v2=false
+persist.sys.turbosched.local.enable_v2=false
+persist.sys.turbosched.dps.enable=false
+persist.sys.turbosched.local.dps.enable=false
 persist.sys.turbosched.enabletop20app=false
+persist.sys.turbosched.local.coreAppTop20.enable=false
 persist.sys.turbosched.gaea.enable=false
 persist.sys.turbosched.link.enable=false
 persist.sys.turbosched.setstartvip.enable=false
-persist.sys.turbosched.enable.coreApp.optimizer=false
-persist.sys.turbosched.thermal_break.enable=false
+persist.sys.turbosched.receive.cloud.data=false
+persist.sys.turbosched.local.policy_list=""
+persist.sys.turbosched.local.feature_list=""
+persist.sys.turbosched.link.asyncbinder.enable=false
+persist.sys.turbosched.viptask.balance.enable=false
+persist.sys.turbosched.local.viptask.balance.enable=false
+persist.sys.turbosched.viptask.schlat.enable=false
+persist.sys.turbosched.local.viptask.schlat.enable=false
+persist.sys.turbosched.csprotect.enable=0
+persist.sys.turbosched.local.csprotect.enable=0
 
-# Memory and Performance Optimization
-# https://github.com/raghavt20/miui-services/tree/d9e4df4bed682f316f555858588e2130611ad768/sources/com/miui/server/sptm
-# persist.sys.miui_sptm_new.enable=false
-# persist.sys.miui_sptm.enable=false
-# persist.sys.miui_sptm.ignore_cloud_enable=false
-# persist.sys.miui_sptm_animation.enable=false
 
 # Mi Perf
 persist.miui.miperf.enable=false
@@ -245,8 +279,7 @@ persist.miui.miperf.enable=false
 # if you'd like to test your luck, be my guest
 # persist.sys.first.frame.accelerates=true
 
-# Performance Hinting
-# persist.sys.enable_perf_hint=false
+
 
 ##############################
 # 			System			 # DONE
@@ -270,9 +303,6 @@ persist.debug.wfd.enable=0
 # https://dumps.tadiphone.dev/dumps/xiaomi/shennong/-/blob/2afdbcea73b73ae4bd0aaacd432647cc9ca7dabe/product/etc/build.prop
 # 启用快速休眠功能，有助于节省电池寿命并提高网络响应速度。
 ro.vendor.radio.fastdormancy=true
-
-# ???
-# persist.sys.unionpower.enable=true
 
 # SmartOP 看不到什麼文檔，但是根據酷安那裡的資料
 # 大概YSRE=YuanShenResolutionEnabler，我不知道哈哈哈
@@ -341,7 +371,7 @@ persist.sys.debug.enable_scout_memory_resume=false
 persist.sys.scout_dumpbysocket=false
 
 # performance debugging monitor used to test performance janks, benchmarking etc.
-# persist.sys.perfdebug.monitor.enable=false
+persist.sys.perfdebug.monitor.enable=false
 
 # Tracks F2FS filesystem health, usage and stats
 persist.sys.stability.f2fsTrackEnable=false
@@ -368,16 +398,9 @@ persist.vendor.sensor.onetrack=false
 # Disable haptic onetrack
 sys.haptic.onetrack=false
 
-# vendor/etc/init/hw/init.qcom.rc
-persist.debug.trace=0
-persist.logd.diag.tcpdump=false
-persist.logd.diag.bootup=false
-persist.logd.diag.networklog=false
-persist.logd.diag.mobilelog=false
-persist.sys.qlogd=0
 
-# init.qti.kernel.rc
-persist.vendor.sys.rawdump_copy=0
+
+
 
 # histograms for system metrics and usage statistics
 ro.vendor.histogram.enable=false
@@ -418,7 +441,7 @@ vendor.gralloc.enable_logs=0
 
 
 # RAMDump
-persist.vendor.ssr.enable_ramdumps=0
+
 ro.boot.ramdump=disable
 ro.vendor.displayfeature.dump=false
 vendor.display.disable_hw_recovery_dump=1
@@ -433,8 +456,7 @@ service.offlinelog.bootloader=false
 # Camera Log
 persist.vendor.camera.logstate=0
 
-# qseelogd
-persist.sys.qseelogd=false
+
 
 # Logd
 persist.logd.limit=Off
@@ -494,7 +516,7 @@ av.debug.disable.pers.cache=1
 debug.egl.profiler=0
 log.shaders=0
 persist.sys.perf.debug=false
-persist.sys.ssr.enable_debug=0
+
 persist.traced_perf.enable=0
 persist.vendor.crash.cnt=0
 persist.vendor.crash.detect=false
@@ -516,7 +538,7 @@ logcat.live=disable
 vendor.vidc.debug.level=0
 persist.media.metrics.enabled=0
 media.stagefright.log-uri=0
-vendor.bluetooth.startbtlogger=false
+
 debug.enable.wl_log=0
 persist.vendor.radio.snapshot_enabled=0
 persist.vendor.radio.snapshot_timer=0
@@ -631,49 +653,4 @@ persist.sys.spc.proc_restart_enable=false
 # persist.sys.stability.enable_fd_monitor=false
 # persist.sys.stability.enable_rss_monitor=false
 # persist.sys.stability_memory_monitor.enable=false
-persist.sys.stability.swapEnable=false
-# persist.sys.thrall.process.freezer_enable=true
-# persist.sys.smartpower.inactive.dur=7200
-# persist.sys.smartpower.inactive.sptm.dur=7200
-# persist.sys.smartpower.idle.dur=86400
-# persist.sys.smartpower.maintenance.dur=86400
-# persist.sys.smartpower.lastinteractive.dur=3600
-# persist.sys.smartpower.memthreshold.app.lvl1=2147483645
-# persist.sys.smartpower.memthreshold.app.lvl2=2147483646
-# persist.sys.smartpower.memthreshold.app.lvl3=2147483647
-# persist.sys.gc_booster.cloud=0
 
-# SYSTEM GC (Don't touch this, is for home app consistently stays in background)
-# persist.sys.smart_gc.enable=false
-# persist.sys.stability.gcImproveEnable.808=false
-# persist.sys.smart_gc.packages=
-
-#########################
-#	 Thermal Control 	# DONE
-#########################
-# persist.sys.enable_templimit=false
-# persist.sys.smartpower.display_thermal_temp_threshold=99
-# ro.vendor.display.hwc_thermal_dimming=false
-# ro.vendor.fps.switch.thermal=false
-# ro.vendor.thermal.dimming.enable=false
-# ro.thermal.iec.enable=false
-# ro.vendor.mi_sf.pq_thermal=false
-
-# Content Adaptive Backlight Control (CABC)
-# ro.vendor.cabc.enable=false
-
-# Backlight Content Brightness Control (BCBC)
-# ro.vendor.bcbc.enable=false
-
-# Fingerprint On Display (FOD) Refresh Rate
-# ro.vendor.display.fod_monitor_default_fps=120
-
-# SQLiteGlobal
-# debug.sqlite.journalmode=OFF
-# debug.sqlite.wal.syncmode=off
-# debug.sqlite.syncmode=off
-# debug.sqlite.wal.poolsize=8
-
-# Disable Sensor HAL Trigger
-# persist.vendor.sensors.debug.hal_trigger_crash=false
-# persist.vendor.sensors.debug.hal_trigger_ssr=false
