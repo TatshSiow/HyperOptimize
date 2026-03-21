@@ -1,6 +1,28 @@
 #!/system/bin/sh
 MODDIR=${0%/*}
 
+set_hwui_pipeline() {
+    local renderer="$1"
+
+    case "$renderer" in
+        skiavk)
+            # HWUI explicitly recognizes debug.hwui.renderer, while ro.hwui.use_vulkan
+            # is used as the default when the renderer property is absent.
+            resetprop ro.hwui.use_vulkan true
+            resetprop debug.hwui.renderer skiavk
+
+            # RenderEngine exposes a separate backend property. We keep it aligned
+            # with HWUI so Xiaomi builds do not mix GL and Vulkan paths.
+            resetprop debug.renderengine.backend skiavkthreaded
+            ;;
+        *)
+            resetprop ro.hwui.use_vulkan false
+            resetprop debug.hwui.renderer skiagl
+            resetprop debug.renderengine.backend skiagl
+            ;;
+    esac
+}
+
 ####################################
 # Additional Props Config
 ####################################
@@ -30,6 +52,9 @@ if [ "$(getprop ro.hardware)" = "qcom" ]; then
     resetprop persist.sys.ssr.enable_debug 0
     resetprop persist.vendor.ssr.enable_ramdumps 0
 
+    # Qualcomm multimedia prefetch toggle.
+    resetprop persist.mm.enable.prefetch false
+
     # trims or optimizes of render nodes (overhead)
     resetprop persist.sys.trim_rendernode.enable true
 
@@ -48,21 +73,9 @@ else
     # resetprop vendor.mi.mpbe.ioturbo.enable 1
 fi
 
-# Vulkan Enabler
-if [ -f "/system/vendor/etc/permissions/android.hardware.vulkan.version-1_3.xml" ] && [[ $(getprop ro.build.version.sdk) -ge 33 ]]; then
-    resetprop debug.hwui.renderer skiavk
-    resetprop ro.hwui.use_vulkan true
-    # resetprop ro.hardware.vulkan adreno
-    # resetprop debug.renderengine.graphite true
-    # resetprop debug.renderengine.vulkan true
-    resetprop debug.renderengine.backend skiavk
-    # Below is MTK Vulkan, skiavkthreaded doesn't make a huge difference and i felt the phone being more unstable, so i took it out 
-elif [ -f "/system/vendor/etc/permissions/android.hardware.vulkan.version-1_3.prebuilt.xml" ] && [[ $(getprop ro.build.version.sdk) -ge 33 ]]; then
-    resetprop debug.hwui.renderer skiavk
-    resetprop ro.hwui.use_vulkan true
-    resetprop debug.renderengine.backend skiavk
-else
-    resetprop debug.renderengine.backend skiagl
-fi
+# Stability-first fallback.
+# Forced Vulkan can cause UI flashing on some vendor/SystemUI combinations, so
+# keep HWUI/RenderEngine on the GL path unless a device-specific profile opts in.
+set_hwui_pipeline "skiagl"
 
 exit

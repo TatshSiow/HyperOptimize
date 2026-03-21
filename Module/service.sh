@@ -23,6 +23,32 @@ write() {
     [ -f "$file" ] && echo "$@" > "$file" 2>/dev/null
 }
 
+normalize_toggle() {
+    case "$1" in
+        "1") echo "0" ;;
+        "Y") echo "N" ;;
+        "enabled") echo "disabled" ;;
+        "on") echo "off" ;;
+        *)
+            if echo "$1" | grep -qE '^[0-9]+$'; then
+                echo "0"
+            else
+                return 1
+            fi
+            ;;
+    esac
+}
+
+apply_toggle() {
+    local path="$1"
+    [ -f "$path" ] || return 0
+
+    local val new_val
+    val=$(cat "$path" 2>/dev/null) || return 0
+    new_val=$(normalize_toggle "$val") || return 0
+    write "$path" "$new_val"
+}
+
 
 # $1:value $2:path
 lock_val() {
@@ -116,29 +142,14 @@ game_link_debug
 migt_debug
 stack_tracer_enabled"
 
-#Fallback method
-for i in $debug_name; do
-    for o in $(find /sys/ /proc/sys -type f -name "$i" 2>/dev/null); do
-        val=$(cat "$o" 2>/dev/null)
-        
-        case "$val" in
-            "1")
-                write "$o" "0"
-                ;;
-            "Y")
-                write "$o" "N"
-                ;;
-            "enabled")
-                write "$o" "disabled"
-                ;;
-            "on")
-                write "$o" "off"
-                ;;
-            *)
-                # Check if purely numeric (fallback regex using grep)
-                if echo "$val" | grep -qE '^[0-9]+$'; then
-                    write "$o" "0"
-                fi
+# Scan sysfs/procfs once instead of walking the full tree for every pattern.
+find /sys /proc/sys -type f 2>/dev/null | while read -r path; do
+    base="${path##*/}"
+    for pattern in $debug_name; do
+        case "$base" in
+            $pattern)
+                apply_toggle "$path"
+                break
                 ;;
         esac
     done
@@ -182,29 +193,7 @@ debug_list_1="/sys/kernel/debug/dri/0/debug/enable
 
 #Fallback Method
 for path in $debug_list_1; do
-    if [ -f "$path" ]; then
-        val=$(cat "$path" 2>/dev/null)
-
-        case "$val" in
-            "1")
-                write "$path" "0"
-                ;;
-            "Y")
-                write "$path" "N"
-                ;;
-            "enabled")
-                write "$path" "disabled"
-                ;;
-            "on")
-                write "$path" "off"
-                ;;
-            *)
-                if echo "$val" | grep -qE '^[0-9]+$'; then
-                    write "$path" "0"
-                fi
-                ;;
-        esac
-    fi
+    apply_toggle "$path"
 done
 
 # Checks
@@ -247,9 +236,6 @@ write "/sys/kernel/mm/transparent_hugepage/enabled" "never"
 # Lower BT Performance but Lower Power Consumption
 write "/sys/module/bluetooth/parameters/disable_ertm" "Y"
 
-# Lower the latency but might affect buffering (audio glitches)
-write "/sys/module/bluetooth/parameters/disable_esco" "Y"
-
 # Disable not so useful modules
 write "/sys/module/cryptomgr/parameters/notests" "Y"
 
@@ -276,6 +262,8 @@ write "/sys/module/printk/parameters/ignore_loglevel" "1"
 # Vendor Specific Tuning
 # Qualcomm Tuning
 if [ "$(getprop ro.hardware)" = "qcom" ]; then 
+    BUS_DCVS="/sys/devices/system/cpu/bus_dcvs"
+
     # KGSL Tuning & GPU Tuning(GPU)
     # lock_val "2147483647" /sys/class/devfreq/*kgsl-3d0/max_freq
     lock_val "0" /sys/class/devfreq/*kgsl-3d0/min_freq
@@ -283,12 +271,15 @@ if [ "$(getprop ro.hardware)" = "qcom" ]; then
     lock_val "0" /sys/class/kgsl/kgsl-3d0/force_clk_on
     lock_val "0" /sys/class/kgsl/kgsl-3d0/force_no_nap
     lock_val "0" /sys/class/kgsl/kgsl-3d0/force_rail_on
-    lock_val "0" /sys/class/kgsl/kgsl-3d0/bus_split
+    # Heuristic and kernel-specific; leave disabled unless validated on target devices.
+    # lock_val "0" /sys/class/kgsl/kgsl-3d0/bus_split
     lock_val "0" /sys/class/kgsl/kgsl-3d0/popp
     lock_val "0" /sys/class/kgsl/kgsl-3d0/bcl
     # lock_val "100" /sys/class/kgsl/kgsl-3d0/devfreq/mod_percent
-    lock_val "0" /sys/class/kgsl/kgsl-3d0/preemption # might give slight overhead
-    lock_val "30" /sys/class/kgsl/kgsl-3d0/idle_timer
+    # Heuristic and kernel-specific; leave disabled unless validated on target devices.
+    # lock_val "0" /sys/class/kgsl/kgsl-3d0/preemption
+    # Heuristic and workload-sensitive; avoid forcing a global idle timer.
+    # lock_val "30" /sys/class/kgsl/kgsl-3d0/idle_timer
 
     # lock_val "2147483647" /sys/kernel/gpu/gpu_max_clock
     lock_val "0" /sys/kernel/gpu/gpu_min_clock
@@ -305,14 +296,15 @@ if [ "$(getprop ro.hardware)" = "qcom" ]; then
         write "$disable" "0"
     done
 
-    # BUS Performance Control 
-    # BUS_DCVS="/sys/devices/system/cpu/bus_dcvs"
+    # BUS Performance Control
     # lock_val_in_path "2147483647" "$BUS_DCVS/DDR" "max_freq"
     # lock_val_in_path "2147483647" "$BUS_DCVS/L3" "max_freq"
-    lock_val_in_path "1" "$BUS_DCVS/DDRQOS" "max_freq"
-    lock_val_in_path "1" "$BUS_DIR/DDRQOS" "min_freq"
-    lock_val "1" "$BUS_DIR/DDRQOS/boost_freq"
-    lock_val "1" "$BUS_DCVS/DDRQOS/boost_freq"
+    # Heuristic and platform-specific; avoid forcing DDRQOS nodes globally.
+    # if [ -d "$BUS_DCVS/DDRQOS" ]; then
+    #     lock_val_in_path "1" "$BUS_DCVS/DDRQOS" "max_freq"
+    #     lock_val_in_path "1" "$BUS_DCVS/DDRQOS" "min_freq"
+    #     lock_val "1" "$BUS_DCVS/DDRQOS/boost_freq"
+    # fi
 
 
     lock_val_in_path "0" "/sys/devices/system/cpu/cpufreq" "hispeed_freq"
