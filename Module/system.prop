@@ -13,8 +13,10 @@
 # debug.sf.enable_gl_backpressure is still read by SurfaceFlinger and tends to
 # favor steadier producer/consumer pacing over raw throughput.
 debug.sf.enable_gl_backpressure=1
+
 # Battery-oriented: avoid forcing higher app/display refresh behavior via SF.
 ro.surface_flinger.enable_frame_rate_override=false
+
 # These two can be beneficial, but on some vendor stacks they can also cause
 # visible UI instability. Prefer the safer default while debugging flashing.
 # ro.surface_flinger.enable_layer_caching=false
@@ -32,19 +34,21 @@ debug.hwui.skip_empty_damage=true
 debug.hwui.use_buffer_age=true
 debug.hwui.use_partial_updates=true
 debug.hwui.use_gpu_pixel_buffers=true
+
 # HWUI optimization / efficiency
 debug.hwui.use_hint_manager=true
+
 # Turns on Skia's reduceOpsTaskSplitting. AOSP notes this improves GPU
 # efficiency, though it may increase VRAM consumption and can be a bad tradeoff
 # while debugging rendering instability.
 renderthread.skia.reduceopstasksplitting=false
 
-# Blur cost / visual effects
-# ro.sf.blurs_are_expensive=1
-# ro.launcher.blur.appLaunch=0
+
 debug.renderengine.blur_algorithm=kawase
 
 # Graphics tracing / diagnostics
+debug.egl.profiler=0
+log.shaders=0
 debug.hwui.profile=false
 debug.hwui.show_layers_updates=false
 debug.hwui.overdraw=false
@@ -59,11 +63,75 @@ debug.hwui.skia_use_perfetto_track_events=false
 debug.renderengine.skia_tracing_enabled=false
 debug.renderengine.skia_use_perfetto_track_events=false
 
-# SurfaceFlinger (SF) and touchscreen (TP) idle power management
-# ro.vendor.mi_sf.enable_tp_idle_automode=true
 
 # Disable SF managed dynamic refresh rate
-# debug.sf.set_idle_timer_ms=0
+debug.sf.set_idle_timer_ms=100
+
+# Blur cost / visual effects
+# ro.sf.blurs_are_expensive=1
+# ro.launcher.blur.appLaunch=0
+
+#########################
+# ART/ dex2oat debug etc.
+#########################
+
+# vm-minidebug
+# ART / dex2oat debug metadata
+# - dalvik.vm.dex2oat-minidebuginfo: artd passes --generate-mini-debug-info to dex2oat
+# - dalvik.vm.minidebuginfo: runtime/compiler path for mini debug info generation
+# Leave dalvik.vm.artd-verbose unset; it only increases artd logging verbosity.
+dalvik.vm.dex2oat-minidebuginfo=false
+dalvik.vm.minidebuginfo=false
+
+# Logd
+# Current AOSP does not offer a clean property to disable logd entirely.
+# Minimize it instead: disable optional inputs/features and shrink buffers.
+# Logd core inputs / features
+ro.logd.kernel=false
+ro.logd.auditd=false
+ro.logd.auditd.dmesg=false
+logd.statistics=false
+
+# Logd buffer sizes
+persist.logd.size=64K
+persist.logd.size.main=64K
+persist.logd.size.system=64K
+persist.logd.size.radio=64K
+persist.logd.size.event=64K
+persist.logd.size.crash=64K
+
+# Log persistence / extras
+logd.logpersistd.enable=false
+
+# AOSP-backed tracing / Perfetto
+# Disable Tracing
+debug.atrace.tags.enableflags=0
+
+# background service of "Perfetto" Perf tracing tool
+persist.traced.enable=0
+persist.traced_perf.enable=0
+persist.mm_events.enabled=false
+persist.debug.perfetto.boottrace=0
+persist.debug.perfetto.persistent_sysui_tracing_for_bugreport=0
+
+# AOSP-backed crash dump control
+# RAMDump
+ro.boot.ramdump=disable
+
+# Log Tags
+log.tag.stats_log=S
+persist.log.tag=S
+persist.log.tag.snet_event_log=S
+
+# misc
+media.stagefright.log-uri=0
+persist.sys.log_max_line=1
+persist.sys.log_time_gap_sec=65535
+persist.sys.log_filter_flag=1
+
+# WindowOrientationListener
+debug.orientation.log=false
+
 
 #########################
 # Hardware/GPU Tuning
@@ -281,21 +349,12 @@ ro.lmk.log_stats=false
 # Log Tuning
 #########################
 
-# Disable Tracing
-debug.atrace.tags.enableflags=0
-
+# Vendor-specific logging / dump controls
 # Mobile Display Processor (MDP) Composition log
 debug.mdpcomp.logs=0
 
 # stops the cellular modem (Radio) from sending debug logs to ADB
 persist.vendor.radio.adb_log_on=0
-
-# background service of "Perfetto" Perf tracing tool
-persist.traced.enable=0
-persist.traced_perf.enable=0
-persist.mm_events.enabled=false
-persist.debug.perfetto.boottrace=0
-persist.debug.perfetto.persistent_sysui_tracing_for_bugreport=0
 
 # Xiaomi Camera Logging
 # AI Scene Detection logging
@@ -307,80 +366,12 @@ persist.vendor.camera.mawlog.main=0
 # Graphics Allocator (Gralloc) logging
 vendor.gralloc.enable_logs=0
 
-# RAMDump
-ro.boot.ramdump=disable
 ro.vendor.displayfeature.dump=false
 vendor.display.disable_hw_recovery_dump=1
 
 # Camera Log
 persist.vendor.camera.logstate=0
 
-# Logd
-persist.logd.limit=Off
-persist.logd.size=0
-persist.logd.size.crash=Off
-persist.logd.size.main=0
-persist.logd.size.radio=0
-persist.logd.size.system=0
-ro.logd.size=0
-ro.logd.size.stats=0
-persist.logd.diag.newlocation=0
-logd.ready=false
-
-# Log Tags
-log.tag.stats_log=
-persist.log.tag=S
-persist.log.tag.snet_event_log=S
-
-# misc
-persist.sys.log_max_line=1
-persist.sys.log_time_gap_sec=65535
-persist.sys.log_filter_flag=1
-
-# vm-minidebug
-dalvik.vm.dex2oat-minidebuginfo=false
-dalvik.vm.minidebuginfo=false
-
-# WindowOrientationListener
-debug.orientation.log=false
-
-# Extended Logging from OLD HyperOptimize
-vendor.swvdec.log.level=0
-persist.vendor.dpmhalservice.loglevel=0
-persist.ims.disableDebugLogs=1
-persist.ims.disableADBLogs=1
-persist.ims.disableQXDMLogs=1
-persist.ims.disableIMSLogs=1
-vidc.debug.level=0
-persist.radio.ramdump=0
-av.debug.disable.pers.cache=1
-debug.egl.profiler=0
-log.shaders=0
-persist.vendor.crash.cnt=0
-persist.vendor.crash.detect=false
-persist.vendor.sys.modem.logging.enable=false
-persist.vendor.sys.reduce_qdss_log=1
-persist.vendor.verbose_logging_enabled=false
-persist.wpa_supplicant.debug=false
-ro.logd.disable=1
-logd.statistics=0
-ro.logd.kernel=false
-ro.logdumpd.enabled=0
-logd.logpersistd.enable=false
-persist.service.logd.enable=0
-vendor.vidc.debug.level=0
-media.stagefright.log-uri=0
-debug.enable.wl_log=0
-persist.vendor.radio.snapshot_enabled=0
-persist.vendor.radio.snapshot_timer=0
-ro.vendor.connsys.dedicated.log=0
-persist.data.qmi.adb_logmask=0
-persist.vendor.dpm.loglevel=0
-
 #########################
 # Etc.
 #########################
-
-# control page scan behaviour when persist.bluetooth.enablepagescan is true
-persist.bluetooth.enablepagescan=false
-persist.bluetooth.support_page_scan_change=true
