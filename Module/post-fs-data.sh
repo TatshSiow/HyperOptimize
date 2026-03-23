@@ -17,8 +17,6 @@ set_hwui_pipeline() {
             ;;
         *)
             resetprop ro.hwui.use_vulkan false
-            resetprop debug.hwui.renderer skiagl
-            resetprop debug.renderengine.backend skiagl
             ;;
     esac
 }
@@ -73,9 +71,10 @@ else
     # resetprop vendor.mi.mpbe.ioturbo.enable 1
 fi
 
-# Stability-first fallback.
-# Forced Vulkan can cause UI flashing on some vendor/SystemUI combinations, so
-# keep HWUI/RenderEngine on the GL path unless a device-specific profile opts in.
-set_hwui_pipeline "skiagl"
+# Vulkan selection.
+# Apply the same HWUI Vulkan force that would normally be tested manually with
+# `setprop debug.hwui.renderer skiavk`, but do it persistently at boot. Keep
+# RenderEngine aligned so the stack does not mix GL and Vulkan paths.
+set_hwui_pipeline "skiavk"
 
 exit
