@@ -46,7 +46,7 @@ if [ "$(getprop ro.hardware)" = "qcom" ]; then
     resetprop persist.sys.qlogd 0
     resetprop vendor.bluetooth.startbtlogger false
     resetprop persist.vendor.sys.rawdump_copy 0
-    resetprop persist.sys.qseelogd=false
+    resetprop persist.sys.qseelogd false
     resetprop persist.sys.ssr.enable_debug 0
     resetprop persist.vendor.ssr.enable_ramdumps 0
 

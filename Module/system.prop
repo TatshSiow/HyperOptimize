@@ -7,6 +7,8 @@
 # SurfaceFlinger core
 # https://source.android.com/docs/core/graphics/surfaceflinger-props
 # https://source.android.com/docs/setup/build/feature-flagging/determine-flag
+# https://android.googlesource.com/platform/frameworks/native/+/refs/heads/master/services/surfaceflinger/SurfaceFlinger.cpp
+# https://android.googlesource.com/platform/frameworks/native/+/refs/heads/master/services/surfaceflinger/sysprop/SurfaceFlingerProperties.sysprop
 # Keep this section limited to documented SurfaceFlinger properties.
 # Do not mirror surfaceflinger_flags.aconfig entries here: most are read-only
 # build/release flags, not supported runtime system.prop toggles.
@@ -24,6 +26,8 @@ ro.surface_flinger.use_content_detection_for_refresh_rate=false
 
 # HWUI / RenderEngine
 # AOSP-backed HWUI properties:
+# https://android.googlesource.com/platform/frameworks/base/+/refs/heads/master/libs/hwui/Properties.h
+# https://android.googlesource.com/platform/frameworks/native/+/refs/heads/master/libs/renderengine/include/renderengine/RenderEngine.h
 # - debug.hwui.skip_empty_damage
 # - debug.hwui.use_buffer_age
 # - debug.hwui.use_partial_updates
@@ -67,15 +71,20 @@ debug.renderengine.skia_use_perfetto_track_events=false
 # Disable SF managed dynamic refresh rate
 debug.sf.set_idle_timer_ms=100
 
-# Blur cost / visual effects
-# ro.sf.blurs_are_expensive=1
-# ro.launcher.blur.appLaunch=0
+# Caution / dangerous SurfaceFlinger power props
+# These can improve idle power behavior, but are highly dependent on vendor
+# HWC, panel, and kernel support. Test carefully on HyperOS devices.
+ro.surface_flinger.support_kernel_idle_timer=true
+ro.surface_flinger.display_update_imminent_timeout_ms=80
 
 #########################
 # ART/ dex2oat debug etc.
 #########################
 
 # vm-minidebug
+# https://android.googlesource.com/platform/art/+/refs/heads/master/artd/artd.cc
+# https://android.googlesource.com/platform/art/+/refs/heads/master/artd/artd_test.cc
+# https://android.googlesource.com/platform/system/sepolicy/+/refs/heads/master/private/property_contexts
 # ART / dex2oat debug metadata
 # - dalvik.vm.dex2oat-minidebuginfo: artd passes --generate-mini-debug-info to dex2oat
 # - dalvik.vm.minidebuginfo: runtime/compiler path for mini debug info generation
@@ -84,6 +93,9 @@ dalvik.vm.dex2oat-minidebuginfo=false
 dalvik.vm.minidebuginfo=false
 
 # Logd
+# https://android.googlesource.com/platform/system/logging/+/refs/heads/master/logd/main.cpp
+# https://android.googlesource.com/platform/system/core/+/refs/heads/master/logd/README.property
+# https://android.googlesource.com/platform/system/core/+/refs/heads/master/logcat/logcatd.rc
 # Current AOSP does not offer a clean property to disable logd entirely.
 # Minimize it instead: disable optional inputs/features and shrink buffers.
 # Logd core inputs / features
@@ -105,6 +117,8 @@ logd.logpersistd.enable=false
 
 # AOSP-backed tracing / Perfetto
 # Disable Tracing
+# https://android.googlesource.com/platform/external/perfetto/+/refs/heads/master/perfetto.rc
+# https://android.googlesource.com/platform/external/perfetto/+/refs/heads/master/traced_perf.rc
 debug.atrace.tags.enableflags=0
 
 # background service of "Perfetto" Perf tracing tool
@@ -124,12 +138,14 @@ persist.log.tag=S
 persist.log.tag.snet_event_log=S
 
 # misc
+# https://android.googlesource.com/platform/frameworks/av/+/refs/heads/master/media/libstagefright/Utils.cpp
 media.stagefright.log-uri=0
 persist.sys.log_max_line=1
 persist.sys.log_time_gap_sec=65535
 persist.sys.log_filter_flag=1
 
 # WindowOrientationListener
+# https://android.googlesource.com/platform/frameworks/base/+/refs/heads/master/services/core/java/com/android/server/wm/WindowOrientationListener.java
 debug.orientation.log=false
 
 
@@ -375,3 +391,30 @@ persist.vendor.camera.logstate=0
 #########################
 # Etc.
 #########################
+
+#########################
+# HDR
+#########################
+# Caution: this is HDR-adjacent behavior tuning, not a full HDR disable.
+# It changes SDR dimming behavior in HDR scenarios and may affect perceived
+# brightness or color behavior depending on the vendor display pipeline.
+ro.surface_flinger.enable_sdr_dimming=false
+
+# Vendor display battery tuning (HyperOS/Xiaomi specific)
+# Derived from local PROP.prop device dump; not core AOSP guarantees.
+# Safe: logging / histogram / AI-style post-processing reductions
+ro.vendor.histogram.enable=false
+vendor.display.disable_sdr_histogram=1
+ro.vendor.display.ai_disp.enable=false
+
+# Caution: compositor / refresh behavior hints
+vendor.display.enable_perf_hint_large_comp_cycle=0
+vendor.display.enable_optimize_refresh=0
+vendor.display.enable_allow_idle_fallback=1
+ro.vendor.display.touch.idle.enable=true
+
+# Blur cost / visual effects
+# https://android.googlesource.com/platform/frameworks/native/+/refs/heads/master/services/surfaceflinger/SurfaceFlinger.cpp
+# https://android.googlesource.com/device/google/zuma/+/refs/heads/main/device.mk
+ro.sf.blurs_are_expensive=1
+ro.launcher.blur.appLaunch=0

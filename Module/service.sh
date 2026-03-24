@@ -232,10 +232,6 @@ done
 # https://blog.csdn.net/hbuxiaofei/article/details/128402495
 write "/sys/kernel/mm/transparent_hugepage/enabled" "never"
 
-# Bluetooth
-# Lower BT Performance but Lower Power Consumption
-write "/sys/module/bluetooth/parameters/disable_ertm" "Y"
-
 # Disable not so useful modules
 write "/sys/module/cryptomgr/parameters/notests" "Y"
 
@@ -252,7 +248,7 @@ write "/sys/module/printk/parameters/always_kmsg_dump" "N"
 write "/sys/module/printk/parameters/console_no_auto_verbose" "Y"
 write "/sys/module/printk/parameters/time" "0"
 write "/sys/module/printk/parameters/console_suspend" "1"
-write "/sys/module/printk/parameters/ignore_loglevel" "1"
+write "/sys/module/printk/parameters/ignore_loglevel" "0"
 
 ####################################
 # Performance Tuning
@@ -460,30 +456,36 @@ write "/sys/module/metis/parameters/sched_doctor_enable" "0"
 # 5. https://github.com/torvalds/linux/commit/488991e28e55b4fbca8067edf0259f69d1a6f92c
 # 6. https://zhuanlan.zhihu.com/p/346966856
 for io in /sys/block/* ; do
+    block="${io##*/}"
+
     # nomerges
     # Why not disable? Disabling merging (nomerges=1 or 2) might seem like it removes kernel overhead
     # but it typically floods the UFS controller with numerous tiny requests. 
     # This can lead to increased CPU usage from more frequent interrupts and command processing
     # ultimately increasing overall overhead and potentially degrading performance and battery life for general use.
-    write "$io/queue/nomerges" "0"
-
-    # lock_val "none" "$sd/queue/scheduler" # (use xiaomi cpq, which introduce in smartfocusio in props)
-
     write "$io/queue/io_poll" "0"
     write "$io/queue/add_random" "0"
-    write "$io/queue/iostats" "0"
-
-
-    # Theoretically NAND Flash don't need scheduler, use none for better battery life
-    # Pick scheduler: prefer "none", else "noop", otherwise leave as-is
-    if [ -f "$io/queue/scheduler" ]; then
-        sched_list="$(cat "$io/queue/scheduler" 2>/dev/null)"
-        if echo "$sched_list" | grep -q '\[none\]'; then
-            write "$io/queue/scheduler" "none"
-        elif echo "$sched_list" | grep -q '\[noop\]'; then
-            write "$io/queue/scheduler" "noop"
-        fi
-    fi
+ 
+    case "$block" in
+        sd*|mmcblk*|nvme*)
+            # Physical block devices benefit from request merging and can keep iostats.
+            write "$io/queue/nomerges" "0"
+            write "$io/queue/iostats" "1"
+            write "$io/queue/rq_affinity" "1"
+            ;;
+        dm-*|loop*|zram*|ram*|mtdblock*)
+            # Virtual / translated devices do not benefit from merges or iostats.
+            write "$io/queue/nomerges" "2"
+            write "$io/queue/iostats" "0"
+            write "$io/queue/rq_affinity" "0"
+            ;;
+        *)
+            # Default to the conservative physical-device behavior for unknown block types.
+            write "$io/queue/nomerges" "0"
+            write "$io/queue/iostats" "1"
+            write "$io/queue/rq_affinity" "1"
+            ;;
+    esac
 
     # write "$io/queue/read_ahead_kb" "128"
     # write "$io/bdi/read_ahead_kb" "128"
@@ -491,19 +493,7 @@ for io in /sys/block/* ; do
     # write "$sd/queue/iosched/writes_starved" "1"
     # write "$sd/queue/iosched/write_expire" "3000"
 
-    # RQ_AFFINITY
-    # Higher values will force scheduler requests complete on initiated core
-    # This can reduce latency and improve performance for workloads that benefit from CPU affinity.
-    # However, it can also lead to suboptimal CPU utilization and increased context switching.
-    # Setting it to 1 is a good balance for most workloads, as it allows some flexibility while still maintaining a degree of CPU affinity.
-    # Setting it to 0 can lead to better CPU utilization in scenarios where tasks are distributed across multiple cores.
-    # However, it can also increase the likelihood of context switching, which can reduce performance and battery life.
-    write "$io/queue/rq_affinity" "1"
 done
-
-# Set Lowest UFS frequency
-write /sys/class/devfreq/*ufs*/min_freq "1"
-
 
 ####################################
 # VM Tunables
@@ -563,11 +553,6 @@ write "/proc/sys/kernel/timer_migration" "1"
 # Energy Aware
 write "/proc/sys/kernel/sched_energy_aware" "1"
 
-#Boeffla Wakelock
-wakelock_list="enable_wlan_ws;enable_wlan_wow_wl_ws;enable_wlan_extscan_wl_ws;wlan_pno_wl;wlan_ipa;wcnss_filter_lock;hal_bluetooth_lock;IPA_WS;sensor_ind;wlan;netmgr_wl;qcom_rx_wakelock;enable_qcom_rx_wakelock_ws;wlan_wow_wl;wlan_extscan_wl;NETLINK;bam_dmux_wakelock;IPA_RM12;wlan;SensorService_wakelock;tftp_server_wakelock;enable_timerfd_ws;[timerfd];enable_netmgr_wl_ws;enable_netlink_ws;enable_ipa_ws;"
-write "/sys/devices/virtual/misc/boeffla_wakelock_blocker/wakelock_blocker" "$wakelock_list"
-write "/sys/class/misc/boeffla_wakelock_blocker/wakelock_blocker" "$wakelock_list"
-
 ####################################
 # Network Tuning
 ####################################
@@ -585,13 +570,6 @@ write "/proc/sys/net/ipv4/ip_forward" "0"
 
 sleep 3 
 process="charge_logger
-logcat
-logd
-statsd
-traced
-traced_probes
-tombstoned
-update_engine
 vendor.tcpdump
 miuibooster
 perfservice
@@ -603,7 +581,6 @@ vendor.atrace-hal-1-0
 vendor.perfservice
 vendor.qesdk-mgr
 vendor.servicetracker-1-2
-cnss-daemon
 mimd-service"
 
 for name in $process; do
@@ -671,26 +648,6 @@ resetprop -n log.tag.FastMixerState S
 resetprop -n log.tag.FastThread S
 resetprop -n log.tag.IAudioFlinger S
 resetprop -n log.tag.ToneGenerator S
-
-# Other Props
-resetprop -n events.cpu false
-
-# This likely refers to trace options or trace optimization
-resetprop -n persist.sys.traceopt 0
-
-# WiFi Tracing
-resetprop sys.wifitracing.started 0
-
-setprop wifi.supplicant_scan_interval 300
-
-# Network Tuning
-write "/proc/sys/net/ipv4/tcp_autocorking" "0"
-write "/proc/sys/net/ipv4/tcp_tw_reuse" "1"
-write "/proc/sys/net/ipv4/tcp_fin_timeout" "5"
-write "/proc/sys/net/ipv4/tcp_shrink_window" "1"
-write "/proc/sys/net/ipv4/tcp_reordering" "10"
-write "/proc/sys/net/ipv4/tcp_max_reordering" "1000"
-write "/proc/sys/net/ipv4/tcp_thin_linear_timeouts" "1"
 
 exit 0
 
