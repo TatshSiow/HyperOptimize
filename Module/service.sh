@@ -553,6 +553,10 @@ write "/proc/sys/kernel/timer_migration" "1"
 # Energy Aware
 write "/proc/sys/kernel/sched_energy_aware" "1"
 
+# Prefer the deeper suspend backend when the kernel exposes it.
+# Revert this first if you see delayed wake, missed notifications, or suspend instability.
+write "/sys/power/mem_sleep" "deep"
+
 ####################################
 # Network Tuning
 ####################################
