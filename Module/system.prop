@@ -158,20 +158,12 @@ persist.miui.gpu.partition.enable=false
 ro.vendor.display.benchmark_app=false
 
 # Performance Tuning
-persist.sys.activity_helper.enable=false
 persist.sys.enable_miui_booster=0
-persist.sys.enable_rtmode=false
 persist.sys.miuibooster.rtmode=false
 persist.sys.miuibooster.launch.rtmode=false
 
-# Touch input follow-up event optimization
-persist.sys.touch.followup.enable=false
-
 # Touch Scheduler
 ro.vendor.touch.touchscheduler.enable=false
-persist.sys.enable_sched_touchdown=false
-persist.sys.enable_sched_gesture=false
-persist.sys.gpu.early_app_start=false
 
 # Sensor Daemon (D,I,S,V,F,E)
 persist.vendor.usb.displayport.enabled=0
@@ -185,32 +177,16 @@ persist.vendor.sensors.hal.log=0
 # I/O Tuning
 #########################
 
-# AppCompact
-persist.miui.extm.dm_opt.enable=true
-persist.miui.extm.enable=one
 persist.sys.use_boot_compact=true
 
 # Preload
-persist.sys.ai_preload_cloud=0
-persist.sys.precache.enable=false
-persist.sys.smartcache.enable=false
 persist.sys.preload.enable=false
-persist.sys.prestart.proc=false
-persist.sys.prestart.feedback.enable=false
-persist.sys.app_dexfile_preload.enable=false
+persist.sys.preload.debug=false
 persist.sys.dynamic_usap_enabled=false
-persist.sys.launch_response_optimization.enable=false
-persist.vendor.sys.activity_resumption_boost=false
-persist.sys.miui_startup_mode.enable=false
-persist.sys.stability.SmartCacheEnable=false
-persist.sys.stability.MultiCacheEnable=false
-persist.sys.stability.swapEnable=false
-persist.sys.stability.iorapEnable=false
 
 # Smart I/O Optimization (ON = CPQ or MQ-DEADLINE | OFF=Device declared scheduler)
 # Declared in init.qti.kernel.rc
 persist.sys.stability.smartfocusio=on
-persist.miui.home_reuse_leash=true
 
 #########################
 # System Tuning
@@ -218,35 +194,22 @@ persist.miui.home_reuse_leash=true
 
 # Memory and Performance Optimization
 # https://github.com/raghavt20/miui-services/tree/d9e4df4bed682f316f555858588e2130611ad768/sources/com/miui/server/sptm
-persist.sys.mirim.enable=false
-persist.sys.enable_ignorecloud_rtmode=true
 ro.miui.shell_anim_enable_fcb=false
-persist.sys.miui_slow_startup_mode.enable=false
 persist.sys.miui_sptm_new.enable=false
 persist.sys.miui_sptm.enable=false
 persist.sys.miui_sptm.ignore_cloud_enable=true
 persist.sys.miui_sptm_animation.enable=false
+persist.sys.procprophet.enable=false
+persist.sys.procprophet.debug=false
 
 # Performance Hinting
-persist.sys.enable_perf_hint=false
 persist.sys.debug.enable_scout_memory_monitor=false
 persist.device_config.netd_native.happy_eyeballs_enable=0
 persist.resleak.enable.all=false
 persist.resleak.enable.fd=false
 persist.resleak.enable.nativeheap=false
-persist.sys.gc_booster.cloud=0
-persist.sys.gc_booster.enable=false
-persist.sys.reduce_died_count_delay=5000
 persist.sys.disable_bganimate=true
-persist.sys.mi.prerender=false
 persist.sf.force_setaffinity.bigcore=0
-
-# GNSS Optimization
-# If you meet GPS loss while screen off, remove this
-persist.sys.gnss_back.opt=true
-
-# System Process Controller CPU Limiting
-persist.sys.spc.cpulimit.enabled=false
 
 # Turbosched Control
 persist.sys.turbosched.thermal_break.enable=false
@@ -274,9 +237,6 @@ persist.sys.turbosched.local.viptask.schlat.enable=false
 persist.sys.turbosched.csprotect.enable=0
 persist.sys.turbosched.local.csprotect.enable=0
 
-# Mi Perf
-persist.miui.miperf.enable=false
-
 # Anti Screen Burn
 persist.sys.screen_anti_burn_enabled=true
 
@@ -285,8 +245,6 @@ persist.debug.wfd.enable=0
 
 # FBO Control
 persist.sys.fboservice.ctrl=true
-persist.sys.stability.fbo_hal_stop=false
-persist.sys.stability.reboot_days=-1
 
 # MIUI TCP Tracker service control
 # It tracks every TCP connection your apps make to calculate data usage and firewall rules
@@ -323,9 +281,6 @@ persist.sys.stability.f2fsTrackEnable=false
 persist.sys.stability.enable_thread_monitor=false
 persist.sys.stability.enable_dmabuf_monitor=false
 
-# Mean Time Between Failures (MTBF) Test Mode
-persist.sys.debug.app.mtbf_test=false
-
 # send sensor event to onetrack
 persist.vendor.sensor.onetrack=false
 
@@ -352,7 +307,6 @@ ro.config.nocheckin=1
 ro.kernel.android.checkjni=0
 ro.kernel.checkjni=0
 dalvik.vm.checkjni=false
-persist.sys.perf.debug=false
 ro.statsd.enable=false
 sys.miui.ndcd=off
 persist.media.metrics.enabled=0
@@ -418,3 +372,48 @@ ro.vendor.display.touch.idle.enable=true
 # https://android.googlesource.com/device/google/zuma/+/refs/heads/main/device.mk
 ro.sf.blurs_are_expensive=1
 ro.launcher.blur.appLaunch=0
+
+#########################
+# Not Verified Yet
+#########################
+# These props may still be useful on Xiaomi/HyperOS builds, but they are not
+# currently backed by public Xiaomi service source or a clearly attributable
+# vendor-tree reference. Keep them separate from the source-backed sections.
+
+persist.sys.activity_helper.enable=false
+persist.sys.enable_rtmode=false
+persist.sys.touch.followup.enable=false
+persist.sys.enable_sched_touchdown=false
+persist.sys.enable_sched_gesture=false
+persist.sys.gpu.early_app_start=false
+persist.miui.extm.dm_opt.enable=true
+persist.miui.extm.enable=one
+persist.sys.ai_preload_cloud=0
+persist.sys.precache.enable=false
+persist.sys.smartcache.enable=false
+persist.sys.prestart.proc=false
+persist.sys.prestart.feedback.enable=false
+persist.sys.app_dexfile_preload.enable=false
+persist.sys.launch_response_optimization.enable=false
+persist.vendor.sys.activity_resumption_boost=false
+persist.sys.miui_startup_mode.enable=false
+persist.sys.stability.SmartCacheEnable=false
+persist.sys.stability.MultiCacheEnable=false
+persist.sys.stability.swapEnable=false
+persist.sys.stability.iorapEnable=false
+persist.miui.home_reuse_leash=true
+persist.sys.mirim.enable=false
+persist.sys.enable_ignorecloud_rtmode=true
+persist.sys.miui_slow_startup_mode.enable=false
+persist.sys.enable_perf_hint=false
+persist.sys.gc_booster.cloud=0
+persist.sys.gc_booster.enable=false
+persist.sys.reduce_died_count_delay=5000
+persist.sys.mi.prerender=false
+persist.sys.gnss_back.opt=true
+persist.sys.spc.cpulimit.enabled=false
+persist.miui.miperf.enable=false
+persist.sys.stability.fbo_hal_stop=false
+persist.sys.stability.reboot_days=-1
+persist.sys.debug.app.mtbf_test=false
+persist.sys.perf.debug=false
