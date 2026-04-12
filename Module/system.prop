@@ -17,12 +17,12 @@
 debug.sf.enable_gl_backpressure=1
 
 # Battery-oriented: avoid forcing higher app/display refresh behavior via SF.
-ro.surface_flinger.enable_frame_rate_override=false
+# ro.surface_flinger.enable_frame_rate_override=false
 
 # These two can be beneficial, but on some vendor stacks they can also cause
 # visible UI instability. Prefer the safer default while debugging flashing.
 # ro.surface_flinger.enable_layer_caching=false
-ro.surface_flinger.use_content_detection_for_refresh_rate=false
+# ro.surface_flinger.use_content_detection_for_refresh_rate=false
 
 # HWUI / RenderEngine
 # AOSP-backed HWUI properties:
@@ -74,8 +74,8 @@ debug.sf.set_idle_timer_ms=100
 # Caution / dangerous SurfaceFlinger power props
 # These can improve idle power behavior, but are highly dependent on vendor
 # HWC, panel, and kernel support. Test carefully on HyperOS devices.
-ro.surface_flinger.support_kernel_idle_timer=true
-ro.surface_flinger.display_update_imminent_timeout_ms=80
+# ro.surface_flinger.support_kernel_idle_timer=true
+# ro.surface_flinger.display_update_imminent_timeout_ms=80
 
 #########################
 # ART/ dex2oat debug etc.
@@ -166,7 +166,7 @@ persist.sys.miuibooster.launch.rtmode=false
 ro.vendor.touch.touchscheduler.enable=false
 
 # Sensor Daemon (D,I,S,V,F,E)
-persist.vendor.usb.displayport.enabled=0
+# persist.vendor.usb.displayport.enabled=0
 persist.vendor.debug.sensors.daemon=S
 
 # Sensor HAL
@@ -212,7 +212,7 @@ persist.sys.disable_bganimate=true
 persist.sf.force_setaffinity.bigcore=0
 
 # Turbosched Control
-persist.sys.turbosched.thermal_break.enable=false
+# persist.sys.turbosched.thermal_break.enable=false
 persist.sys.turbosched.enable=false
 persist.sys.turbosched.local.enable=false
 persist.sys.turbosched.enable.coreApp.optimizer=false
@@ -352,20 +352,20 @@ persist.vendor.camera.logstate=0
 # Caution: this is HDR-adjacent behavior tuning, not a full HDR disable.
 # It changes SDR dimming behavior in HDR scenarios and may affect perceived
 # brightness or color behavior depending on the vendor display pipeline.
-ro.surface_flinger.enable_sdr_dimming=false
+# ro.surface_flinger.enable_sdr_dimming=false
 
 # Vendor display battery tuning (HyperOS/Xiaomi specific)
 # Derived from local PROP.prop device dump; not core AOSP guarantees.
 # Safe: logging / histogram / AI-style post-processing reductions
-ro.vendor.histogram.enable=false
-vendor.display.disable_sdr_histogram=1
-ro.vendor.display.ai_disp.enable=false
+# ro.vendor.histogram.enable=false
+# vendor.display.disable_sdr_histogram=1
+# ro.vendor.display.ai_disp.enable=false
 
 # Caution: compositor / refresh behavior hints
-vendor.display.enable_perf_hint_large_comp_cycle=0
-vendor.display.enable_optimize_refresh=0
-vendor.display.enable_allow_idle_fallback=1
-ro.vendor.display.touch.idle.enable=true
+# vendor.display.enable_perf_hint_large_comp_cycle=0
+# vendor.display.enable_optimize_refresh=0
+# vendor.display.enable_allow_idle_fallback=1
+# ro.vendor.display.touch.idle.enable=true
 
 # Blur cost / visual effects
 # https://android.googlesource.com/platform/frameworks/native/+/refs/heads/master/services/surfaceflinger/SurfaceFlinger.cpp
