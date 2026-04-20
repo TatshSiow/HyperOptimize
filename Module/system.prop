@@ -298,7 +298,7 @@ persist.sys.lmk.reportkills=false
 # OfflineLog
 persist.sys.offlinelog=false
 persist.sys.offlinelog.bootlog=false
-persist.sys.offlinelog.kernel=false
+persist.sys.offlinelog.logcatkernel=false
 persist.sys.offlinelog.logcat=false
 service.offlinelog.bootloader=false
 

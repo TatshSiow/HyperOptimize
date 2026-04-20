@@ -2,5 +2,5 @@ id=HyperOptimize_Tatsh
 name=Hyper Optimize
 author=Tatsh
 description=Tune HyperOS System and Kernel parameters to reduce power consumption
-version=v9.0.0
-versionCode=260407
+version=20260420_Test
+versionCode=260420
