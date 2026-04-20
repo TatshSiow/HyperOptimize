@@ -361,12 +361,11 @@ if [ -d /proc/sys/walt/ ]; then
     # Extra battery-biased WALT policy. Keep this limited to generic scheduler
     # hints and avoid the more aggressive per-task boost knobs.
     write "/proc/sys/walt/sched_sync_hint_enable" "0"
-    # Conservative battery test: avoid eagerly waking idle CPUs for bursts.
-    # Revert this first if you notice slower response after wake-heavy input.
-    write "/proc/sys/walt/sched_wake_up_idle" "0 0"
     # On fuxi these two remain at 1 0 after a clean reflash, so treat them as
     # ineffective in this module context unless a device-specific method is
     # proven.
+    # The same applies to sched_wake_up_idle, which stayed at 1 0 after test.
+    # write "/proc/sys/walt/sched_wake_up_idle" "0 0"
     # write "/proc/sys/walt/sched_low_latency" "0 0"
     # write "/proc/sys/walt/sched_pipeline" "0 0"
 
@@ -706,6 +705,9 @@ resetprop -n log.tag.NotificationHeaderExpandController S
 resetprop -n log.tag.NotificationPanelExpandController S
 resetprop -n log.tag.MiuiClockController S
 resetprop -n log.tag.MiuiClockController\ Aod S
+resetprop -n log.tag.msys S
+resetprop -n log.tag.secondary_dns S
+resetprop -n log.tag.msgr.DeviceInfoPeriodicReporter S
 resetprop -n log.tag.MI-SF S
 resetprop -n log.tag.SLM-SRV-SLAService S
 resetprop -n log.tag.Modem_ModemEnhanceMain S
@@ -773,6 +775,9 @@ resetprop -n log.tag.NetworkScheduler.Stats S
 resetprop -n log.tag.ProcessManager S
 resetprop -n log.tag.MagicTether S
 resetprop -n log.tag.MiuiNetworkPolicy S
+resetprop -n log.tag.MiuiGallery2_AiCoreSupportHelper S
+resetprop -n log.tag.MiuiGallery2_AlgoProgressManager S
+resetprop -n log.tag.Wth2:WeatherProvider S
 resetprop -n log.tag.ITouchFeature S
 resetprop -n log.tag.CrossProfileSender S
 resetprop -n log.tag.BroadcastExecutor S
@@ -862,6 +867,8 @@ resetprop -n log.tag.NetlinkEvent S
 resetprop -n log.tag.MiuiBatteryServiceImpl S
 resetprop -n log.tag.MiuiBatteryStatsService S
 resetprop -n log.tag.BatteryStatsImpl S
+resetprop -n log.tag.MiuiDecorationController S
+resetprop -n log.tag.MiuiWallpaperSurfaceAnimation S
 resetprop -n log.tag.LockScreenMagazinePreView S
 resetprop -n log.tag.ThemeUtils S
 resetprop -n log.tag.EasternArtBAodClock S
@@ -875,21 +882,37 @@ resetprop -n log.tag.MiuiFastConnectService_Plugin S
 resetprop -n log.tag.MiuiConfigNetConnectController S
 resetprop -n log.tag.MiuiBluetoothUtil_Plugin S
 resetprop -n log.tag.DeviceNickName_Plugin S
+resetprop -n log.tag.MiuiDataControllerImpl[0] S
+resetprop -n log.tag.MiuiDataServiceManagerImpl[0] S
 resetprop -n log.tag.PhoneAdapter S
+resetprop -n log.tag.Phone-0 S
 resetprop -n log.tag.RequestManager S
 resetprop -n log.tag.qcrilNrd S
-resetprop -n log.tag.MiuiDataServiceManagerImpl[0] S
-resetprop -n log.tag.MiuiDataControllerImpl[0] S
 resetprop -n log.tag.Phone-1 S
 resetprop -n log.tag.NetworkTypeController S
 resetprop -n log.tag.QtiGsmCdmaPhone S
 resetprop -n log.tag.QtiDSMGR-0 S
 resetprop -n log.tag.QtiDSMGR-1 S
 resetprop -n log.tag.RILJ S
+resetprop -n log.tag.RILUtils S
 resetprop -n log.tag.SST S
 resetprop -n log.tag.DNC-0 S
 resetprop -n log.tag.DNC-1 S
 resetprop -n log.tag.DIC-1 S
+resetprop -n log.tag.DN-103-C S
+resetprop -n log.tag.DN-102-C S
+resetprop -n log.tag.QOSCT-103 S
+resetprop -n log.tag.QOSCT-102 S
+resetprop -n log.tag.NitzStateMachineImpl S
+resetprop -n log.tag.LocaleTracker-0 S
+resetprop -n log.tag.DPM-0 S
+resetprop -n log.tag.MiuiNetworkControllerImpl S
+resetprop -n log.tag.MiuiNetworkControllerImpl[0] S
+resetprop -n log.tag.PhoneReceiver S
+resetprop -n log.tag.NRM-I-0 S
+resetprop -n log.tag.NRM-C-0 S
+resetprop -n log.tag.RILC S
+resetprop -n log.tag.MiuiCellSignalStrength S
 resetprop -n log.tag.GSSTInjector S
 resetprop -n log.tag.ServiceProvider S
 resetprop -n log.tag.RoamingUtils S
