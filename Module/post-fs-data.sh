@@ -24,7 +24,7 @@ set_hwui_pipeline() {
 }
 
 load_user_options() {
-    ENABLE_VULKAN=1
+    ENABLE_VULKAN=0
 
     if [ -f "$MODDIR/config/user_options" ]; then
         . "$MODDIR/config/user_options"
@@ -82,8 +82,8 @@ else
 fi
 
 # Vulkan selection.
-# Default to the previous module behavior unless the installer option disabled
-# it. Keep RenderEngine aligned so the stack does not mix GL and Vulkan paths.
+# Default to GL unless the installer option explicitly enabled Vulkan. Keep
+# RenderEngine aligned so the stack does not mix GL and Vulkan paths.
 load_user_options
 if [ "$ENABLE_VULKAN" = "1" ]; then
     set_hwui_pipeline "skiavk"

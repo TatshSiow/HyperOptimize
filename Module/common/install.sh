@@ -36,7 +36,7 @@ ui_print " "
 ui_print "- Installer Options"
 ui_print "  Use Volume Up for Yes, Volume Down for No."
 
-choose_volume_option "Enable Vulkan renderer?" "Yes"
+choose_volume_option "Enable Vulkan renderer?" "No"
 ENABLE_VULKAN="$?"
 
 mkdir -p "$MODPATH/config"
