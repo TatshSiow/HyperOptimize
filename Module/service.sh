@@ -441,33 +441,9 @@ write "/sys/devices/system/cpu/cpufreq/boost" "0"
 # CPUSETS & IRQ
 ####################################
 
-get_cpu_list_by_cluster() {
-    local cluster_id="$1"
-    for cpu in /sys/devices/system/cpu/cpu[0-9]*; do
-        if [[ -f "$cpu/topology/physical_package_id" ]]; then
-            cid="$(cat "$cpu/topology/physical_package_id")"
-            if [ "$cid" == "$cluster_id" ]; then
-                echo "${cpu##*/cpu}"
-            fi
-        fi
-    done | sort -n | paste -sd,
-}
-
-LITTLE_LIST="$(get_cpu_list_by_cluster 0)"
-BIG_LIST="$(get_cpu_list_by_cluster 1)"
-PRIME_LIST="$(get_cpu_list_by_cluster 2)"
-ALL_LIST="$(cat /sys/devices/system/cpu/present)"
-
-# pkill -f irqbalance
-
-lock_val "$LITTLE_LIST" "/dev/cpuset/background/cpus"
-lock_val "$LITTLE_LIST" "/dev/cpuset/system-background/cpus"
-lock_val "$LITTLE_LIST,$BIG_LIST" "/dev/cpuset/foreground/cpus"
-lock_val "$ALL_LIST" "/dev/cpuset/top-app/cpus"
-lock_val "$LITTLE_LIST" /proc/irq/default_smp_affinity
-lock_val_in_path "$LITTLE_LIST" "/proc/irq" "smp_affinity_list"
-
-
+# Cluster-derived cpuset and IRQ affinity tuning is intentionally disabled.
+# CPU topology layouts vary too much across devices, and hard-coded cluster
+# assumptions can exclude higher clusters on 4-cluster SoCs.
 # /sys/devices/system/cpu/cpu*/cpuidle/state*/disable to 0
 # /sys/module/lpm_levels/parameters/sleep_disabled
 
