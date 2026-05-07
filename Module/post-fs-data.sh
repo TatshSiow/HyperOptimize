@@ -17,8 +17,18 @@ set_hwui_pipeline() {
             ;;
         *)
             resetprop ro.hwui.use_vulkan false
+            resetprop debug.hwui.renderer skiagl
+            resetprop debug.renderengine.backend skiaglthreaded
             ;;
     esac
+}
+
+load_user_options() {
+    ENABLE_VULKAN=1
+
+    if [ -f "$MODDIR/config/user_options" ]; then
+        . "$MODDIR/config/user_options"
+    fi
 }
 
 ####################################
@@ -72,9 +82,13 @@ else
 fi
 
 # Vulkan selection.
-# Apply the same HWUI Vulkan force that would normally be tested manually with
-# `setprop debug.hwui.renderer skiavk`, but do it persistently at boot. Keep
-# RenderEngine aligned so the stack does not mix GL and Vulkan paths.
-set_hwui_pipeline "skiavk"
+# Default to the previous module behavior unless the installer option disabled
+# it. Keep RenderEngine aligned so the stack does not mix GL and Vulkan paths.
+load_user_options
+if [ "$ENABLE_VULKAN" = "1" ]; then
+    set_hwui_pipeline "skiavk"
+else
+    set_hwui_pipeline "skiagl"
+fi
 
 exit
