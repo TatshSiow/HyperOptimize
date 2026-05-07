@@ -49,6 +49,62 @@ apply_toggle() {
     write "$path" "$new_val"
 }
 
+debug_cache_signature() {
+    {
+        getprop ro.build.fingerprint
+        getprop ro.build.version.incremental
+        getprop ro.vendor.build.fingerprint
+        getprop ro.bootimage.build.fingerprint
+        uname -r
+    } 2>/dev/null
+}
+
+build_debug_path_cache() {
+    local cache="$1"
+    local tmp="${cache}.tmp"
+    local path base pattern
+
+    mkdir -p "$(dirname "$cache")"
+    : > "$tmp"
+
+    find /sys /proc/sys -type f 2>/dev/null | while read -r path; do
+        base="${path##*/}"
+        for pattern in $debug_name; do
+            case "$base" in
+                $pattern)
+                    echo "$path"
+                    break
+                    ;;
+            esac
+        done
+    done > "$tmp"
+
+    mv -f "$tmp" "$cache"
+}
+
+apply_debug_path_cache() {
+    local cache="$1"
+    local sig="${cache}.sig"
+    local sig_tmp="${sig}.tmp"
+    local path
+
+    mkdir -p "$(dirname "$cache")"
+    debug_cache_signature > "$sig_tmp"
+
+    if [ ! -f "$cache" ] || [ ! -f "$sig" ] || ! cmp -s "$sig_tmp" "$sig"; then
+        build_debug_path_cache "$cache"
+        mv -f "$sig_tmp" "$sig"
+    else
+        rm -f "$sig_tmp"
+    fi
+
+    [ -s "$cache" ] || return 0
+
+    while read -r path; do
+        apply_toggle "$path"
+    done < "$cache"
+}
+
 
 # $1:value $2:path
 lock_val() {
@@ -142,18 +198,9 @@ game_link_debug
 migt_debug
 stack_tracer_enabled"
 
-# Scan sysfs/procfs once instead of walking the full tree for every pattern.
-find /sys /proc/sys -type f 2>/dev/null | while read -r path; do
-    base="${path##*/}"
-    for pattern in $debug_name; do
-        case "$base" in
-            $pattern)
-                apply_toggle "$path"
-                break
-                ;;
-        esac
-    done
-done
+# Scan sysfs/procfs once, then reuse the path cache on later boots. This avoids
+# repeatedly walking large debug trees during boot settle.
+apply_debug_path_cache "$MODDIR/config/debug_paths"
 
 # Checks
 # for i in $debug_name; do
