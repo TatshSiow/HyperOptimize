@@ -64,6 +64,9 @@ game_link_debug
 migt_debug
 stack_tracer_enabled"
 
+# Present but protected on mayfly/HyperOS; repeated attempts only add noise.
+debug_skip_path="dplh_log_level gplaf_log_level cpucp_log_level enable_pkg_monitor"
+
 # Scan sysfs/procfs once, then reuse the path cache on later boots. This avoids
 # repeatedly walking large debug trees during boot settle.
 apply_debug_path_cache "$MODDIR/config/debug_paths"
@@ -113,4 +116,3 @@ done
 # for path in $debug_list_1; do
 #     echo "$path $(cat $path)"
 # done
-

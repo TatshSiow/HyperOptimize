@@ -20,26 +20,28 @@ for io in /sys/block/* ; do
     # but it typically floods the UFS controller with numerous tiny requests. 
     # This can lead to increased CPU usage from more frequent interrupts and command processing
     # ultimately increasing overall overhead and potentially degrading performance and battery life for general use.
-    write "$io/queue/io_poll" "0"
     write "$io/queue/add_random" "0"
  
     case "$block" in
         sd*|mmcblk*|nvme*)
-            # Physical block devices benefit from request merging and can keep iostats.
-            write "$io/queue/nomerges" "0"
-            write "$io/queue/iostats" "1"
+            # Physical block devices benefit from request merging and can keep
+            # iostats. Many Android kernels expose these as read-only, so leave
+            # readonly nodes intact.
+            write_if_writable "$io/queue/nomerges" "0"
+            write_if_writable "$io/queue/iostats" "1"
             write "$io/queue/rq_affinity" "1"
             ;;
         dm-*|loop*|zram*|ram*|mtdblock*)
-            # Virtual / translated devices do not benefit from merges or iostats.
-            write "$io/queue/nomerges" "2"
-            write "$io/queue/iostats" "0"
+            # Virtual / translated devices often expose nomerges/iostats as
+            # read-only. Apply only when the kernel allows normal writes.
+            write_if_writable "$io/queue/nomerges" "2"
+            write_if_writable "$io/queue/iostats" "0"
             write "$io/queue/rq_affinity" "0"
             ;;
         *)
-            # Default to the conservative physical-device behavior for unknown block types.
-            write "$io/queue/nomerges" "0"
-            write "$io/queue/iostats" "1"
+            # Default to conservative physical-device behavior for unknown block types.
+            write_if_writable "$io/queue/nomerges" "0"
+            write_if_writable "$io/queue/iostats" "1"
             write "$io/queue/rq_affinity" "1"
             ;;
     esac
@@ -51,4 +53,3 @@ for io in /sys/block/* ; do
     # write "$sd/queue/iosched/write_expire" "3000"
 
 done
-

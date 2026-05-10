@@ -13,16 +13,19 @@ if [ "$(getprop ro.hardware)" = "qcom" ]; then
     BUS_DCVS="/sys/devices/system/cpu/bus_dcvs"
 
     # KGSL Tuning & GPU Tuning(GPU)
-    # lock_val "2147483647" /sys/class/devfreq/*kgsl-3d0/max_freq
-    lock_val "0" /sys/class/devfreq/*kgsl-3d0/min_freq
-    lock_val "0" /sys/class/kgsl/kgsl-3d0/force_bus_on
-    lock_val "0" /sys/class/kgsl/kgsl-3d0/force_clk_on
-    lock_val "0" /sys/class/kgsl/kgsl-3d0/force_no_nap
-    lock_val "0" /sys/class/kgsl/kgsl-3d0/force_rail_on
+    # GPU devfreq min/max are vendor policy knobs. Avoid forcing them globally;
+    # PowerHAL, thermal, and game/display modes may need to adjust them.
+    # write_in_path_excluding "0" "/sys/devices/platform" "kgsl-3d0/devfreq" "kgsl-busmon" "min_freq"
+    write "/sys/class/kgsl/kgsl-3d0/force_bus_on" "0"
+    write "/sys/class/kgsl/kgsl-3d0/force_clk_on" "0"
+    write "/sys/class/kgsl/kgsl-3d0/force_no_nap" "0"
+    write "/sys/class/kgsl/kgsl-3d0/force_rail_on" "0"
     # Heuristic and kernel-specific; leave disabled unless validated on target devices.
     # lock_val "0" /sys/class/kgsl/kgsl-3d0/bus_split
-    lock_val "0" /sys/class/kgsl/kgsl-3d0/popp
-    lock_val "0" /sys/class/kgsl/kgsl-3d0/bcl
+    # Read-protected on some kernels; avoid forcing permissions for this GPU
+    # policy knob unless validated on target devices.
+    # write "/sys/class/kgsl/kgsl-3d0/popp" "0"
+    write "/sys/class/kgsl/kgsl-3d0/bcl" "0"
     # lock_val "100" /sys/class/kgsl/kgsl-3d0/devfreq/mod_percent
     # Heuristic and kernel-specific; leave disabled unless validated on target devices.
     # lock_val "0" /sys/class/kgsl/kgsl-3d0/preemption
@@ -30,11 +33,11 @@ if [ "$(getprop ro.hardware)" = "qcom" ]; then
     # lock_val "30" /sys/class/kgsl/kgsl-3d0/idle_timer
 
     # lock_val "2147483647" /sys/kernel/gpu/gpu_max_clock
-    lock_val "0" /sys/kernel/gpu/gpu_min_clock
+    write "/sys/kernel/gpu/gpu_min_clock" "0"
 
     # RCU Tuning
     # https://www.kernel.org/doc/Documentation/RCU/Design/Expedited-Grace-Periods/Expedited-Grace-Periods.html
-    write "/sys/kernel/rcu_expedited" "0"
+    write_if_writable "/sys/kernel/rcu_expedited" "0"
 
     # PELT Multiplier
     # lock_val "4" "/proc/sys/kernel/sched_pelt_multiplier"
@@ -60,17 +63,17 @@ if [ "$(getprop ro.hardware)" = "qcom" ]; then
     # fi
 
 
-    lock_val_in_path "0" "/sys/devices/system/cpu/cpufreq" "hispeed_freq"
-    lock_val_in_path "0" "/sys/devices/system/cpu/cpufreq" "rtg_boost_freq"
-    lock_val_in_path "1000" "/sys/devices/system/cpu/cpufreq" "up_rate_limit_us"
-    lock_val_in_path "1000" "/sys/devices/system/cpu/cpufreq" "down_rate_limit_us"
+    write_in_path "0" "/sys/devices/system/cpu/cpufreq" "hispeed_freq"
+    write_in_path "0" "/sys/devices/system/cpu/cpufreq" "rtg_boost_freq"
+    write_in_path "5000" "/sys/devices/system/cpu/cpufreq" "up_rate_limit_us"
+    write_in_path "1000" "/sys/devices/system/cpu/cpufreq" "down_rate_limit_us"
 
 else 
 #Mediatek Tuning
     write  "/sys/kernel/ged/hal/custom_upbound_gpu_freq" "0"
     write  "/sys/module/ged/parameters/is_GED_KPI_enabled" "1"
     write  "/sys/module/mtk_core_ctl/parameters/policy_enable" "0"
-    lock_val "0" "/sys/kernel/ged/hal/dcs_mode"
+    write "/sys/kernel/ged/hal/dcs_mode" "0"
     write "/proc/mtk_lpm/cpuidle/enable" "1"
 fi
 
@@ -97,7 +100,7 @@ if [ -d /proc/sys/walt/ ]; then
     # Check WINDOW_STATS_RECENT | WINDOW_STATS_MAX | WINDOW_STATS_MAX_RECENT_AVG | WINDOW_STATS_AVG
     write "/proc/sys/walt/sched_window_stats_policy" "0"
     
-    lock_val "99" "/proc/sys/walt/walt_rtg_cfs_boost_prio" #99=disabled
+    write "/proc/sys/walt/walt_rtg_cfs_boost_prio" "99" #99=disabled
     # write "/proc/sys/walt/walt_low_latency_task_threshold" "0"
 
     # task
@@ -127,7 +130,7 @@ else
 # Schedutil config based in this patch: 
 # https://patchwork.kernel.org/project/linux-pm/patch/c6248ec9475117a1d6c9ff9aafa8894f6574a82f.1479359903.git.viresh.kumar@linaro.org/
     for i in /sys/devices/system/cpu/cpu*/cpufreq/schedutil/up_rate_limit_us ; do
-        write $i "1000"
+        write $i "5000"
     done
     for i in /sys/devices/system/cpu/cpu*/cpufreq/schedutil/down_rate_limit_us ; do
         write $i "1000"
@@ -151,4 +154,3 @@ write "/sys/devices/system/cpu/cpufreq/boost" "0"
 # assumptions can exclude higher clusters on 4-cluster SoCs.
 # /sys/devices/system/cpu/cpu*/cpuidle/state*/disable to 0
 # /sys/module/lpm_levels/parameters/sleep_disabled
-

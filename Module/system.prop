@@ -100,20 +100,48 @@ dalvik.vm.minidebuginfo=false
 # Minimize it instead: disable optional inputs/features and shrink buffers.
 # Logd core inputs / features
 ro.logd.kernel=false
+logd.klogd=false
 ro.logd.auditd=false
+logd.auditd=false
 ro.logd.auditd.dmesg=false
+logd.auditd.dmesg=false
+ro.logd.auditd.main=false
+ro.logd.auditd.events=false
+ro.logd.statistics=false
 logd.statistics=false
+logd.statistics.dgram_qlen=false
+logd.dgram_qlen.statistics=false
+persist.logd.security=false
 
 # Logd buffer sizes
+ro.logd.size=64K
 persist.logd.size=64K
+ro.logd.size.main=64K
 persist.logd.size.main=64K
+ro.logd.size.system=64K
 persist.logd.size.system=64K
+ro.logd.size.radio=64K
 persist.logd.size.radio=64K
+ro.logd.size.event=64K
 persist.logd.size.event=64K
+ro.logd.size.crash=64K
 persist.logd.size.crash=64K
 
 # Log persistence / extras
 logd.logpersistd.enable=false
+logd.logpersistd=stop
+logd.logpersistd.buffer=
+logd.logpersistd.size=1
+logd.logpersistd.rotate_kbytes=64
+persist.logd.logpersistd=stop
+persist.logd.logpersistd.buffer=
+persist.logd.logpersistd.size=1
+persist.logd.logpersistd.count=1
+persist.logd.logpersistd.rotate_kbytes=64
+ro.logd.filter=~! ~1000/!
+persist.logd.filter=~! ~1000/!
+ro.logd.timestamp=monotonic
+persist.logd.timestamp=monotonic
 
 # AOSP-backed tracing / Perfetto
 # Disable Tracing

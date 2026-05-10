@@ -1,8 +1,10 @@
 #!/system/bin/sh
 MODDIR="${0%/*}"
 . "$MODDIR/scripts/lib.sh"
-RUN_LOG="$MODDIR/config/service-run.log"
+RUN_LOG="$MODDIR/config/hyperoptimize.log"
 RUN_LOCK="$MODDIR/config/service.lock"
+HYPEROPTIMIZE_DEBUG=1
+export RUN_LOG HYPEROPTIMIZE_DEBUG
 
 run_script() {
     local script="$1"

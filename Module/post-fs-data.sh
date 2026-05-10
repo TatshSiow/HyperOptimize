@@ -60,6 +60,17 @@ if [ "$(getprop ro.hardware)" = "qcom" ]; then
     resetprop persist.sys.ssr.enable_debug 0
     resetprop persist.vendor.ssr.enable_ramdumps 0
 
+    # Qualcomm IMS/radio logging controls. These are vendor-stack dependent,
+    # but reduce IMS debug, ADB, QXDM, and radio ramdump logging when honored.
+    resetprop persist.ims.disableDebugLogs 1
+    resetprop persist.ims.disableADBLogs 1
+    resetprop persist.ims.disableQXDMLogs 1
+    resetprop persist.ims.disableIMSLogs 1
+    resetprop persist.radio.ramdump 0
+    resetprop vidc.debug.level 0
+    resetprop vendor.vidc.debug.level 0
+    resetprop vendor.swvdec.log.level 0
+
     # Qualcomm multimedia prefetch toggle.
     resetprop persist.mm.enable.prefetch false
 

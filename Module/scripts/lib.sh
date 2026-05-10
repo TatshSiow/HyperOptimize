@@ -19,7 +19,40 @@ wait_until_login() {
 write() {
     local file="$1"
     shift
-    [ -f "$file" ] && { echo "$@" > "$file"; } 2>/dev/null
+
+    : "${RUN_LOG:=/dev/null}"
+
+    if [ ! -f "$file" ]; then
+        [ "$HYPEROPTIMIZE_DEBUG" = "1" ] && echo "skip missing: $file" >> "$RUN_LOG"
+        return 0
+    fi
+
+    if { echo "$@" > "$file"; } 2>/dev/null; then
+        [ "$HYPEROPTIMIZE_DEBUG" = "1" ] && echo "write ok: $file <- $*" >> "$RUN_LOG"
+    else
+        [ "$HYPEROPTIMIZE_DEBUG" = "1" ] && echo "write failed: $file <- $*" >> "$RUN_LOG"
+    fi
+
+    return 0
+}
+
+write_if_writable() {
+    local file="$1"
+    shift
+
+    : "${RUN_LOG:=/dev/null}"
+
+    if [ ! -f "$file" ]; then
+        [ "$HYPEROPTIMIZE_DEBUG" = "1" ] && echo "skip missing: $file" >> "$RUN_LOG"
+        return 0
+    fi
+
+    if [ ! -w "$file" ]; then
+        [ "$HYPEROPTIMIZE_DEBUG" = "1" ] && echo "skip readonly: $file" >> "$RUN_LOG"
+        return 0
+    fi
+
+    write "$file" "$@"
     return 0
 }
 
@@ -101,6 +134,10 @@ apply_debug_path_cache() {
     [ -s "$cache" ] || return 0
 
     while read -r path; do
+        base="${path##*/}"
+        for pattern in $debug_skip_path; do
+            [ "$base" = "$pattern" ] && continue 2
+        done
         apply_toggle "$path"
     done < "$cache"
 }
@@ -132,98 +169,64 @@ lock_val_in_path() {
     return 0
 }
 
-get_memtotal_mb() {
-    awk '/MemTotal:/ { print int($2 / 1024); exit }' /proc/meminfo 2>/dev/null
-}
+write_in_path() {
+    local matches
 
-get_swaptotal_mb() {
-    awk '/SwapTotal:/ { print int($2 / 1024); exit }' /proc/meminfo 2>/dev/null
-}
-
-apply_adaptive_vm_tunables() {
-    local mem_mb swap_mb has_swap
-    local stat_interval swappiness page_cluster vfs_cache_pressure
-    local dirty_ratio dirty_background_ratio dirty_expire dirty_writeback
-
-    mem_mb="$(get_memtotal_mb)"
-    swap_mb="$(get_swaptotal_mb)"
-    [ -n "$mem_mb" ] || mem_mb=0
-    [ -n "$swap_mb" ] || swap_mb=0
-
-    if [ "$swap_mb" -gt 0 ]; then
-        has_swap=1
+    if [ "$#" = "4" ]; then
+        matches="$(find "$2/" -path "*$3*" -name "$4" -type f 2>/dev/null)"
     else
-        has_swap=0
+        matches="$(find "$2/" -name "$3" -type f 2>/dev/null)"
     fi
 
-    case "$mem_mb" in
-        0)
-            stat_interval=60
-            swappiness=40
-            page_cluster=1
-            vfs_cache_pressure=100
-            dirty_ratio=12
-            dirty_background_ratio=5
-            dirty_expire=2000
-            dirty_writeback=3000
-            ;;
-        *)
-            if [ "$mem_mb" -le 4096 ]; then
-                stat_interval=30
-                page_cluster=0
-                vfs_cache_pressure=120
-                dirty_ratio=8
-                dirty_background_ratio=3
-                dirty_expire=1000
-                dirty_writeback=2000
-                [ "$has_swap" = "1" ] && swappiness=70 || swappiness=35
-            elif [ "$mem_mb" -le 6144 ]; then
-                stat_interval=45
-                page_cluster=0
-                vfs_cache_pressure=110
-                dirty_ratio=10
-                dirty_background_ratio=4
-                dirty_expire=1500
-                dirty_writeback=2500
-                [ "$has_swap" = "1" ] && swappiness=60 || swappiness=30
-            elif [ "$mem_mb" -le 8192 ]; then
-                stat_interval=60
-                page_cluster=1
-                vfs_cache_pressure=100
-                dirty_ratio=12
-                dirty_background_ratio=5
-                dirty_expire=2000
-                dirty_writeback=3000
-                [ "$has_swap" = "1" ] && swappiness=50 || swappiness=25
-            elif [ "$mem_mb" -le 12288 ]; then
-                stat_interval=60
-                page_cluster=2
-                vfs_cache_pressure=90
-                dirty_ratio=14
-                dirty_background_ratio=6
-                dirty_expire=2000
-                dirty_writeback=3000
-                [ "$has_swap" = "1" ] && swappiness=40 || swappiness=20
-            else
-                stat_interval=60
-                page_cluster=3
-                vfs_cache_pressure=80
-                dirty_ratio=16
-                dirty_background_ratio=8
-                dirty_expire=3000
-                dirty_writeback=5000
-                [ "$has_swap" = "1" ] && swappiness=30 || swappiness=15
-            fi
-            ;;
-    esac
+    if [ -z "$matches" ]; then
+        : "${RUN_LOG:=/dev/null}"
+        [ "$HYPEROPTIMIZE_DEBUG" = "1" ] && echo "skip no match: $2 $3 ${4:-}" >> "$RUN_LOG"
+        return 0
+    fi
 
-    write "/proc/sys/vm/stat_interval" "$stat_interval"
-    write "/proc/sys/vm/swappiness" "$swappiness"
-    write "/proc/sys/vm/page-cluster" "$page_cluster"
-    write "/proc/sys/vm/vfs_cache_pressure" "$vfs_cache_pressure"
-    write "/proc/sys/vm/dirty_ratio" "$dirty_ratio"
-    write "/proc/sys/vm/dirty_background_ratio" "$dirty_background_ratio"
-    write "/proc/sys/vm/dirty_expire_centisecs" "$dirty_expire"
-    write "/proc/sys/vm/dirty_writeback_centisecs" "$dirty_writeback"
-    write "/proc/sys/vm/dirtytime_expire_seconds" "43200"
+    echo "$matches" | while read -r file; do
+        write "$file" "$1"
+    done
+
+    return 0
+}
+
+write_in_path_excluding() {
+    local matches
+
+    matches="$(find "$2/" -path "*$3*" ! -path "*$4*" -name "$5" -type f 2>/dev/null)"
+
+    if [ -z "$matches" ]; then
+        : "${RUN_LOG:=/dev/null}"
+        [ "$HYPEROPTIMIZE_DEBUG" = "1" ] && echo "skip no match: $2 $3 ! $4 $5" >> "$RUN_LOG"
+        return 0
+    fi
+
+    echo "$matches" | while read -r file; do
+        write "$file" "$1"
+    done
+
+    return 0
+}
+
+write_in_path_if_writable() {
+    local matches
+
+    if [ "$#" = "4" ]; then
+        matches="$(find "$2/" -path "*$3*" -name "$4" -type f 2>/dev/null)"
+    else
+        matches="$(find "$2/" -name "$3" -type f 2>/dev/null)"
+    fi
+
+    if [ -z "$matches" ]; then
+        : "${RUN_LOG:=/dev/null}"
+        [ "$HYPEROPTIMIZE_DEBUG" = "1" ] && echo "skip no match: $2 $3 ${4:-}" >> "$RUN_LOG"
+        return 0
+    fi
+
+    echo "$matches" | while read -r file; do
+        write_if_writable "$file" "$1"
+    done
+
+    return 0
 }

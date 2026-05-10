@@ -35,4 +35,3 @@ write "/sys/kernel/mm/transparent_hugepage/enabled" "never"
 
 # Disable not so useful modules
 write "/sys/module/cryptomgr/parameters/notests" "Y"
-
