@@ -53,12 +53,35 @@ if [ "$(getprop ro.hardware)" = "qcom" ]; then
     resetprop persist.logd.diag.bootup false
     resetprop persist.logd.diag.networklog false
     resetprop persist.logd.diag.mobilelog false
+    resetprop persist.logd.diag.newlocation false
     resetprop persist.sys.qlogd 0
     resetprop vendor.bluetooth.startbtlogger false
     resetprop persist.vendor.sys.rawdump_copy 0
     resetprop persist.sys.qseelogd false
     resetprop persist.sys.ssr.enable_debug 0
     resetprop persist.vendor.ssr.enable_ramdumps 0
+    resetprop persist.sys.debug.app.mtbf_test false
+
+    # Xiaomi RT scheduler boost / SPTM guards. Some values are persisted by
+    # the ROM, so reassert them early instead of relying only on system.prop.
+    resetprop persist.sys.debug_rtmode false
+    resetprop persist.sys.enable_rtmode false
+    resetprop persist.sys.enable_sched_gesture false
+    resetprop persist.sys.enable_ignorecloud_rtmode true
+    resetprop persist.sys.miui_sptm.enable_pl_type 0
+
+    # Xiaomi Scout/native-hang diagnostics. These are still enabled as persisted
+    # values on some HyperOS builds even when system.prop contains false values.
+    resetprop persist.sys.miui_scout_debug false
+    resetprop persist.sys.stability.nativehangII.enable false
+    resetprop persist.sys.stability.nativehangII.resume false
+    resetprop persist.sys.miui_scout_binder_full_kill_process false
+    resetprop persist.sys.scout_binder_gki false
+    resetprop persist.sys.stability.scout.enable false
+    resetprop persist.sys.stability.scout.check_frozen false
+    resetprop persist.sys.sysrqOnAnr_D_state false
+    resetprop persist.sys.panicOnAnr_D_state false
+    resetprop persist.sys.panicOnWatchdog_D_state false
 
     # Qualcomm IMS/radio logging controls. These are vendor-stack dependent,
     # but reduce IMS debug, ADB, QXDM, and radio ramdump logging when honored.

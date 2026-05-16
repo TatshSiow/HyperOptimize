@@ -14,6 +14,8 @@ choose_volume_option() {
   ui_print " "
   ui_print "----------------------------------------"
   ui_print "$prompt"
+  ui_print "Note: Might be unstable on some devices, use at your own risk."
+  ui_print "For powersaving: Your mileage might vary."
   ui_print "Volume Up = Yes"
   ui_print "Volume Down = No"
   ui_print "Default after ${VOLUME_SELECT_TIMEOUT}s: $default"

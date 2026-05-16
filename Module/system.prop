@@ -148,11 +148,14 @@ persist.logd.timestamp=monotonic
 # https://android.googlesource.com/platform/external/perfetto/+/refs/heads/master/perfetto.rc
 # https://android.googlesource.com/platform/external/perfetto/+/refs/heads/master/traced_perf.rc
 debug.atrace.tags.enableflags=0
+debug.atrace.app_cmdlines=
 
 # background service of "Perfetto" Perf tracing tool
+persist.device_config.global_settings.sys_traced=0
 persist.traced.enable=0
 persist.traced_perf.enable=0
 persist.mm_events.enabled=false
+persist.heapprofd.enable=0
 persist.debug.perfetto.boottrace=0
 persist.debug.perfetto.persistent_sysui_tracing_for_bugreport=0
 
@@ -172,6 +175,9 @@ persist.sys.log_max_line=1
 persist.sys.log_time_gap_sec=65535
 persist.sys.log_filter_flag=1
 
+# SQLite slow-query logging. Negative disables slow query logging in AOSP.
+db.log.slow_query_threshold=-1
+
 # WindowOrientationListener
 # https://android.googlesource.com/platform/frameworks/base/+/refs/heads/master/services/core/java/com/android/server/wm/WindowOrientationListener.java
 debug.orientation.log=false
@@ -189,6 +195,14 @@ ro.vendor.display.benchmark_app=false
 persist.sys.enable_miui_booster=0
 persist.sys.miuibooster.rtmode=false
 persist.sys.miuibooster.launch.rtmode=false
+
+# Xiaomi RT scheduler boost controls
+# https://github.com/chrmhoffmann/miui-services/blob/fba6b27f43ee39c1a5d5a62d1dcfb45246eddb27/sources/com/android/server/wm/RealTimeModeControllerImpl.java
+# https://github.com/chrmhoffmann/miui-services/blob/fba6b27f43ee39c1a5d5a62d1dcfb45246eddb27/sources/com/miui/server/rtboost/SchedBoostService.java
+persist.sys.debug_rtmode=false
+persist.sys.enable_rtmode=false
+persist.sys.enable_sched_gesture=false
+persist.sys.enable_ignorecloud_rtmode=true
 
 # Touch Scheduler
 ro.vendor.touch.touchscheduler.enable=false
@@ -225,6 +239,7 @@ persist.sys.stability.smartfocusio=on
 ro.miui.shell_anim_enable_fcb=false
 persist.sys.miui_sptm_new.enable=false
 persist.sys.miui_sptm.enable=false
+persist.sys.miui_sptm.enable_pl_type=0
 persist.sys.miui_sptm.ignore_cloud_enable=true
 persist.sys.miui_sptm_animation.enable=false
 persist.sys.procprophet.enable=false
@@ -281,6 +296,7 @@ persist.sys.miuitcptracker.ctrl=false
 # Wi-Fi / connectivity logging
 # Wi-Fi Enhanced Logging
 persist.vendor.wifienhancelog=0
+persist.wpa_supplicant.debug=false
 # Connectivity System Firmware (Connsys) logging or dump generation
 persist.vendor.connsysfw.enable=false
 
@@ -295,15 +311,25 @@ vendor.hardware.wlan.runtcpdump=stop
 # https://github.com/raghavt20/miui-services/blob/d9e4df4bed682f316f555858588e2130611ad768/sources/com/android/server/wm/MiuiWindowMonitorImpl.java#L63
 persist.sys.stability.window_monitor.enabled=false
 persist.sys.stability.nativehang.enable=false
+persist.sys.stability.nativehangII.enable=false
+persist.sys.stability.nativehangII.resume=false
 persist.sys.stability.anr_monitor.enabled=false
 persist.sys.stability.report_app_launch.enable=false
 persist.sys.stability.enable_process_exit_monitor=false
 persist.sys.stability.enable_sentinel_resource_monitor=false
 persist.sys.miui_scout_enable=false
+persist.sys.miui_scout_debug=false
+persist.sys.miui_scout_binder_full_kill_process=false
 persist.sys.debug.enable_scout_memory_resume=false
 
 # Enable `scout` related debug features via socket dumping.
+persist.sys.scout_binder_gki=false
 persist.sys.scout_dumpbysocket=false
+persist.sys.stability.scout.enable=false
+persist.sys.stability.scout.check_frozen=false
+persist.sys.sysrqOnAnr_D_state=false
+persist.sys.panicOnAnr_D_state=false
+persist.sys.panicOnWatchdog_D_state=false
 persist.sys.perfdebug.monitor.enable=false
 persist.sys.stability.f2fsTrackEnable=false
 persist.sys.stability.enable_thread_monitor=false
@@ -353,6 +379,13 @@ debug.mdpcomp.logs=0
 
 # stops the cellular modem (Radio) from sending debug logs to ADB
 persist.vendor.radio.adb_log_on=0
+
+# Bluetooth HCI snoop / vendor verbose / modem logging controls.
+persist.bluetooth.btsnooplogmode=disabled
+persist.bt.iot.enablelogging=false
+persist.vendor.sys.modem.logging.enable=false
+persist.vendor.verbose_logging_enabled=false
+persist.data.qmi.adb_logmask=0
 
 # Xiaomi Camera Logging
 # AI Scene Detection logging
@@ -409,10 +442,8 @@ ro.launcher.blur.appLaunch=0
 # vendor-tree reference. Keep them separate from the source-backed sections.
 
 persist.sys.activity_helper.enable=false
-persist.sys.enable_rtmode=false
 persist.sys.touch.followup.enable=false
 persist.sys.enable_sched_touchdown=false
-persist.sys.enable_sched_gesture=false
 persist.sys.gpu.early_app_start=false
 persist.miui.extm.dm_opt.enable=true
 persist.miui.extm.enable=one
@@ -431,7 +462,6 @@ persist.sys.stability.swapEnable=false
 persist.sys.stability.iorapEnable=false
 persist.miui.home_reuse_leash=true
 persist.sys.mirim.enable=false
-persist.sys.enable_ignorecloud_rtmode=true
 persist.sys.miui_slow_startup_mode.enable=false
 persist.sys.enable_perf_hint=false
 persist.sys.gc_booster.cloud=0

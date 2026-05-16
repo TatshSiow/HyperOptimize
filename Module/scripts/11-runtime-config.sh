@@ -35,11 +35,54 @@ log_get() {
 run_cmd cmd dropbox set-rate-limit 10000
 
 # Disable framework looper statistics collection when the shell service exists.
+run_cmd cmd settings put global looper_stats enabled false
+run_cmd resetprop debug.sys.looper_stats_enabled false
 run_cmd cmd looper_stats disable
 
 # Reduce framework/runtime diagnostics overhead where supported.
 run_cmd cmd settings put system anr_debugging_mechanism 0
 run_cmd cmd device_config put runtime_native_boot iorap_perfetto_enable false
 
+# Disable attention features that can keep sensors active.
+run_cmd cmd settings put secure adaptive_sleep 0
+
+# Perfetto/heapprofd tracing triggers. These properties can start tracing,
+# perf sampling, or heap profiling daemons when set by developer tools.
+run_cmd resetprop persist.device_config.global_settings.sys_traced 0
+run_cmd resetprop persist.traced.enable 0
+run_cmd resetprop persist.traced_perf.enable 0
+run_cmd resetprop debug.atrace.user_initiated ""
+run_cmd resetprop traced.lazy.traced_perf ""
+run_cmd resetprop traced.lazy.heapprofd ""
+run_cmd resetprop persist.heapprofd.enable 0
+run_cmd resetprop traced.lazy.heapprofd_standalone ""
+run_cmd resetprop persist.sys.debug.app.mtbf_test false
+
+# logcatd/logpersist can be re-enabled by logcatd.rc during persistent-property
+# load. Reassert the stopped state late in boot.
+run_cmd resetprop logd.logpersistd.enable false
+run_cmd resetprop logd.logpersistd stop
+run_cmd resetprop persist.logd.logpersistd ""
+
+# Keep retained logcat data minimal without killing logd.
+run_cmd logcat -b all -G 64K
+run_cmd logcat -P "~! ~1000/!"
+run_cmd logcat -b all -c
+
 log_get "settings.system.anr_debugging_mechanism" cmd settings get system anr_debugging_mechanism
+log_get "settings.global.looper_stats" cmd settings get global looper_stats
+log_get "settings.secure.adaptive_sleep" cmd settings get secure adaptive_sleep
 log_get "device_config.runtime_native_boot.iorap_perfetto_enable" cmd device_config get runtime_native_boot iorap_perfetto_enable
+log_get "prop.debug.sys.looper_stats_enabled" getprop debug.sys.looper_stats_enabled
+log_get "prop.persist.device_config.global_settings.sys_traced" getprop persist.device_config.global_settings.sys_traced
+log_get "prop.persist.traced.enable" getprop persist.traced.enable
+log_get "prop.persist.traced_perf.enable" getprop persist.traced_perf.enable
+log_get "prop.debug.atrace.user_initiated" getprop debug.atrace.user_initiated
+log_get "prop.traced.lazy.traced_perf" getprop traced.lazy.traced_perf
+log_get "prop.traced.lazy.heapprofd" getprop traced.lazy.heapprofd
+log_get "prop.persist.heapprofd.enable" getprop persist.heapprofd.enable
+log_get "prop.traced.lazy.heapprofd_standalone" getprop traced.lazy.heapprofd_standalone
+log_get "prop.persist.sys.debug.app.mtbf_test" getprop persist.sys.debug.app.mtbf_test
+log_get "prop.logd.logpersistd.enable" getprop logd.logpersistd.enable
+log_get "prop.logd.logpersistd" getprop logd.logpersistd
+log_get "prop.persist.logd.logpersistd" getprop persist.logd.logpersistd
