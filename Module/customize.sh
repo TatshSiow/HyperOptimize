@@ -44,6 +44,9 @@ REPLACE="
 
 set_permissions() {
   set_perm_recursive $MODPATH/scripts 0 0 0755 0755
+  set_perm $MODPATH/service.sh 0 0 0755
+  set_perm $MODPATH/post-fs-data.sh 0 0 0755
+  set_perm $MODPATH/uninstall.sh 0 0 0755
 
   # Note that all files/folders in magisk module directory have the $MODPATH prefix - keep this prefix on all of your files/folders
   # Some examples:

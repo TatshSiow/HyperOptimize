@@ -1,3 +1,7 @@
+# REFINED: no active system.prop assignment produced a repeatable multi-metric win.
+# All original knobs are retained below as commented portability candidates.
+# Thermal bypasses were not live-tested; boot/read-once properties need reboot A/B.
+
 # BUILD PROPS
 
 #########################
@@ -14,7 +18,7 @@
 # build/release flags, not supported runtime system.prop toggles.
 # debug.sf.enable_gl_backpressure is still read by SurfaceFlinger and tends to
 # favor steadier producer/consumer pacing over raw throughput.
-debug.sf.enable_gl_backpressure=1
+# no-confirmed-win: debug.sf.enable_gl_backpressure=1
 
 # Battery-oriented: avoid forcing higher app/display refresh behavior via SF.
 # ro.surface_flinger.enable_frame_rate_override=false
@@ -34,42 +38,42 @@ debug.sf.enable_gl_backpressure=1
 # - debug.hwui.use_gpu_pixel_buffers
 # These default to true in AOSP HWUI already; keep them explicit here so the
 # module can restore the efficient path if a vendor build overrides them.
-debug.hwui.skip_empty_damage=true
-debug.hwui.use_buffer_age=true
-debug.hwui.use_partial_updates=true
-debug.hwui.use_gpu_pixel_buffers=true
+# no-confirmed-win: debug.hwui.skip_empty_damage=true
+# no-confirmed-win: debug.hwui.use_buffer_age=true
+# no-confirmed-win: debug.hwui.use_partial_updates=true
+# no-confirmed-win: debug.hwui.use_gpu_pixel_buffers=true
 
 # HWUI optimization / efficiency
-debug.hwui.use_hint_manager=true
+# no-confirmed-win: debug.hwui.use_hint_manager=true
 
 # Turns on Skia's reduceOpsTaskSplitting. AOSP notes this improves GPU
 # efficiency, though it may increase VRAM consumption and can be a bad tradeoff
 # while debugging rendering instability.
-renderthread.skia.reduceopstasksplitting=false
+# no-confirmed-win: renderthread.skia.reduceopstasksplitting=false
 
 
-debug.renderengine.blur_algorithm=kawase2
+# no-confirmed-win: debug.renderengine.blur_algorithm=kawase2
 
 # Graphics tracing / diagnostics
-debug.egl.profiler=0
-log.shaders=0
-debug.hwui.profile=false
-debug.hwui.show_layers_updates=false
-debug.hwui.overdraw=false
-debug.hwui.show_dirty_regions=false
-debug.hwui.capture_skp_enabled=false
-debug.hwui.trace_gpu_resources=false
-debug.sf.enable_transaction_tracing=false
-debug.sf.enable_egl_image_tracker=0
-debug.renderengine.skia_atrace_enabled=false
-debug.hwui.skia_tracing_enabled=false
-debug.hwui.skia_use_perfetto_track_events=false
-debug.renderengine.skia_tracing_enabled=false
-debug.renderengine.skia_use_perfetto_track_events=false
+# no-confirmed-win: debug.egl.profiler=0
+# no-confirmed-win: log.shaders=0
+# no-confirmed-win: debug.hwui.profile=false
+# no-confirmed-win: debug.hwui.show_layers_updates=false
+# no-confirmed-win: debug.hwui.overdraw=false
+# no-confirmed-win: debug.hwui.show_dirty_regions=false
+# no-confirmed-win: debug.hwui.capture_skp_enabled=false
+# no-confirmed-win: debug.hwui.trace_gpu_resources=false
+# no-confirmed-win: debug.sf.enable_transaction_tracing=false
+# no-confirmed-win: debug.sf.enable_egl_image_tracker=0
+# no-confirmed-win: debug.renderengine.skia_atrace_enabled=false
+# no-confirmed-win: debug.hwui.skia_tracing_enabled=false
+# no-confirmed-win: debug.hwui.skia_use_perfetto_track_events=false
+# no-confirmed-win: debug.renderengine.skia_tracing_enabled=false
+# no-confirmed-win: debug.renderengine.skia_use_perfetto_track_events=false
 
 
 # Disable SF managed dynamic refresh rate
-debug.sf.set_idle_timer_ms=100
+# no-confirmed-win: debug.sf.set_idle_timer_ms=100
 
 # Caution / dangerous SurfaceFlinger power props
 # These can improve idle power behavior, but are highly dependent on vendor
@@ -89,8 +93,8 @@ debug.sf.set_idle_timer_ms=100
 # - dalvik.vm.dex2oat-minidebuginfo: artd passes --generate-mini-debug-info to dex2oat
 # - dalvik.vm.minidebuginfo: runtime/compiler path for mini debug info generation
 # Leave dalvik.vm.artd-verbose unset; it only increases artd logging verbosity.
-dalvik.vm.dex2oat-minidebuginfo=false
-dalvik.vm.minidebuginfo=false
+# no-confirmed-win: dalvik.vm.dex2oat-minidebuginfo=false
+# no-confirmed-win: dalvik.vm.minidebuginfo=false
 
 # Logd
 # https://android.googlesource.com/platform/system/logging/+/refs/heads/master/logd/main.cpp
@@ -99,88 +103,88 @@ dalvik.vm.minidebuginfo=false
 # Current AOSP does not offer a clean property to disable logd entirely.
 # Minimize it instead: disable optional inputs/features and shrink buffers.
 # Logd core inputs / features
-ro.logd.kernel=false
+# no-confirmed-win: ro.logd.kernel=false
 # logd.klogd=false
-ro.logd.auditd=false
+# no-confirmed-win: ro.logd.auditd=false
 # logd.auditd=false
-ro.logd.auditd.dmesg=false
+# no-confirmed-win: ro.logd.auditd.dmesg=false
 # logd.auditd.dmesg=false
-ro.logd.auditd.main=false
-ro.logd.auditd.events=false
-ro.logd.statistics=false
-logd.statistics=false
+# no-confirmed-win: ro.logd.auditd.main=false
+# no-confirmed-win: ro.logd.auditd.events=false
+# no-confirmed-win: ro.logd.statistics=false
+# no-confirmed-win: logd.statistics=false
 # logd.statistics.dgram_qlen=false
 # logd.dgram_qlen.statistics=false
-persist.logd.security=false
+# no-confirmed-win: persist.logd.security=false
 
 # Logd buffer sizes
-ro.logd.size=64K
-persist.logd.size=64K
-ro.logd.size.main=64K
-persist.logd.size.main=64K
-ro.logd.size.system=64K
-persist.logd.size.system=64K
-ro.logd.size.radio=64K
-persist.logd.size.radio=64K
-ro.logd.size.event=64K
-persist.logd.size.event=64K
-ro.logd.size.crash=64K
-persist.logd.size.crash=64K
+# no-confirmed-win: ro.logd.size=64K
+# no-confirmed-win: persist.logd.size=64K
+# no-confirmed-win: ro.logd.size.main=64K
+# no-confirmed-win: persist.logd.size.main=64K
+# no-confirmed-win: ro.logd.size.system=64K
+# no-confirmed-win: persist.logd.size.system=64K
+# no-confirmed-win: ro.logd.size.radio=64K
+# no-confirmed-win: persist.logd.size.radio=64K
+# no-confirmed-win: ro.logd.size.event=64K
+# no-confirmed-win: persist.logd.size.event=64K
+# no-confirmed-win: ro.logd.size.crash=64K
+# no-confirmed-win: persist.logd.size.crash=64K
 
 # Log persistence / extras
-logd.logpersistd.enable=false
+# no-confirmed-win: logd.logpersistd.enable=false
 # logd.logpersistd=stop
 # logd.logpersistd.buffer=
 # logd.logpersistd.size=1
 # logd.logpersistd.rotate_kbytes=64
-persist.logd.logpersistd=stop
-persist.logd.logpersistd.buffer=
-persist.logd.logpersistd.size=1
-persist.logd.logpersistd.count=1
-persist.logd.logpersistd.rotate_kbytes=64
-ro.logd.filter=~! ~1000/!
-persist.logd.filter=~! ~1000/!
-ro.logd.timestamp=monotonic
-persist.logd.timestamp=monotonic
+# no-confirmed-win: persist.logd.logpersistd=stop
+# no-confirmed-win: persist.logd.logpersistd.buffer=
+# no-confirmed-win: persist.logd.logpersistd.size=1
+# no-confirmed-win: persist.logd.logpersistd.count=1
+# no-confirmed-win: persist.logd.logpersistd.rotate_kbytes=64
+# no-confirmed-win: ro.logd.filter=~! ~1000/!
+# no-confirmed-win: persist.logd.filter=~! ~1000/!
+# no-confirmed-win: ro.logd.timestamp=monotonic
+# no-confirmed-win: persist.logd.timestamp=monotonic
 
 # AOSP-backed tracing / Perfetto
 # Disable Tracing
 # https://android.googlesource.com/platform/external/perfetto/+/refs/heads/master/perfetto.rc
 # https://android.googlesource.com/platform/external/perfetto/+/refs/heads/master/traced_perf.rc
-debug.atrace.tags.enableflags=0
+# no-confirmed-win: debug.atrace.tags.enableflags=0
 # debug.atrace.app_cmdlines=
 
 # background service of "Perfetto" Perf tracing tool
-persist.device_config.global_settings.sys_traced=0
-persist.traced.enable=0
-persist.traced_perf.enable=0
-persist.mm_events.enabled=false
-persist.heapprofd.enable=0
-persist.debug.perfetto.boottrace=0
-persist.debug.perfetto.persistent_sysui_tracing_for_bugreport=0
+# no-confirmed-win: persist.device_config.global_settings.sys_traced=0
+# no-confirmed-win: persist.traced.enable=0
+# no-confirmed-win: persist.traced_perf.enable=0
+# no-confirmed-win: persist.mm_events.enabled=false
+# no-confirmed-win: persist.heapprofd.enable=0
+# no-confirmed-win: persist.debug.perfetto.boottrace=0
+# no-confirmed-win: persist.debug.perfetto.persistent_sysui_tracing_for_bugreport=0
 
 # AOSP-backed crash dump control
 # RAMDump
-ro.boot.ramdump=disable
+# no-confirmed-win: ro.boot.ramdump=disable
 
 # Log Tags
-log.tag.stats_log=S
-persist.log.tag=S
-persist.log.tag.snet_event_log=S
+# no-confirmed-win: log.tag.stats_log=S
+# no-confirmed-win: persist.log.tag=S
+# no-confirmed-win: persist.log.tag.snet_event_log=S
 
 # misc
 # https://android.googlesource.com/platform/frameworks/av/+/refs/heads/master/media/libstagefright/Utils.cpp
-media.stagefright.log-uri=0
-persist.sys.log_max_line=1
-persist.sys.log_time_gap_sec=65535
-persist.sys.log_filter_flag=1
+# no-confirmed-win: media.stagefright.log-uri=0
+# no-confirmed-win: persist.sys.log_max_line=1
+# no-confirmed-win: persist.sys.log_time_gap_sec=65535
+# no-confirmed-win: persist.sys.log_filter_flag=1
 
 # SQLite slow-query logging. Negative disables slow query logging in AOSP.
-db.log.slow_query_threshold=-1
+# no-confirmed-win: db.log.slow_query_threshold=-1
 
 # WindowOrientationListener
 # https://android.googlesource.com/platform/frameworks/base/+/refs/heads/master/services/core/java/com/android/server/wm/WindowOrientationListener.java
-debug.orientation.log=false
+# no-confirmed-win: debug.orientation.log=false
 
 
 #########################
@@ -188,47 +192,47 @@ debug.orientation.log=false
 #########################
 
 # CHEATING
-persist.miui.gpu.partition.enable=false
-ro.vendor.display.benchmark_app=false
+# no-confirmed-win: persist.miui.gpu.partition.enable=false
+# no-confirmed-win: ro.vendor.display.benchmark_app=false
 
 # Performance Tuning
-persist.sys.enable_miui_booster=0
-persist.sys.miuibooster.rtmode=false
-persist.sys.miuibooster.launch.rtmode=false
+# no-confirmed-win: persist.sys.enable_miui_booster=0
+# no-confirmed-win: persist.sys.miuibooster.rtmode=false
+# no-confirmed-win: persist.sys.miuibooster.launch.rtmode=false
 
 # Xiaomi RT scheduler boost controls
 # https://github.com/chrmhoffmann/miui-services/blob/fba6b27f43ee39c1a5d5a62d1dcfb45246eddb27/sources/com/android/server/wm/RealTimeModeControllerImpl.java
 # https://github.com/chrmhoffmann/miui-services/blob/fba6b27f43ee39c1a5d5a62d1dcfb45246eddb27/sources/com/miui/server/rtboost/SchedBoostService.java
-persist.sys.debug_rtmode=false
-persist.sys.enable_rtmode=false
-persist.sys.enable_sched_gesture=false
-persist.sys.enable_ignorecloud_rtmode=true
+# no-confirmed-win: persist.sys.debug_rtmode=false
+# no-confirmed-win: persist.sys.enable_rtmode=false
+# no-confirmed-win: persist.sys.enable_sched_gesture=false
+# no-confirmed-win: persist.sys.enable_ignorecloud_rtmode=true
 
 # Touch Scheduler
-ro.vendor.touch.touchscheduler.enable=false
+# no-confirmed-win: ro.vendor.touch.touchscheduler.enable=false
 
 # Sensor Daemon (D,I,S,V,F,E)
 # persist.vendor.usb.displayport.enabled=0
-persist.vendor.debug.sensors.daemon=S
+# no-confirmed-win: persist.vendor.debug.sensors.daemon=S
 
 # Sensor HAL
-persist.debug.sensors.hal=S
-persist.vendor.sensors.hal.log=0
+# no-confirmed-win: persist.debug.sensors.hal=S
+# no-confirmed-win: persist.vendor.sensors.hal.log=0
 
 #########################
 # I/O Tuning
 #########################
 
-persist.sys.use_boot_compact=true
+# no-confirmed-win: persist.sys.use_boot_compact=true
 
 # Preload
-persist.sys.preload.enable=false
-persist.sys.preload.debug=false
-persist.sys.dynamic_usap_enabled=false
+# no-confirmed-win: persist.sys.preload.enable=false
+# no-confirmed-win: persist.sys.preload.debug=false
+# no-confirmed-win: persist.sys.dynamic_usap_enabled=false
 
 # Smart I/O Optimization (ON = CPQ or MQ-DEADLINE | OFF=Device declared scheduler)
 # Declared in init.qti.kernel.rc
-persist.sys.stability.smartfocusio=on
+# no-confirmed-win: persist.sys.stability.smartfocusio=on
 
 #########################
 # System Tuning
@@ -236,138 +240,138 @@ persist.sys.stability.smartfocusio=on
 
 # Memory and Performance Optimization
 # https://github.com/raghavt20/miui-services/tree/d9e4df4bed682f316f555858588e2130611ad768/sources/com/miui/server/sptm
-ro.miui.shell_anim_enable_fcb=false
-persist.sys.miui_sptm_new.enable=false
-persist.sys.miui_sptm.enable=false
-persist.sys.miui_sptm.enable_pl_type=0
-persist.sys.miui_sptm.ignore_cloud_enable=true
-persist.sys.miui_sptm_animation.enable=false
-persist.sys.procprophet.enable=false
-persist.sys.procprophet.debug=false
+# no-confirmed-win: ro.miui.shell_anim_enable_fcb=false
+# no-confirmed-win: persist.sys.miui_sptm_new.enable=false
+# no-confirmed-win: persist.sys.miui_sptm.enable=false
+# no-confirmed-win: persist.sys.miui_sptm.enable_pl_type=0
+# no-confirmed-win: persist.sys.miui_sptm.ignore_cloud_enable=true
+# no-confirmed-win: persist.sys.miui_sptm_animation.enable=false
+# no-confirmed-win: persist.sys.procprophet.enable=false
+# no-confirmed-win: persist.sys.procprophet.debug=false
 
 # Performance Hinting
-persist.sys.debug.enable_scout_memory_monitor=false
+# no-confirmed-win: persist.sys.debug.enable_scout_memory_monitor=false
 # persist.device_config.netd_native.happy_eyeballs_enable=0
-persist.resleak.enable.all=false
-persist.resleak.enable.fd=false
-persist.resleak.enable.nativeheap=false
-persist.sys.disable_bganimate=true
-persist.sf.force_setaffinity.bigcore=0
+# no-confirmed-win: persist.resleak.enable.all=false
+# no-confirmed-win: persist.resleak.enable.fd=false
+# no-confirmed-win: persist.resleak.enable.nativeheap=false
+# no-confirmed-win: persist.sys.disable_bganimate=true
+# no-confirmed-win: persist.sf.force_setaffinity.bigcore=0
 
 # Turbosched Control
 # persist.sys.turbosched.thermal_break.enable=false
-persist.sys.turbosched.enable=false
-persist.sys.turbosched.local.enable=false
-persist.sys.turbosched.enable.coreApp.optimizer=false
-persist.sys.turbosched.local.coreApp.enable=false
-persist.sys.turbosched.enable_v2=false
-persist.sys.turbosched.local.enable_v2=false
-persist.sys.turbosched.dps.enable=false
-persist.sys.turbosched.local.dps.enable=false
-persist.sys.turbosched.enabletop20app=false
-persist.sys.turbosched.local.coreAppTop20.enable=false
-persist.sys.turbosched.gaea.enable=false
-persist.sys.turbosched.link.enable=false
-persist.sys.turbosched.setstartvip.enable=false
-persist.sys.turbosched.receive.cloud.data=false
-persist.sys.turbosched.local.policy_list=""
-persist.sys.turbosched.local.feature_list=""
-persist.sys.turbosched.link.asyncbinder.enable=false
-persist.sys.turbosched.viptask.balance.enable=false
-persist.sys.turbosched.local.viptask.balance.enable=false
-persist.sys.turbosched.viptask.schlat.enable=false
-persist.sys.turbosched.local.viptask.schlat.enable=false
-persist.sys.turbosched.csprotect.enable=0
-persist.sys.turbosched.local.csprotect.enable=0
+# no-confirmed-win: persist.sys.turbosched.enable=false
+# applied conditionally by scripts/11-runtime-config.sh: persist.sys.turbosched.local.enable=false
+# no-confirmed-win: persist.sys.turbosched.enable.coreApp.optimizer=false
+# no-confirmed-win: persist.sys.turbosched.local.coreApp.enable=false
+# no-confirmed-win: persist.sys.turbosched.enable_v2=false
+# no-confirmed-win: persist.sys.turbosched.local.enable_v2=false
+# no-confirmed-win: persist.sys.turbosched.dps.enable=false
+# no-confirmed-win: persist.sys.turbosched.local.dps.enable=false
+# no-confirmed-win: persist.sys.turbosched.enabletop20app=false
+# no-confirmed-win: persist.sys.turbosched.local.coreAppTop20.enable=false
+# no-confirmed-win: persist.sys.turbosched.gaea.enable=false
+# no-confirmed-win: persist.sys.turbosched.link.enable=false
+# no-confirmed-win: persist.sys.turbosched.setstartvip.enable=false
+# no-confirmed-win: persist.sys.turbosched.receive.cloud.data=false
+# no-confirmed-win: persist.sys.turbosched.local.policy_list=""
+# no-confirmed-win: persist.sys.turbosched.local.feature_list=""
+# no-confirmed-win: persist.sys.turbosched.link.asyncbinder.enable=false
+# no-confirmed-win: persist.sys.turbosched.viptask.balance.enable=false
+# no-confirmed-win: persist.sys.turbosched.local.viptask.balance.enable=false
+# no-confirmed-win: persist.sys.turbosched.viptask.schlat.enable=false
+# no-confirmed-win: persist.sys.turbosched.local.viptask.schlat.enable=false
+# no-confirmed-win: persist.sys.turbosched.csprotect.enable=0
+# no-confirmed-win: persist.sys.turbosched.local.csprotect.enable=0
 
 # Anti Screen Burn
-persist.sys.screen_anti_burn_enabled=true
+# no-confirmed-win: persist.sys.screen_anti_burn_enabled=true
 
 # Google WiFi-Direct
-persist.debug.wfd.enable=0
+# no-confirmed-win: persist.debug.wfd.enable=0
 
 # FBO Control
-persist.sys.fboservice.ctrl=true
+# no-confirmed-win: persist.sys.fboservice.ctrl=true
 
 # MIUI TCP Tracker service control
 # It tracks every TCP connection your apps make to calculate data usage and firewall rules
-persist.sys.miuitcptracker.ctrl=false
+# no-confirmed-win: persist.sys.miuitcptracker.ctrl=false
 
 # Wi-Fi / connectivity logging
 # Wi-Fi Enhanced Logging
-persist.vendor.wifienhancelog=0
-persist.wpa_supplicant.debug=false
+# no-confirmed-win: persist.vendor.wifienhancelog=0
+# no-confirmed-win: persist.wpa_supplicant.debug=false
 # Connectivity System Firmware (Connsys) logging or dump generation
-persist.vendor.connsysfw.enable=false
+# no-confirmed-win: persist.vendor.connsysfw.enable=false
 
 # A tool like "WireShark" trace
-persist.vendor.tcpdump.enable=false
+# no-confirmed-win: persist.vendor.tcpdump.enable=false
 
 # Wi-Fi Standalone (SA) Logging
-persist.vendor.wifisalog.enable=false
-vendor.hardware.wlan.runtcpdump=stop
+# applied conditionally by scripts/11-runtime-config.sh: persist.vendor.wifisalog.enable=false
+# no-confirmed-win: vendor.hardware.wlan.runtcpdump=stop
 
 # Xiaomi Specific windows watchdog service
 # https://github.com/raghavt20/miui-services/blob/d9e4df4bed682f316f555858588e2130611ad768/sources/com/android/server/wm/MiuiWindowMonitorImpl.java#L63
-persist.sys.stability.window_monitor.enabled=false
-persist.sys.stability.nativehang.enable=false
-persist.sys.stability.nativehangII.enable=false
-persist.sys.stability.nativehangII.resume=false
-persist.sys.stability.anr_monitor.enabled=false
-persist.sys.stability.report_app_launch.enable=false
-persist.sys.stability.enable_process_exit_monitor=false
-persist.sys.stability.enable_sentinel_resource_monitor=false
-persist.sys.miui_scout_enable=false
-persist.sys.miui_scout_debug=false
-persist.sys.miui_scout_binder_full_kill_process=false
-persist.sys.debug.enable_scout_memory_resume=false
+# no-confirmed-win: persist.sys.stability.window_monitor.enabled=false
+# no-confirmed-win: persist.sys.stability.nativehang.enable=false
+# applied conditionally by scripts/11-runtime-config.sh: persist.sys.stability.nativehangII.enable=false
+# no-confirmed-win: persist.sys.stability.nativehangII.resume=false
+# no-confirmed-win: persist.sys.stability.anr_monitor.enabled=false
+# no-confirmed-win: persist.sys.stability.report_app_launch.enable=false
+# no-confirmed-win: persist.sys.stability.enable_process_exit_monitor=false
+# no-confirmed-win: persist.sys.stability.enable_sentinel_resource_monitor=false
+# no-confirmed-win: persist.sys.miui_scout_enable=false
+# no-confirmed-win: persist.sys.miui_scout_debug=false
+# no-confirmed-win: persist.sys.miui_scout_binder_full_kill_process=false
+# no-confirmed-win: persist.sys.debug.enable_scout_memory_resume=false
 
 # Enable `scout` related debug features via socket dumping.
-persist.sys.scout_binder_gki=false
-persist.sys.scout_dumpbysocket=false
-persist.sys.stability.scout.enable=false
-persist.sys.stability.scout.check_frozen=false
-persist.sys.sysrqOnAnr_D_state=false
-persist.sys.panicOnAnr_D_state=false
-persist.sys.panicOnWatchdog_D_state=false
-persist.sys.perfdebug.monitor.enable=false
-persist.sys.stability.f2fsTrackEnable=false
-persist.sys.stability.enable_thread_monitor=false
-persist.sys.stability.enable_dmabuf_monitor=false
+# no-confirmed-win: persist.sys.scout_binder_gki=false
+# no-confirmed-win: persist.sys.scout_dumpbysocket=false
+# no-confirmed-win: persist.sys.stability.scout.enable=false
+# no-confirmed-win: persist.sys.stability.scout.check_frozen=false
+# no-confirmed-win: persist.sys.sysrqOnAnr_D_state=false
+# no-confirmed-win: persist.sys.panicOnAnr_D_state=false
+# no-confirmed-win: persist.sys.panicOnWatchdog_D_state=false
+# no-confirmed-win: persist.sys.perfdebug.monitor.enable=false
+# no-confirmed-win: persist.sys.stability.f2fsTrackEnable=false
+# no-confirmed-win: persist.sys.stability.enable_thread_monitor=false
+# no-confirmed-win: persist.sys.stability.enable_dmabuf_monitor=false
 
 # send sensor event to onetrack
-persist.vendor.sensor.onetrack=false
+# no-confirmed-win: persist.vendor.sensor.onetrack=false
 
 # Disable haptic onetrack
-sys.haptic.onetrack=false
+# no-confirmed-win: sys.haptic.onetrack=false
 
 # histograms for system metrics and usage statistics
-ro.vendor.histogram.enable=false
-vendor.display.disable_sdr_histogram=1
+# no-confirmed-win: ro.vendor.histogram.enable=false
+# no-confirmed-win: vendor.display.disable_sdr_histogram=1
 
 # LMK
-sys.lmk.reportkills=0
-persist.sys.lmk.reportkills=false
+# no-confirmed-win: sys.lmk.reportkills=0
+# no-confirmed-win: persist.sys.lmk.reportkills=false
 
 # OfflineLog
-persist.sys.offlinelog=false
-persist.sys.offlinelog.bootlog=false
-persist.sys.offlinelog.logcatkernel=false
-persist.sys.offlinelog.logcat=false
-service.offlinelog.bootloader=false
+# no-confirmed-win: persist.sys.offlinelog=false
+# applied conditionally by scripts/11-runtime-config.sh: persist.sys.offlinelog.bootlog=false
+# no-confirmed-win: persist.sys.offlinelog.logcatkernel=false
+# no-confirmed-win: persist.sys.offlinelog.logcat=false
+# no-confirmed-win: service.offlinelog.bootloader=false
 
 # Runtime diagnostics
-ro.config.nocheckin=1
-ro.kernel.android.checkjni=0
-ro.kernel.checkjni=0
-dalvik.vm.checkjni=false
-ro.statsd.enable=false
-sys.miui.ndcd=off
-persist.media.metrics.enabled=0
-persist.anr.dumpthr=0
-persist.oem.dump=0
-ro.lmk.debug=false
-ro.lmk.log_stats=false
+# no-confirmed-win: ro.config.nocheckin=1
+# no-confirmed-win: ro.kernel.android.checkjni=0
+# no-confirmed-win: ro.kernel.checkjni=0
+# no-confirmed-win: dalvik.vm.checkjni=false
+# no-confirmed-win: ro.statsd.enable=false
+# no-confirmed-win: sys.miui.ndcd=off
+# no-confirmed-win: persist.media.metrics.enabled=0
+# no-confirmed-win: persist.anr.dumpthr=0
+# no-confirmed-win: persist.oem.dump=0
+# no-confirmed-win: ro.lmk.debug=false
+# no-confirmed-win: ro.lmk.log_stats=false
 
 #########################
 # Log Tuning
@@ -375,33 +379,33 @@ ro.lmk.log_stats=false
 
 # Vendor-specific logging / dump controls
 # Mobile Display Processor (MDP) Composition log
-debug.mdpcomp.logs=0
+# no-confirmed-win: debug.mdpcomp.logs=0
 
 # stops the cellular modem (Radio) from sending debug logs to ADB
-persist.vendor.radio.adb_log_on=0
+# no-confirmed-win: persist.vendor.radio.adb_log_on=0
 
 # Bluetooth HCI snoop / vendor verbose / modem logging controls.
-persist.bluetooth.btsnooplogmode=disabled
+# no-confirmed-win: persist.bluetooth.btsnooplogmode=disabled
 # persist.bt.iot.enablelogging=false
-persist.vendor.sys.modem.logging.enable=false
-persist.vendor.verbose_logging_enabled=false
-persist.data.qmi.adb_logmask=0
+# no-confirmed-win: persist.vendor.sys.modem.logging.enable=false
+# no-confirmed-win: persist.vendor.verbose_logging_enabled=false
+# no-confirmed-win: persist.data.qmi.adb_logmask=0
 
 # Xiaomi Camera Logging
 # AI Scene Detection logging
-persist.vendor.camera.mawlog.aiasd=0
+# applied conditionally by scripts/11-runtime-config.sh: persist.vendor.camera.mawlog.aiasd=0
 
 # Main camera algorithm logging
-persist.vendor.camera.mawlog.main=0
+# no-confirmed-win: persist.vendor.camera.mawlog.main=0
 
 # Graphics Allocator (Gralloc) logging
-vendor.gralloc.enable_logs=0
+# no-confirmed-win: vendor.gralloc.enable_logs=0
 
-ro.vendor.displayfeature.dump=false
-vendor.display.disable_hw_recovery_dump=1
+# no-confirmed-win: ro.vendor.displayfeature.dump=false
+# no-confirmed-win: vendor.display.disable_hw_recovery_dump=1
 
 # Camera Log
-persist.vendor.camera.logstate=0
+# no-confirmed-win: persist.vendor.camera.logstate=0
 
 #########################
 # Etc.
@@ -431,8 +435,8 @@ persist.vendor.camera.logstate=0
 # Blur cost / visual effects
 # https://android.googlesource.com/platform/frameworks/native/+/refs/heads/master/services/surfaceflinger/SurfaceFlinger.cpp
 # https://android.googlesource.com/device/google/zuma/+/refs/heads/main/device.mk
-ro.sf.blurs_are_expensive=1
-ro.launcher.blur.appLaunch=0
+# no-confirmed-win: ro.sf.blurs_are_expensive=1
+# no-confirmed-win: ro.launcher.blur.appLaunch=0
 
 #########################
 # Not Verified Yet
@@ -441,49 +445,49 @@ ro.launcher.blur.appLaunch=0
 # currently backed by public Xiaomi service source or a clearly attributable
 # vendor-tree reference. Keep them separate from the source-backed sections.
 
-persist.sys.activity_helper.enable=false
-persist.sys.touch.followup.enable=false
-persist.sys.enable_sched_touchdown=false
-persist.sys.gpu.early_app_start=false
-persist.miui.extm.dm_opt.enable=true
-persist.miui.extm.enable=one
-persist.sys.ai_preload_cloud=0
-persist.sys.precache.enable=false
-persist.sys.smartcache.enable=false
-persist.sys.prestart.proc=false
-persist.sys.prestart.feedback.enable=false
-persist.sys.app_dexfile_preload.enable=false
-persist.sys.launch_response_optimization.enable=false
-persist.vendor.sys.activity_resumption_boost=false
-persist.sys.miui_startup_mode.enable=false
-persist.sys.stability.SmartCacheEnable=false
-persist.sys.stability.MultiCacheEnable=false
-persist.sys.stability.swapEnable=false
-persist.sys.stability.iorapEnable=false
-persist.miui.home_reuse_leash=true
-persist.sys.mirim.enable=false
-persist.sys.miui_slow_startup_mode.enable=false
-persist.sys.enable_perf_hint=false
-persist.sys.gc_booster.cloud=0
-persist.sys.gc_booster.enable=false
-persist.sys.reduce_died_count_delay=5000
-persist.sys.mi.prerender=false
-persist.sys.gnss_back.opt=true
-persist.sys.spc.cpulimit.enabled=false
-persist.miui.miperf.enable=false
-persist.sys.stability.fbo_hal_stop=false
-persist.sys.stability.reboot_days=-1
-persist.sys.debug.app.mtbf_test=false
-persist.sys.perf.debug=false
+# no-confirmed-win: persist.sys.activity_helper.enable=false
+# no-confirmed-win: persist.sys.touch.followup.enable=false
+# no-confirmed-win: persist.sys.enable_sched_touchdown=false
+# no-confirmed-win: persist.sys.gpu.early_app_start=false
+# no-confirmed-win: persist.miui.extm.dm_opt.enable=true
+# no-confirmed-win: persist.miui.extm.enable=one
+# no-confirmed-win: persist.sys.ai_preload_cloud=0
+# no-confirmed-win: persist.sys.precache.enable=false
+# no-confirmed-win: persist.sys.smartcache.enable=false
+# no-confirmed-win: persist.sys.prestart.proc=false
+# no-confirmed-win: persist.sys.prestart.feedback.enable=false
+# no-confirmed-win: persist.sys.app_dexfile_preload.enable=false
+# no-confirmed-win: persist.sys.launch_response_optimization.enable=false
+# no-confirmed-win: persist.vendor.sys.activity_resumption_boost=false
+# no-confirmed-win: persist.sys.miui_startup_mode.enable=false
+# no-confirmed-win: persist.sys.stability.SmartCacheEnable=false
+# no-confirmed-win: persist.sys.stability.MultiCacheEnable=false
+# no-confirmed-win: persist.sys.stability.swapEnable=false
+# no-confirmed-win: persist.sys.stability.iorapEnable=false
+# no-confirmed-win: persist.miui.home_reuse_leash=true
+# no-confirmed-win: persist.sys.mirim.enable=false
+# no-confirmed-win: persist.sys.miui_slow_startup_mode.enable=false
+# no-confirmed-win: persist.sys.enable_perf_hint=false
+# no-confirmed-win: persist.sys.gc_booster.cloud=0
+# no-confirmed-win: persist.sys.gc_booster.enable=false
+# no-confirmed-win: persist.sys.reduce_died_count_delay=5000
+# no-confirmed-win: persist.sys.mi.prerender=false
+# no-confirmed-win: persist.sys.gnss_back.opt=true
+# no-confirmed-win: persist.sys.spc.cpulimit.enabled=false
+# no-confirmed-win: persist.miui.miperf.enable=false
+# no-confirmed-win: persist.sys.stability.fbo_hal_stop=false
+# no-confirmed-win: persist.sys.stability.reboot_days=-1
+# no-confirmed-win: persist.sys.debug.app.mtbf_test=false
+# no-confirmed-win: persist.sys.perf.debug=false
 
 # Thermal Control
-persist.sys.enable_templimit=false
-persist.sys.smartpower.display_thermal_temp_threshold=99
-ro.vendor.display.hwc_thermal_dimming=false
-ro.vendor.fps.switch.thermal=false
-ro.vendor.thermal.dimming.enable=false
-ro.thermal.iec.enable=false
-ro.vendor.mi_sf.pq_thermal=false
+# no-confirmed-win: persist.sys.enable_templimit=false
+# no-confirmed-win: persist.sys.smartpower.display_thermal_temp_threshold=99
+# no-confirmed-win: ro.vendor.display.hwc_thermal_dimming=false
+# no-confirmed-win: ro.vendor.fps.switch.thermal=false
+# no-confirmed-win: ro.vendor.thermal.dimming.enable=false
+# no-confirmed-win: ro.thermal.iec.enable=false
+# no-confirmed-win: ro.vendor.mi_sf.pq_thermal=false
 
 # Not confirmed in current AOSP or not battery/log related. Kept as reference only.
 # debug.atrace.app_cmdlines=

@@ -2,6 +2,8 @@
 MODDIR="${MODDIR:-${0%/*}/..}"
 . "$MODDIR/scripts/lib.sh"
 
+# Keep portable patterns even when their matches are already disabled on the
+# test phone; another kernel may expose the same knob with an active value.
 debug_name="
 *log_level*
 *debug_level*
@@ -64,19 +66,9 @@ game_link_debug
 migt_debug
 stack_tracer_enabled"
 
-# Present but protected on mayfly/HyperOS; repeated attempts only add noise.
 debug_skip_path="dplh_log_level gplaf_log_level cpucp_log_level enable_pkg_monitor"
-
-# Scan sysfs/procfs once, then reuse the path cache on later boots. This avoids
-# repeatedly walking large debug trees during boot settle.
-apply_debug_path_cache "$MODDIR/config/debug_paths"
-
-# Checks
-# for i in $debug_name; do
-#     for o in $(find /sys/ /proc/sys -type f -name "$i" 2>/dev/null); do
-#         echo "$o $(cat $o)"
-#     done
-# done
+# Portable discovery candidates are retained above, but only individually
+# benchmarked winners are applied below.
 
 debug_list_1="/sys/kernel/debug/dri/0/debug/enable
 /kernel/debug/sde_rotator0/evtlog/enable
@@ -107,12 +99,11 @@ debug_list_1="/sys/kernel/debug/dri/0/debug/enable
 /sys/kernel/debug/tracing/events/enable
 /sys/kernel/tracing/events/enable"
 
-#Fallback Method
-for path in $debug_list_1; do
+individual_winners="
+/sys/devices/system/edac/qcom-llcc/log_ce
+/sys/devices/system/edac/qcom-llcc/log_ue
+/sys/kernel/tracing/events/bpf_trace/bpf_trace_printk/enable"
+
+for path in $individual_winners; do
     apply_toggle "$path"
 done
-
-# Checks
-# for path in $debug_list_1; do
-#     echo "$path $(cat $path)"
-# done

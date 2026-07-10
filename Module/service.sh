@@ -3,7 +3,7 @@ MODDIR="${0%/*}"
 . "$MODDIR/scripts/lib.sh"
 RUN_LOG="$MODDIR/config/hyperoptimize.log"
 RUN_LOCK="$MODDIR/config/service.lock"
-HYPEROPTIMIZE_DEBUG=1
+HYPEROPTIMIZE_DEBUG=0
 export RUN_LOG HYPEROPTIMIZE_DEBUG
 
 load_user_options() {
