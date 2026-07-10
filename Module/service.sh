@@ -6,12 +6,25 @@ RUN_LOCK="$MODDIR/config/service.lock"
 HYPEROPTIMIZE_DEBUG=1
 export RUN_LOG HYPEROPTIMIZE_DEBUG
 
+load_user_options() {
+    ENABLE_PERFORMANCE_TUNING=0
+
+    if [ -f "$MODDIR/config/user_options" ]; then
+        . "$MODDIR/config/user_options"
+    fi
+}
+
 run_script() {
     local script="$1"
     local name code
 
     [ -f "$script" ] || return 0
     name="${script##*/}"
+
+    if [ "$name" = "04-performance.sh" ] && [ "$ENABLE_PERFORMANCE_TUNING" != "1" ]; then
+        echo "$(date '+%Y-%m-%d %H:%M:%S') skip $name disabled by user option" >> "$RUN_LOG"
+        return 0
+    fi
 
     echo "$(date '+%Y-%m-%d %H:%M:%S') start $name" >> "$RUN_LOG"
     sh "$script" >> "$RUN_LOG" 2>&1
@@ -29,6 +42,8 @@ trap 'rmdir "$RUN_LOCK" 2>/dev/null' EXIT
 
 : > "$RUN_LOG"
 echo "$(date '+%Y-%m-%d %H:%M:%S') service start" >> "$RUN_LOG"
+load_user_options
+echo "$(date '+%Y-%m-%d %H:%M:%S') option ENABLE_PERFORMANCE_TUNING=$ENABLE_PERFORMANCE_TUNING" >> "$RUN_LOG"
 
 if [ "$HYPEROPTIMIZE_SKIP_WAIT" = "1" ]; then
     echo "$(date '+%Y-%m-%d %H:%M:%S') boot wait skipped" >> "$RUN_LOG"

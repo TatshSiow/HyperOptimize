@@ -41,10 +41,21 @@ run_cmd cmd looper_stats disable
 
 # Reduce framework/runtime diagnostics overhead where supported.
 run_cmd cmd settings put system anr_debugging_mechanism 0
+run_cmd cmd settings put system send_security_reports 0
+run_cmd cmd settings put secure send_action_app_error 0
+run_cmd cmd settings put global send_action_app_error 0
+run_cmd cmd settings put global activity_starts_logging_enabled 0
+run_cmd cmd settings put global force_enable_pss_profiling 0
+run_cmd cmd settings put global upload_apk_enable 0
 run_cmd cmd device_config put runtime_native_boot iorap_perfetto_enable false
 
 # Disable attention features that can keep sensors active.
 run_cmd cmd settings put secure adaptive_sleep 0
+
+# Disable Xiaomi touch-down app prestart behavior through the all-package
+# blacklist. This complements the MIUI preload/SPTM properties in system.prop.
+run_cmd cmd settings put system touch_prestart_opt_config "{featureDisable:false,bgExceptionInterceptDisable:false,touchDownPreStartBlackList:[disable_all_package]}"
+run_cmd cmd settings put system predownload_cloud_enable 0
 
 # Perfetto/heapprofd tracing triggers. These properties can start tracing,
 # perf sampling, or heap profiling daemons when set by developer tools.
@@ -70,6 +81,14 @@ run_cmd logcat -P "~! ~1000/!"
 run_cmd logcat -b all -c
 
 log_get "settings.system.anr_debugging_mechanism" cmd settings get system anr_debugging_mechanism
+log_get "settings.system.send_security_reports" cmd settings get system send_security_reports
+log_get "settings.secure.send_action_app_error" cmd settings get secure send_action_app_error
+log_get "settings.global.send_action_app_error" cmd settings get global send_action_app_error
+log_get "settings.global.activity_starts_logging_enabled" cmd settings get global activity_starts_logging_enabled
+log_get "settings.global.force_enable_pss_profiling" cmd settings get global force_enable_pss_profiling
+log_get "settings.global.upload_apk_enable" cmd settings get global upload_apk_enable
+log_get "settings.system.touch_prestart_opt_config" cmd settings get system touch_prestart_opt_config
+log_get "settings.system.predownload_cloud_enable" cmd settings get system predownload_cloud_enable
 log_get "settings.global.looper_stats" cmd settings get global looper_stats
 log_get "settings.secure.adaptive_sleep" cmd settings get secure adaptive_sleep
 log_get "device_config.runtime_native_boot.iorap_perfetto_enable" cmd device_config get runtime_native_boot iorap_perfetto_enable

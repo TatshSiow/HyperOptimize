@@ -10,8 +10,6 @@ MODDIR="${MODDIR:-${0%/*}/..}"
 # Vendor Specific Tuning
 # Qualcomm Tuning
 if [ "$(getprop ro.hardware)" = "qcom" ]; then 
-    BUS_DCVS="/sys/devices/system/cpu/bus_dcvs"
-
     # KGSL Tuning & GPU Tuning(GPU)
     # GPU devfreq min/max are vendor policy knobs. Avoid forcing them globally;
     # PowerHAL, thermal, and game/display modes may need to adjust them.
@@ -25,7 +23,9 @@ if [ "$(getprop ro.hardware)" = "qcom" ]; then
     # Read-protected on some kernels; avoid forcing permissions for this GPU
     # policy knob unless validated on target devices.
     # write "/sys/class/kgsl/kgsl-3d0/popp" "0"
-    write "/sys/class/kgsl/kgsl-3d0/bcl" "0"
+    # Battery/current-limit behavior is kernel-specific; avoid forcing it
+    # globally unless the target device's KGSL bcl node is validated.
+    # write "/sys/class/kgsl/kgsl-3d0/bcl" "0"
     # lock_val "100" /sys/class/kgsl/kgsl-3d0/devfreq/mod_percent
     # Heuristic and kernel-specific; leave disabled unless validated on target devices.
     # lock_val "0" /sys/class/kgsl/kgsl-3d0/preemption
@@ -33,7 +33,7 @@ if [ "$(getprop ro.hardware)" = "qcom" ]; then
     # lock_val "30" /sys/class/kgsl/kgsl-3d0/idle_timer
 
     # lock_val "2147483647" /sys/kernel/gpu/gpu_max_clock
-    write "/sys/kernel/gpu/gpu_min_clock" "0"
+    # write "/sys/kernel/gpu/gpu_min_clock" "0"
 
     # RCU Tuning
     # https://www.kernel.org/doc/Documentation/RCU/Design/Expedited-Grace-Periods/Expedited-Grace-Periods.html
@@ -45,22 +45,9 @@ if [ "$(getprop ro.hardware)" = "qcom" ]; then
     # Enable LPM for all CPUs
     # qcom_lpm controls Qualcomm idle / cluster power-state entry. Forcing
     # these disables to 0 prefers allowing deeper idle states.
-    for disable in $(find /sys/devices/system/cpu/qcom_lpm -type f -name '*disable*'); do
+    for disable in $(find /sys/devices/system/cpu/qcom_lpm -type f -name '*disable*' 2>/dev/null); do
         write "$disable" "0"
     done
-
-    # BUS Performance Control
-    # bus_dcvs is Qualcomm DDR/L3 bandwidth + memlat scaling, not plain CPU
-    # frequency control. Forcing it aggressively is device-sensitive, so only
-    # light-touch tuning is left active here.
-    # lock_val_in_path "2147483647" "$BUS_DCVS/DDR" "max_freq"
-    # lock_val_in_path "2147483647" "$BUS_DCVS/L3" "max_freq"
-    # Heuristic and platform-specific; avoid forcing DDRQOS nodes globally.
-    # if [ -d "$BUS_DCVS/DDRQOS" ]; then
-    #     lock_val_in_path "1" "$BUS_DCVS/DDRQOS" "max_freq"
-    #     lock_val_in_path "1" "$BUS_DCVS/DDRQOS" "min_freq"
-    #     lock_val "1" "$BUS_DCVS/DDRQOS/boost_freq"
-    # fi
 
 
     write_in_path "0" "/sys/devices/system/cpu/cpufreq" "hispeed_freq"
@@ -71,8 +58,10 @@ if [ "$(getprop ro.hardware)" = "qcom" ]; then
 else 
 #Mediatek Tuning
     write  "/sys/kernel/ged/hal/custom_upbound_gpu_freq" "0"
-    write  "/sys/module/ged/parameters/is_GED_KPI_enabled" "1"
-    write  "/sys/module/mtk_core_ctl/parameters/policy_enable" "0"
+    write  "/sys/module/ged/parameters/is_GED_KPI_enabled" "0"
+    # Keep MTK core_ctl policy active; disabling it can prevent normal
+    # battery-oriented core management.
+    # write  "/sys/module/mtk_core_ctl/parameters/policy_enable" "0"
     write "/sys/kernel/ged/hal/dcs_mode" "0"
     write "/proc/mtk_lpm/cpuidle/enable" "1"
 fi
@@ -107,11 +96,11 @@ if [ -d /proc/sys/walt/ ]; then
     # write "/proc/sys/walt/sched_task_unfilter_period" "20000000"
     write "/proc/sys/walt/sched_min_task_util_for_boost"  "51"
     write "/proc/sys/walt/sched_min_task_util_for_colocation"  "35"
-    write "/proc/sys/walt/sched_downmigrate" "50 70"
-    write "/proc/sys/walt/sched_upmigrate" "50 90"
+    write "/proc/sys/walt/sched_downmigrate" "60 75"
+    write "/proc/sys/walt/sched_upmigrate" "70 90"
 
     # Reduce the time to consider an idle
-    write "/proc/sys/walt/sched_idle_enough" "10"
+    write "/proc/sys/walt/sched_idle_enough" "25"
 
     # Extra battery-biased WALT policy. Keep this limited to generic scheduler
     # hints and avoid the more aggressive per-task boost knobs.
