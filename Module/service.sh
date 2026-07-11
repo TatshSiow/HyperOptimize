@@ -8,6 +8,7 @@ export RUN_LOG HYPEROPTIMIZE_DEBUG
 
 load_user_options() {
     ENABLE_PERFORMANCE_TUNING=0
+    ENABLE_AGGRESSIVE_DIAGNOSTIC_REDUCTION=0
 
     if [ -f "$MODDIR/config/user_options" ]; then
         . "$MODDIR/config/user_options"
@@ -22,6 +23,11 @@ run_script() {
     name="${script##*/}"
 
     if [ "$name" = "04-performance.sh" ] && [ "$ENABLE_PERFORMANCE_TUNING" != "1" ]; then
+        echo "$(date '+%Y-%m-%d %H:%M:%S') skip $name disabled by user option" >> "$RUN_LOG"
+        return 0
+    fi
+
+    if [ "$name" = "12-aggressive-diagnostics.sh" ] && [ "$ENABLE_AGGRESSIVE_DIAGNOSTIC_REDUCTION" != "1" ]; then
         echo "$(date '+%Y-%m-%d %H:%M:%S') skip $name disabled by user option" >> "$RUN_LOG"
         return 0
     fi
@@ -44,6 +50,7 @@ trap 'rmdir "$RUN_LOCK" 2>/dev/null' EXIT
 echo "$(date '+%Y-%m-%d %H:%M:%S') service start" >> "$RUN_LOG"
 load_user_options
 echo "$(date '+%Y-%m-%d %H:%M:%S') option ENABLE_PERFORMANCE_TUNING=$ENABLE_PERFORMANCE_TUNING" >> "$RUN_LOG"
+echo "$(date '+%Y-%m-%d %H:%M:%S') option ENABLE_AGGRESSIVE_DIAGNOSTIC_REDUCTION=$ENABLE_AGGRESSIVE_DIAGNOSTIC_REDUCTION" >> "$RUN_LOG"
 
 if [ "$HYPEROPTIMIZE_SKIP_WAIT" = "1" ]; then
     echo "$(date '+%Y-%m-%d %H:%M:%S') boot wait skipped" >> "$RUN_LOG"

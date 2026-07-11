@@ -54,6 +54,13 @@ choose_volume_option \
   "Battery results vary by device; test before keeping it enabled."
 ENABLE_PERFORMANCE_TUNING="$?"
 
+choose_volume_option \
+  "Enable Aggressive Diagnostic Reduction?" \
+  "No" \
+  "Disables additional accounting and fault-time diagnostic dumps." \
+  "No repeatable power win was measured; troubleshooting data will be reduced."
+ENABLE_AGGRESSIVE_DIAGNOSTIC_REDUCTION="$?"
+
 mkdir -p "$MODPATH/config"
 {
   if [ "$ENABLE_VULKAN" = "0" ]; then
@@ -67,6 +74,12 @@ mkdir -p "$MODPATH/config"
   else
     echo "ENABLE_PERFORMANCE_TUNING=0"
   fi
+
+  if [ "$ENABLE_AGGRESSIVE_DIAGNOSTIC_REDUCTION" = "0" ]; then
+    echo "ENABLE_AGGRESSIVE_DIAGNOSTIC_REDUCTION=1"
+  else
+    echo "ENABLE_AGGRESSIVE_DIAGNOSTIC_REDUCTION=0"
+  fi
 } > "$MODPATH/config/user_options"
 
 chmod 0644 "$MODPATH/config/user_options"
@@ -74,3 +87,4 @@ chmod 0644 "$MODPATH/config/user_options"
 ui_print " "
 ui_print "- Vulkan renderer: $([ "$ENABLE_VULKAN" = "0" ] && echo Enabled || echo Disabled)"
 ui_print "- Performance tuning: $([ "$ENABLE_PERFORMANCE_TUNING" = "0" ] && echo Enabled || echo Disabled)"
+ui_print "- Aggressive diagnostic reduction: $([ "$ENABLE_AGGRESSIVE_DIAGNOSTIC_REDUCTION" = "0" ] && echo Enabled || echo Disabled)"
