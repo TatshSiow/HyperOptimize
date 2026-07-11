@@ -1,69 +1,50 @@
 #!/system/bin/sh
+STATE_DIR=${HYPEROPTIMIZE_STATE_DIR:-/data/adb/hyperoptimize-state}
 
-delete_prop() {
-  command -v resetprop >/dev/null 2>&1 || return 0
-  resetprop -d "$1" >/dev/null 2>&1
-  return 0
+restore_files() {
+    [ -f "$STATE_DIR/files" ] || return 0
+    while IFS='|' read -r path value; do
+        [ -f "$path" ] && printf '%s\n' "$value" > "$path" 2>/dev/null
+    done < "$STATE_DIR/files"
 }
 
-MODDIR="${0%/*}"
-
-delete_props_from_system_prop() {
-  local file="$1"
-  local prop
-
-  [ -f "$file" ] || return 0
-
-  while IFS='=' read -r prop _; do
-    case "$prop" in
-      persist.*|debug.*|logd.*|media.*|db.*|dalvik.*|sys.*|service.*|vendor.*|traced.*)
-        delete_prop "$prop"
-        ;;
-    esac
-  done < "$file"
-
-  return 0
+restore_props() {
+    [ -f "$STATE_DIR/props" ] || return 0
+    while IFS='|' read -r prop had value; do
+        if [ "$had" = 1 ]; then resetprop "$prop" "$value" >/dev/null 2>&1
+        else resetprop -d "$prop" >/dev/null 2>&1
+        fi
+    done < "$STATE_DIR/props"
 }
 
-delete_resetprop_targets_from_script() {
-  local file="$1"
-  local prop
-
-  [ -f "$file" ] || return 0
-
-  sed -n \
-    -e 's/^[[:space:]]*resetprop[[:space:]]\+\(-n[[:space:]]\+\)\{0,1\}\([^[:space:]]\+\).*/\2/p' \
-    -e 's/^[[:space:]]*setprop_if_present[[:space:]]\+\([^[:space:]]\+\).*/\1/p' \
-    "$file" 2>/dev/null |
-    while read -r prop; do
-      case "$prop" in
-        persist.*|debug.*|logd.*|media.*|db.*|dalvik.*|sys.*|service.*|vendor.*|traced.*|log.tag.*)
-          delete_prop "$prop"
-          ;;
-      esac
-    done
-
-  return 0
+restore_settings() {
+    [ -f "$STATE_DIR/settings" ] || return 0
+    while IFS='|' read -r namespace name had value; do
+        if [ "$had" = 1 ]; then cmd settings put "$namespace" "$name" "$value" >/dev/null 2>&1
+        else cmd settings delete "$namespace" "$name" >/dev/null 2>&1
+        fi
+    done < "$STATE_DIR/settings"
 }
 
-# Re-enable framework looper statistics collection when supported.
-cmd looper_stats enable >/dev/null 2>&1
-delete_prop debug.sys.looper_stats_enabled
+restore_services() {
+    [ -f "$STATE_DIR/services" ] || return 0
+    while IFS='|' read -r name state; do
+        case "$state" in running|restarting) start "$name" >/dev/null 2>&1 ;; stopped) stop "$name" >/dev/null 2>&1 ;; esac
+    done < "$STATE_DIR/services"
+}
 
-# Remove framework settings changed by the refined runtime script.
-cmd settings delete system anr_debugging_mechanism >/dev/null 2>&1
-cmd settings delete system send_security_reports >/dev/null 2>&1
+# The looper command has no status API. Restore it only when the original
+# property explicitly exposed its state; otherwise leave the framework default.
+looper_original=
+[ -f "$STATE_DIR/props" ] && looper_original=$(awk -F '|' '$1 == "debug.sys.looper_stats_enabled" { print $2 "|" $3; exit }' "$STATE_DIR/props")
 
-# Restore the only service explicitly stopped by the refined service script.
-start charge_logger >/dev/null 2>&1
+restore_files
+restore_settings
+restore_props
+restore_services
 
-# Remove persistent/module-owned props that were declared in system.prop or set
-# through resetprop scripts. This prevents uninstall from leaving stale persist.*
-# values on devices where resetprop stored them beyond the module lifetime.
-delete_props_from_system_prop "$MODDIR/system.prop"
-delete_resetprop_targets_from_script "$MODDIR/post-fs-data.sh"
-delete_resetprop_targets_from_script "$MODDIR/scripts/10-services-logtags.sh"
-delete_resetprop_targets_from_script "$MODDIR/scripts/11-runtime-config.sh"
+case "$looper_original" in 1\|true|1\|1) cmd looper_stats enable >/dev/null 2>&1 ;; 1\|false|1\|0) cmd looper_stats disable >/dev/null 2>&1 ;; esac
+rm -rf "$STATE_DIR"
 
 # Don't modify anything after this
 if [ -f "$INFO" ]; then

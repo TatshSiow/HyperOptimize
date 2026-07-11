@@ -65,5 +65,17 @@ for script in "$MODDIR"/scripts/[0-9][0-9]-*.sh; do
     run_script "$script"
 done
 
+awk '
+    /^apply-summary / {
+        for (i=1; i<=NF; i++) {
+            split($i, field, "=")
+            if (field[1] == "applied") applied += field[2]
+            else if (field[1] == "unchanged") unchanged += field[2]
+            else if (field[1] == "skipped") skipped += field[2]
+            else if (field[1] == "failed") failed += field[2]
+        }
+    }
+    END { printf "apply-total applied=%d unchanged=%d skipped=%d failed=%d\n", applied, unchanged, skipped, failed }
+' "$RUN_LOG" >> "$RUN_LOG"
 echo "$(date '+%Y-%m-%d %H:%M:%S') service end" >> "$RUN_LOG"
 exit 0
