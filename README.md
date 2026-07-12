@@ -34,7 +34,9 @@ A module to optimize System and Kernel parameters to reduce power consumption, n
 ## How to install?
 - Flash in Magisk or KSU Manager
 > [!WARNING]  
-> - not tested on APatch
+> - Magisk 20.4+
+> - KSU 0.6.6+
+> - APatch is not tested.
 
 ## My Magisk break after uninstalled, what should I do?
 - Force close and launch again

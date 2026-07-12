@@ -61,6 +61,13 @@ choose_volume_option \
   "No repeatable power win was measured; troubleshooting data will be reduced."
 ENABLE_AGGRESSIVE_DIAGNOSTIC_REDUCTION="$?"
 
+choose_volume_option \
+  "Enable Experimental Reduction?" \
+  "No" \
+  "These are the knobs that might be good on some devices." \
+  "Disable if worsens idle drain."
+ENABLE_NEAR_WIN_EXPERIMENTS="$?"
+
 mkdir -p "$MODPATH/config"
 {
   if [ "$ENABLE_VULKAN" = "0" ]; then
@@ -80,6 +87,12 @@ mkdir -p "$MODPATH/config"
   else
     echo "ENABLE_AGGRESSIVE_DIAGNOSTIC_REDUCTION=0"
   fi
+
+  if [ "$ENABLE_NEAR_WIN_EXPERIMENTS" = "0" ]; then
+    echo "ENABLE_NEAR_WIN_EXPERIMENTS=1"
+  else
+    echo "ENABLE_NEAR_WIN_EXPERIMENTS=0"
+  fi
 } > "$MODPATH/config/user_options"
 
 chmod 0644 "$MODPATH/config/user_options"
@@ -88,3 +101,4 @@ ui_print " "
 ui_print "- Vulkan renderer: $([ "$ENABLE_VULKAN" = "0" ] && echo Enabled || echo Disabled)"
 ui_print "- Performance tuning: $([ "$ENABLE_PERFORMANCE_TUNING" = "0" ] && echo Enabled || echo Disabled)"
 ui_print "- Aggressive diagnostic reduction: $([ "$ENABLE_AGGRESSIVE_DIAGNOSTIC_REDUCTION" = "0" ] && echo Enabled || echo Disabled)"
+ui_print "- Near-win drain experiment: $([ "$ENABLE_NEAR_WIN_EXPERIMENTS" = "0" ] && echo Enabled || echo Disabled)"
