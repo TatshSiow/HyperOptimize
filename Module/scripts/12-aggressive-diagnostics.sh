@@ -8,6 +8,8 @@ MODDIR="${MODDIR:-${0%/*}/..}"
 # Continuous diagnostic accounting.
 write_if_writable "/proc/sys/kernel/sched_schedstats" "0"
 write_in_path_if_writable "0" "/sys/fs/f2fs" "iostat_enable"
+stop_service_if_running misight
+stop_service_if_running vendor.mi_misight
 
 # Fault/OOM/resume dump generation.
 write_if_writable "/proc/sys/vm/oom_dump_tasks" "0"
